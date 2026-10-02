@@ -80,9 +80,9 @@ function render(){
   const d=wrap(i-cur),a=Math.abs(d),c=cards[i],it=items[i];
   if(a>5){c.style.opacity=0;c.style.visibility="hidden";it.style.visibility="hidden";continue}
   c.style.visibility="visible";it.style.visibility="visible";
-  const center=Math.max(0,1-a),diag=mobile?innerWidth*.075:innerWidth*.115;
+  const center=Math.max(0,1-a),diag=mobile?innerWidth*.16:innerWidth*.20;
   const x=-d*diag + ptx*(16-a*2);
-  const y=d*(mobile?innerHeight*.24:innerHeight*.21) + pty*(12-a*1.5);
+  const y=d*(mobile?innerHeight*.30:innerHeight*.27) + pty*(12-a*1.5);
   const z=-a*240 + center*220;
   const scale=(mobile?.66:.66)+center*(mobile?.34:.52)-Math.min(a,2)*.025;
   const rot=-d*4+ptx*(a<.7?2.4:1.1);
