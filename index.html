@@ -592,8 +592,8 @@ function render() {
     c.style.transform =
       `translate3d(calc(-50% + ${x}px),calc(-50% + ${y}px),${z}px) rotateZ(${rot}deg) rotateX(${-pty * k}deg) rotateY(${ptx * k}deg) scale(${scale})`;
 
-    it.style.opacity = (mobile ? Math.max(0, 1 - a * 1.8) : Math.max(.02, 1 - a * .55));
-    it.style.transform = `translate3d(0,${d * (mobile ? 55 : innerHeight * .17)}px,0)`;
+    it.style.opacity = (mobile ? Math.max(0, 1 - a * 2.4) : Math.max(.02, 1 - a * .55));
+    it.style.transform = `translate3d(0,${d * (mobile ? 90 : Math.max(innerHeight * .17, 170))}px,0)`;
     const so = Math.max(0, 1 - a * 2.6);
     it.querySelector(".dsc").style.opacity = so;
     it.querySelector(".bar").style.opacity = so;
