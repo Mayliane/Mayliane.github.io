@@ -72,23 +72,23 @@ document.getElementById("tot").textContent="/"+String(N).padStart(2,"0");
 let target=0,cur=0,shown=-1,raf=null,last=performance.now(),idle=null,pointerX=0,pointerY=0,ptx=0,pty=0;
 const wrap=d=>((d+N/2)%N+N)%N-N/2;
 function goTo(i){const r=Math.round(cur);target=r+wrap(i-r);kick()}
-function nudge(v){target+=v;kick();clearTimeout(idle);idle=setTimeout(()=>{target=Math.round(target);kick()},150)}
+function nudge(v){target=Math.max(0,Math.min(N-1,target+v));kick();clearTimeout(idle);idle=setTimeout(()=>{target=Math.max(0,Math.min(N-1,Math.round(target)));kick()},150)}
 function kick(){if(!raf){last=performance.now();raf=requestAnimationFrame(tick)}}
 function render(){
  const mobile=innerWidth<=860;
  for(let i=0;i<N;i++){
-  const d=wrap(i-cur),a=Math.abs(d),c=cards[i],it=items[i];
-  if(a>5){c.style.opacity=0;c.style.visibility="hidden";it.style.visibility="hidden";continue}
+  const d=i-cur,a=Math.abs(d),c=cards[i],it=items[i];
+  if(a>8){c.style.opacity=0;c.style.visibility="hidden";it.style.visibility="hidden";continue}
   c.style.visibility="visible";it.style.visibility="visible";
-  const center=Math.max(0,1-a),diag=mobile?innerWidth*.16:innerWidth*.20;
+  const center=Math.max(0,1-a),diag=mobile?innerWidth*.17:innerWidth*.22;
   const x=-d*diag + ptx*(16-a*2);
-  const y=d*(mobile?innerHeight*.30:innerHeight*.27) + pty*(12-a*1.5);
+  const y=d*(mobile?innerHeight*.32:innerHeight*.29) + pty*(12-a*1.5);
   const z=-a*240 + center*220;
   const scale=(mobile?.66:.66)+center*(mobile?.34:.52)-Math.min(a,2)*.025;
   const rot=-d*4+ptx*(a<.7?2.4:1.1);
   const textZone=innerWidth*.33;const cardX=Math.abs(x);const overlapsText=cardX < textZone && (innerWidth>860 || Math.abs(y)<innerHeight*.46);c.classList.toggle("over-text",overlapsText && a>.55);c.style.opacity=Math.max(0,1-a*.17);c.style.zIndex=100-Math.round(a*10);c.style.filter=(a<1.15 ? "blur("+Math.max(0,(1-a)*1.8)+"px)" : "none");
   c.style.transform=`translate3d(calc(-50% + ${x}px),calc(-50% + ${y}px),${z}px) rotateZ(${rot}deg) rotateX(${-pty*(a<.7?2:1)}deg) rotateY(${ptx*(a<.7?2:1)}deg) scale(${scale})`;
-  const op=mobile?Math.max(0,1-a*1.8):Math.max(.04,1-a*.62);it.style.opacity=op;it.style.transform=`translate3d(0,${d*(mobile?55:innerHeight*.16)}px,0)`;
+  const op=mobile?Math.max(0,1-a*1.8):Math.max(.02,1-a*.55);it.style.opacity=op;it.style.transform=`translate3d(0,${d*(mobile?55:innerHeight*.16)}px,0)`;
  }
  const idx=((Math.round(cur)%N)+N)%N;
  if(idx!==shown){shown=idx;document.getElementById("num").textContent=String(idx+1).padStart(2,"0");document.getElementById("m-type").textContent=PROJECTS[idx][1];document.getElementById("m-team").textContent=PROJECTS[idx][3];document.title=PROJECTS[idx][0]+" – "+CONFIG.name}
