@@ -34,7 +34,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Gloock&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#ebebea;--bg0:rgba(235,235,234,0);--ink:#141414;--mute:#8d8d8b;--line:#cfcfcd;
@@ -56,20 +56,53 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 
-/* ---------- écran d'intro ---------- */
-.loader{position:fixed;inset:0;z-index:200;background:var(--bg);display:block;transition:opacity .7s ease,visibility .7s}
-.loader.done{opacity:0;visibility:hidden;pointer-events:none}
-.ld-name{position:absolute;left:calc(22px + var(--sl));top:calc(22px + var(--st));font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:-.01em}
-.ld-label{position:absolute;right:calc(22px + var(--sr));top:calc(26px + var(--st));color:var(--mute);text-transform:uppercase;font-weight:600}
-.ld-count{position:absolute;left:calc(18px + var(--sl));bottom:calc(14px + var(--sb));display:flex;align-items:flex-start;gap:12px;line-height:.8}
-.ld-count b{font-weight:300;font-size:clamp(88px,min(24vw,36vh),320px);letter-spacing:-.05em;font-variant-numeric:tabular-nums}
-.ld-count span{font-weight:600;margin-top:1.1em}
-.ld-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--line)}
-.ld-bar i{display:block;height:100%;background:var(--ink);transform-origin:0 50%;transform:scaleX(0)}
+/* ---------- écran d'intro : le personnage pousse le panneau, qui s'ouvre ensuite en deux ---------- */
+.loader{position:fixed;inset:0;z-index:200;overflow:hidden;
+  --ld-bg:#ffffff;--ld-ink:#141414;--ld-skin:#ffffff;--ld-shirt:#a3a3a1;--ld-red:#d9474f;
+  --ld-font:"Gloock","Georgia","Times New Roman",serif;
+  --ld-fs:min(11.2vw,30vh);--ld-fig:calc(var(--ld-fs)*1.6)}
+:root[data-theme="dark"] .loader{--ld-bg:#161616;--ld-ink:#f1f1ef;--ld-skin:#262625;--ld-shirt:#58584f}
+.loader.open{pointer-events:none}
+.loader.gone{display:none}
+.loader.fade{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .5s ease,visibility .5s}
+.ld-back{position:absolute;inset:0;background:#000;transition:opacity .12s linear}
+.loader.open .ld-back{opacity:0}
+.ld-panels{position:absolute;inset:0;clip-path:inset(0 100% 0 0);-webkit-clip-path:inset(0 100% 0 0)}
+.ld-half{position:absolute;left:0;right:0;height:50%;background:var(--ld-bg);overflow:hidden;will-change:transform}
+.ld-top{top:0}.ld-bot{bottom:0}
+.ld-line{position:absolute;left:0;right:0;text-align:center;white-space:nowrap;font-family:var(--ld-font);font-weight:400;
+  font-size:var(--ld-fs);line-height:.8;letter-spacing:-.01em;text-transform:uppercase;color:var(--ld-red);opacity:0;transition:opacity .2s}
+.loader.fontok .ld-line{opacity:1}
+.ld-top .ld-line{bottom:1vh}
+.ld-bot .ld-line{top:1vh}
+.ld-count{position:absolute;left:calc(22px + var(--sl));bottom:calc(18px + var(--sb));font-weight:600;font-size:13px;letter-spacing:.04em;
+  color:var(--ld-ink);font-variant-numeric:tabular-nums;transition:opacity .3s}
+.ld-count.off{display:none}
+.loader.open .ld-count{opacity:0}
+/* ouverture : la ligne du haut monte, celle du bas descend */
+.loader.open .ld-top{transform:translate3d(0,-101%,0);transition:transform .85s cubic-bezier(.76,0,.24,1)}
+.loader.open .ld-bot{transform:translate3d(0,101%,0);transition:transform .85s cubic-bezier(.76,0,.24,1) .14s}
+/* personnage */
+.ld-fig{position:absolute;left:0;top:50%;height:var(--ld-fig);width:calc(var(--ld-fig)*200/330);margin-top:calc(var(--ld-fig)/-2);
+  opacity:0;pointer-events:none;will-change:transform}
+.ld-fig svg,.ld-fig img{display:block;width:100%;height:100%;object-fit:contain;overflow:visible}
+.ld-fig .f-skin{fill:var(--ld-skin)}
+.ld-fig .f-cap{fill:var(--ld-shirt)}
+.ld-fig .f-shirt{fill:url(#ldFlower)}
+.ld-fig .f-ink{fill:var(--ld-ink)}
+.ld-fig .s-ink{stroke:var(--ld-ink)}
+.ld-fig .s-skin{stroke:var(--ld-skin)}
+.ld-fig .lg-a,.ld-fig .lg-b{transform-box:view-box}
+.ld-fig .lg-a{transform-origin:90px 206px;animation:ldLegA .5s ease-in-out infinite alternate}
+.ld-fig .lg-b{transform-origin:98px 208px;animation:ldLegB .5s ease-in-out infinite alternate}
+@keyframes ldLegA{from{transform:rotate(-9deg)}to{transform:rotate(13deg)}}
+@keyframes ldLegB{from{transform:rotate(12deg)}to{transform:rotate(-10deg)}}
 
-/* l'interface apparaît quand l'intro est finie */
-.brand,.nav,.meta,.counter,.hint,.themebtn{transition:opacity .9s ease .2s}
-body:not(.ready) :is(.brand,.nav,.meta,.counter,.hint,.themebtn){opacity:0}
+/* après l'arrivée des cartes, les textes apparaissent en passant du flou au net */
+.meta,.counter,.list{transition:opacity 1s ease,filter 1s ease}
+.counter{transition-delay:0s}.meta{transition-delay:.15s}.list{transition-delay:.3s}
+body:not(.ui) :is(.meta,.counter,.list){opacity:0;filter:blur(12px)}
+body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
 
 /* ---------- nom vertical + menu ---------- */
 .brand{position:fixed;left:calc(22px + var(--sl));top:calc(22px + var(--st));writing-mode:vertical-rl;transform:rotate(180deg);font-weight:800;font-size:32px;line-height:1;z-index:10;text-transform:uppercase}
@@ -181,6 +214,7 @@ body:not(.ready) :is(.brand,.nav,.meta,.counter,.hint,.themebtn){opacity:0}
   .nav button[aria-current=true]::before{content:none}
   .nav button[aria-current=true]{text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:2px}
   .themebtn{right:calc(10px + var(--sr));top:calc(11px + var(--st))}
+  .loader{--ld-fs:min(14.6vw,26vh)}
   .meta{display:none}
   .card{width:72vw;max-width:520px}
   .list{left:0;width:100%;right:auto}
@@ -228,11 +262,57 @@ body:not(.ready) :is(.brand,.nav,.meta,.counter,.hint,.themebtn){opacity:0}
 <body>
 
 <!-- écran d'intro -->
-<div class="loader" id="loader" aria-live="polite">
-  <div class="ld-name">Mayliane Lefebvre ©</div>
-  <div class="ld-label">Chargement</div>
-  <div class="ld-count"><b id="ldNum">000</b><span>%</span></div>
-  <div class="ld-bar"><i id="ldBar"></i></div>
+<div class="loader" id="loader" role="status" aria-label="Chargement">
+  <div class="ld-back"></div>
+  <div class="ld-panels" id="ldPanels">
+    <div class="ld-half ld-top"><div class="ld-line" id="ldL1">Mayliane</div></div>
+    <div class="ld-half ld-bot"><div class="ld-line" id="ldL2">Lefebvre</div></div>
+    <div class="ld-count" id="ldCount"><span id="ldNum">000</span> %</div>
+  </div>
+  <div class="ld-fig" id="ldFig" aria-hidden="true">
+    <svg viewBox="0 0 200 330" fill="none" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="ldFlower" width="16" height="16" patternUnits="userSpaceOnUse">
+          <rect width="16" height="16" class="f-cap" stroke="none"/>
+          <circle cx="5" cy="5" r="3" class="f-skin" stroke="none"/>
+          <circle cx="13" cy="12" r="2.4" class="f-skin" stroke="none"/>
+        </pattern>
+        <path id="ldArmF" d="M128,102 L158,108 L188,98"/>
+        <path id="ldArmN" d="M138,110 L164,124 L188,112"/>
+        <path id="ldLegA" d="M90,206 L76,262 L52,308"/>
+        <path id="ldLegB" d="M98,208 L118,256 L100,306"/>
+      </defs>
+      <!-- bras éloigné -->
+      <use href="#ldArmF" class="s-ink" stroke-width="17"/><use href="#ldArmF" class="s-skin" stroke-width="9"/>
+      <circle cx="190" cy="98" r="7" class="f-skin s-ink" stroke-width="4"/>
+      <!-- jambe arrière -->
+      <g class="lg-a">
+        <use href="#ldLegA" class="s-ink" stroke-width="17"/><use href="#ldLegA" class="s-skin" stroke-width="9"/>
+        <g transform="translate(56 308)"><path class="f-skin s-ink" stroke-width="5" d="M-24,-8 Q-24,-14 -16,-14 L8,-12 Q24,-9 26,2 L26,7 L-24,7 Z"/><path class="s-ink" stroke-width="3" d="M-20,1 L22,1"/></g>
+      </g>
+      <!-- jambe avant -->
+      <g class="lg-b">
+        <use href="#ldLegB" class="s-ink" stroke-width="17"/><use href="#ldLegB" class="s-skin" stroke-width="9"/>
+        <g transform="translate(104 306)"><path class="f-skin s-ink" stroke-width="5" d="M-24,-8 Q-24,-14 -16,-14 L8,-12 Q24,-9 26,2 L26,7 L-24,7 Z"/><path class="s-ink" stroke-width="3" d="M-20,1 L22,1"/></g>
+      </g>
+      <!-- cou, torse, short -->
+      <path d="M127,80 L125,98" class="s-ink" stroke-width="16"/><path d="M127,80 L125,98" class="s-skin" stroke-width="8"/>
+      <path class="f-shirt s-ink" stroke-width="5" d="M104,92 Q128,92 146,106 L116,206 Q90,214 62,198 Z"/>
+      <path class="f-skin s-ink" stroke-width="5" d="M62,198 Q90,214 116,206 L124,238 Q96,252 70,244 Z"/>
+      <!-- bras proche -->
+      <use href="#ldArmN" class="s-ink" stroke-width="17"/><use href="#ldArmN" class="s-skin" stroke-width="9"/>
+      <circle cx="190" cy="112" r="7" class="f-skin s-ink" stroke-width="4"/>
+      <!-- tête -->
+      <circle cx="134" cy="58" r="25" class="f-skin s-ink" stroke-width="5"/>
+      <circle cx="113" cy="64" r="5" class="f-skin s-ink" stroke-width="3.5"/>
+      <path class="f-cap s-ink" stroke-width="5" d="M109,54 C108,34 122,26 138,27 C152,28 160,40 160,54 Z"/>
+      <path class="f-cap s-ink" stroke-width="5" d="M148,49 L182,56 Q184,62 178,62 L148,57 Z"/>
+      <circle cx="150" cy="65" r="2.6" class="f-ink"/>
+      <path class="s-ink" stroke-width="3" d="M143,58 L156,62"/>
+      <path class="s-ink" stroke-width="3" d="M147,79 Q153,75 159,79"/>
+      <path class="f-skin s-ink" stroke-width="3" d="M112,32 q-5,7 0,10 q5,-3 0,-10z"/>
+    </svg>
+  </div>
 </div>
 
 <div class="brand">Mayliane Lefebvre ©</div>
@@ -294,7 +374,11 @@ body:not(.ready) :is(.brand,.nav,.meta,.counter,.hint,.themebtn){opacity:0}
 const CONFIG = {
   name: "Mayliane Lefebvre",
   email: "prenom.nom@mail.com",
-  about: "Portfolio de projets de communication réalisés en équipe : identités visuelles, personas, stratégies publicitaires, événementiel et supports de marque."
+  about: "Portfolio de projets de communication réalisés en équipe : identités visuelles, personas, stratégies publicitaires, événementiel et supports de marque.",
+  introLines: ["Mayliane", "Lefebvre"],   // intro : les 2 lignes du nom (vide = le nom est coupé automatiquement)
+  introColor: "#d9474f",                  // intro : couleur du nom
+  introFigure: "",                        // intro : "" = petit personnage intégré ; ou ton dessin : "mon-perso.svg" / ".png" (tourné vers la droite, mains au bord droit)
+  introCounter: true                      // intro : petit compteur % en bas à gauche (false = caché)
 };
 
 /* Dossier des fichiers (images, vidéos). "" = même dossier que index.html. Exemple : "images/" */
@@ -462,8 +546,8 @@ $("tot").textContent = "/" + String(N).padStart(2, "0");
 /* ---------- défilement infini ---------- */
 let target = 0, cur = 0, shown = -1, raf = null, last = performance.now(), idle = null;
 let pointerX = 0, pointerY = 0, ptx = 0, pty = 0;
-let ready = false, enter = 0;                       // enter : 0 -> 1 pendant l'arrivée des cartes
-const ENTER_MS = REDUCED ? 1 : 1900;
+let ready = false, sweeping = false, sweepT = 0, uiOn = false;   // ready : on peut interagir ; sweeping : les cartes arrivent
+const SWEEP_MS = 2300, SWEEP_FROM = 4.5;                          // arrivée rapide des cartes depuis le haut à droite
 const wrap = d => ((d + N / 2) % N + N) % N - N / 2;
 
 function nudge(v) {
@@ -494,25 +578,21 @@ function render() {
     if (a > 5) { c.style.visibility = "hidden"; c.style.opacity = 0; it.style.visibility = "hidden"; continue; }
     c.style.visibility = "visible"; it.style.visibility = "visible";
 
-    /* arrivée en 3D : les cartes proches du centre arrivent en premier */
-    const local = Math.max(0, Math.min(1, (enter - Math.min(a, 4) * .1) / .6));
-    const e = 1 - Math.pow(1 - local, 3);
-
     const center = Math.max(0, 1 - a);
     const x = -d * stepX + ptx * (14 - a * 2);
-    const y =  d * stepY + yOff + pty * (12 - a * 1.5) + (1 - e) * innerHeight * .22;
-    const z = -a * 240 + center * 220 - (1 - e) * 1500;
+    const y =  d * stepY + yOff + pty * (12 - a * 1.5);
+    const z = -a * 240 + center * 220;
     const scale = .62 + center * (mobile ? .38 : .55) - Math.min(a, 2) * .02;
-    const rot = -d * 3.5 + ptx * (a < .7 ? 2.2 : 1) - (1 - e) * 12;
+    const rot = -d * 3.5 + ptx * (a < .7 ? 2.2 : 1);
     const k = a < .7 ? 2 : 1;
 
-    c.style.opacity = Math.max(0, 1 - a * .17) * e;
+    c.style.opacity = Math.max(0, 1 - a * .17);
     c.style.zIndex = 100 - Math.round(a * 10);
     c.style.filter = (!mobile && a > .25) ? "blur(" + (Math.min(a, 1.5) * 1.1).toFixed(2) + "px)" : "none";
     c.style.transform =
       `translate3d(calc(-50% + ${x}px),calc(-50% + ${y}px),${z}px) rotateZ(${rot}deg) rotateX(${-pty * k}deg) rotateY(${ptx * k}deg) scale(${scale})`;
 
-    it.style.opacity = (mobile ? Math.max(0, 1 - a * 1.8) : Math.max(.02, 1 - a * .55)) * e;
+    it.style.opacity = (mobile ? Math.max(0, 1 - a * 1.8) : Math.max(.02, 1 - a * .55));
     it.style.transform = `translate3d(0,${d * (mobile ? 55 : innerHeight * .17)}px,0)`;
     const so = Math.max(0, 1 - a * 2.6);
     it.querySelector(".dsc").style.opacity = so;
@@ -531,11 +611,19 @@ function render() {
 }
 
 function tick(now) {
+  if (!ready && !sweeping) { raf = null; return; }            // intro en cours : les cartes attendent sous le panneau
   const dt = Math.min(48, now - last); last = now;
-  if (ready && enter < 1) enter = Math.min(1, enter + dt / ENTER_MS);
   ptx += (pointerX - ptx) * .08; pty += (pointerY - pty) * .08;
+  if (sweeping) {
+    sweepT = Math.min(1, sweepT + dt / SWEEP_MS);
+    const e = 1 - Math.pow(1 - sweepT, 4);                    // départ rapide puis freinage
+    cur = target + SWEEP_FROM * (1 - e);
+    if (!uiOn && sweepT > .5) { uiOn = true; document.body.classList.add("ui"); }
+    if (sweepT >= 1) { sweeping = false; ready = true; cur = target; }
+    render(); raf = requestAnimationFrame(tick); return;
+  }
   const diff = target - cur;
-  const still = (!ready || enter >= 1) && Math.abs(diff) < .0007 && Math.abs(pointerX - ptx) < .002 && Math.abs(pointerY - pty) < .002;
+  const still = Math.abs(diff) < .0007 && Math.abs(pointerX - ptx) < .002 && Math.abs(pointerY - pty) < .002;
   if (still) {
     cur = target; render(); raf = null;
     if (Math.abs(cur) > 1000) { const s = Math.round(cur / N) * N; cur -= s; target -= s; }
@@ -827,11 +915,25 @@ document.querySelectorAll(".nav button").forEach(b => b.addEventListener("click"
 }));
 $("close").addEventListener("click", closePanel);
 
-/* ---------- intro : compteur 000 -> 100 % pendant le chargement des images ---------- */
+/* ---------- intro : le personnage pousse le panneau, le nom apparaît, puis le panneau s'ouvre en deux ---------- */
 const initialIdx = slugIndex(location.hash);
-if (initialIdx >= 0) { cur = target = initialIdx; }      // lien direct : le carrousel démarre sur ce projet
+if (initialIdx >= 0) target = initialIdx;                // lien direct : le carrousel finira sur ce projet
+cur = target + SWEEP_FROM;                               // les cartes attendent en haut à droite, sous le panneau
 
-const loaderEl = $("loader"), ldNum = $("ldNum"), ldBar = $("ldBar");
+const loaderEl = $("loader"), ldPanels = $("ldPanels"), ldFig = $("ldFig"), ldNum = $("ldNum");
+const nameParts = String(CONFIG.name || "").trim().split(/\s+/);
+const introLines = (CONFIG.introLines && CONFIG.introLines.length) ? CONFIG.introLines : [nameParts[0] || "", nameParts.slice(1).join(" ")];
+$("ldL1").textContent = introLines[0] || "";
+$("ldL2").textContent = introLines[1] || "";
+if (CONFIG.introColor) loaderEl.style.setProperty("--ld-red", CONFIG.introColor);
+if (CONFIG.introCounter === false) $("ldCount").classList.add("off");
+if (CONFIG.introFigure) {
+  ldFig.innerHTML = "";
+  const fi = document.createElement("img"); fi.src = asset(CONFIG.introFigure); fi.alt = ""; fi.draggable = false;
+  ldFig.appendChild(fi);
+}
+
+/* chargement réel des images de couverture */
 let loadedCount = 0;
 for (let i = 0; i < N; i++) {
   const im = new Image();
@@ -840,27 +942,62 @@ for (let i = 0; i < N; i++) {
 }
 setTimeout(() => { loadedCount = N; }, 12000);            // sécurité : on n'attend pas plus de 12 s
 
-function startSite() {
-  loaderEl.classList.add("done");
-  setTimeout(() => { loaderEl.style.display = "none"; }, 800);
-  document.body.classList.add("ready");
-  ready = true;
-  if (initialIdx >= 0) openProject(initialIdx, { fromUrl: true });
-  kick();
-}
-const MIN_MS = REDUCED ? 0 : 1300, t0 = performance.now();
-let shownPct = 0;
-(function loop() {
+const PUSH_MS = REDUCED ? 0 : 2000;     // durée de la poussée : le panneau cède de plus en plus vite
+const WALK_MS = 700;                    // le personnage s'en va vers la droite
+const OPEN_AT = REDUCED ? 0 : 3000;     // le panneau ne s'ouvre jamais avant (même si tout est déjà chargé)
+const easeIn = t => Math.pow(t, 2.3);
+let tStart = null, shownPct = 0, opened = false;
+
+function frame(now) {
+  if (tStart === null) tStart = now;
+  const el = now - tStart;
+
+  /* le panneau blanc avance, il est poussé par le personnage */
+  const p = PUSH_MS ? Math.min(1, el / PUSH_MS) : 1;
+  const edge = easeIn(p);
+  const clip = "inset(0 " + ((1 - edge) * 100).toFixed(3) + "% 0 0)";
+  ldPanels.style.clipPath = clip; ldPanels.style.webkitClipPath = clip;
+
+  /* le personnage : mains au bord du panneau, puis il sort à droite */
+  if (!REDUCED) {
+    const W = innerWidth, hand = ldFig.offsetWidth * .96;
+    let x, bob;
+    if (el <= PUSH_MS) { x = edge * W - hand; bob = Math.sin(el / 95) * 2.5 * (1 - edge * .6); }
+    else { const q = Math.min(1, (el - PUSH_MS) / WALK_MS); x = W - hand + q * q * (hand + 40); bob = Math.sin(el / 80) * 2; }
+    ldFig.style.transform = "translate3d(" + x.toFixed(1) + "px," + bob.toFixed(1) + "px,0)";
+  }
+
+  /* compteur : suit le vrai chargement, sans jamais dépasser le temps minimum */
   const real = Math.min(1, loadedCount / N);
-  const time = MIN_MS ? Math.min(1, (performance.now() - t0) / MIN_MS) : 1;
+  const time = OPEN_AT ? Math.min(1, el / OPEN_AT) : 1;
   const goal = Math.min(real, time) * 100;
   shownPct += (goal - shownPct) * .14;
   if (goal >= 100 && shownPct > 99.4) shownPct = 100;
   ldNum.textContent = String(Math.round(shownPct)).padStart(3, "0");
-  ldBar.style.transform = "scaleX(" + (shownPct / 100) + ")";
-  if (shownPct >= 100) { setTimeout(startSite, 300); return; }
-  requestAnimationFrame(loop);
-})();
+
+  if (shownPct >= 100) { opened = true; setTimeout(openCurtain, 250); return; }
+  requestAnimationFrame(frame);
+}
+
+function openCurtain() {
+  ldFig.style.opacity = 0;
+  loaderEl.classList.add(REDUCED ? "fade" : "open");       // « HUY » monte, « PHAN » descend
+  if (initialIdx >= 0) openProject(initialIdx, { fromUrl: true });
+  if (REDUCED) { cur = target; ready = true; uiOn = true; document.body.classList.add("ui"); render(); }
+  else { sweeping = true; sweepT = 0; }                    // les cartes arrivent en diagonale
+  kick();
+  setTimeout(() => loaderEl.classList.add("gone"), REDUCED ? 600 : 1300);
+}
+
+/* on attend que la police du nom soit prête (1,5 s maximum) avant de lancer la poussée */
+Promise.race([
+  (document.fonts && document.fonts.load) ? document.fonts.load('1em "Gloock"') : Promise.resolve(),
+  new Promise(r => setTimeout(r, 1500))
+]).catch(() => {}).then(() => {
+  loaderEl.classList.add("fontok");
+  ldFig.style.opacity = REDUCED ? 0 : 1;
+  requestAnimationFrame(frame);
+});
 
 render();
 </script>
