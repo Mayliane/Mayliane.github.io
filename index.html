@@ -147,7 +147,7 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
 .item .cat{display:block;color:var(--mute);margin-bottom:10px}
 .item .ttl{display:block;font-weight:600;font-size:clamp(22px,2.3vw,36px);text-transform:uppercase;line-height:1}
 .item .bar{display:block;width:18px;height:1px;background:currentColor;margin:16px auto}
-.item .dsc{display:block;max-width:34ch;margin:auto}
+.item .dsc{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;line-clamp:5;overflow:hidden;max-width:34ch;margin:auto}
 
 /* ---------- fenêtre projet ---------- */
 .project-modal{position:fixed;inset:0;z-index:100;background:var(--bg);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .4s ease,visibility .4s}
@@ -419,16 +419,16 @@ const IMG_DIR = "";
    Les images (img et gallery) s'agrandissent au clic dans la fenêtre projet.
    --------------------------------------------------------------------- */
 const PROJECTS = [
-  { title:"Maison Lima", type:"Identité de marque", team:"",
-    desc:"Marque de denim. « Quand l’art rencontre l’indispensable ».",
+  { title:"Maison Lima", type:"Création d’un produit", team:"",
+    desc:"Nous avons imaginé et lancé Maison Lima, une marque de sacs de voyage à l’apparence de sacs à main. De la conception du produit aux matériaux, en passant par le site internet, les réseaux sociaux, les partenariats, les événements et le lancement, nous avons développé le projet de A à Z.",
     blocks:[] },
 
   { title:"Cocon d’Éveil", type:"Persona", team:"Léa, Elsa K, Éva, Mayliane",
     desc:"Étude de persona pour une marque dédiée à l’univers du bébé.",
     blocks:[] },
 
-  { title:"Air Up", type:"Stratégie publicitaire", team:"",
-    desc:"Création de contenu et réalisation d’un spot TV.",
+  { title:"Gourde Air-Up", slug:"air-up", type:"Création de contenu", team:"",
+    desc:"Création d’un spot TV pour mettre en avant la gourde Air Up à travers une campagne publicitaire pensée de la conception à la réalisation.",
     details:{ "Projet":"Pub TV Netflix / streaming", "Cible":"18-30 ans" },
     blocks:[
       { heading:"Concept" },
@@ -468,12 +468,12 @@ const PROJECTS = [
   { title:"Papeterie Neveu", type:"Identité visuelle", team:"",
     desc:"Papeterie : formes organiques bleu nuit sur fond crème.", blocks:[] },
 
-  { title:"Carte d’infidélité", type:"Programme de fidélité",
+  { title:"La carte d’infidélité", type:"Lancement d’un concept",
     team:"Hugues Thimoté, Mayliane Lefebvre, Noah Boutreau, Sixtine Périer Peau, Louna, Tiko, Arwen Vallin",
-    desc:"Conception d’une carte de fidélité et de son univers visuel.", blocks:[] },
+    desc:"Et si vous trompiez votre bar habituel ? Cette carte ludique invite à découvrir de nouvelles adresses et à sortir de ses habitudes. Grâce à des défis et récompenses, elle transforme la découverte des bars locaux en une expérience fun et conviviale.", blocks:[] },
 
-  { title:"Mariage franco-japonais", type:"Événementiel", team:"",
-    desc:"Organisation d’un mariage entre deux cultures : devis, activités, DJ, repas et lieu de réception.", blocks:[] },
+  { title:"Mariage franco-japonais", type:"Wedding planner", team:"",
+    desc:"Un mariage entre deux cultures. Dans ce projet, nous avons endossé le rôle de wedding planners pour organiser un mariage franco-japonais de A à Z : choix du lieu de réception, repas, activités, DJ, décoration et gestion des différents devis.", blocks:[] },
 
   { title:"Grain Doré", type:"Identité visuelle", team:"",
     desc:"Seconde proposition pour la boulangerie, plus éditoriale.", blocks:[] }
