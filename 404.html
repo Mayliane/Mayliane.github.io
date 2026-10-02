@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page introuvable – Mayliane Lefebvre</title>
+<meta name="description" content="Cette page n’existe pas.">
+<meta name="robots" content="noindex,follow">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="site.webmanifest">
+<script>
+(function(){var t=null;try{t=localStorage.getItem("theme")}catch(e){}
+if(t!=="dark"&&t!=="light")t=(window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches)?"dark":"light";
+document.documentElement.setAttribute("data-theme",t);})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ebebea;--ink:#141414;--mute:#6b6b69;--line:#cfcfcd;--font:"Archivo","Helvetica Neue",Arial,sans-serif;color-scheme:light}
+:root[data-theme="dark"]{--bg:#121212;--ink:#ececea;--mute:#9a9a98;--line:#2b2b2a;color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:22px max(22px,5vw);border-bottom:1px solid var(--line)}
+.top a{text-transform:uppercase;font-weight:700;text-decoration:none;letter-spacing:.02em}
+main{max-width:760px;margin:0 auto;padding:7vh max(22px,5vw) 10vh}
+h1{font-size:clamp(40px,8vw,84px);line-height:.92;text-transform:uppercase;letter-spacing:-.04em;margin-bottom:12px;overflow-wrap:anywhere}
+.upd{color:var(--mute);font-size:14px;margin-bottom:48px}
+h2{font-size:20px;text-transform:uppercase;letter-spacing:-.01em;margin:40px 0 10px}
+p,li{max-width:66ch;margin-bottom:12px}
+ul{padding-left:1.2em}
+.todo{background:rgba(217,71,79,.15);padding:0 .25em;border-radius:2px}
+footer{border-top:1px solid var(--line);padding:22px max(22px,5vw);color:var(--mute);font-size:14px;display:flex;gap:18px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="top"><a href="/">← Mayliane Lefebvre ©</a></div>
+<main style="min-height:60vh;display:flex;flex-direction:column;justify-content:center">
+<p class="upd" style="margin-bottom:12px">Erreur 404</p>
+<h1>Page introuvable</h1>
+<p style="margin-top:24px">La page demandée n’existe pas ou a été déplacée.</p>
+<p><a href="/" style="display:inline-block;border:1px solid var(--ink);padding:12px 20px;text-transform:uppercase;font-weight:600;text-decoration:none">Retour au portfolio</a></p>
+</main>
+<footer>
+  <a href="/">Accueil</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgu.html">CGU</a>
+</footer>
+</body>
+</html>

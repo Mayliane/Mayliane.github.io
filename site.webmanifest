@@ -1,0 +1,16 @@
+{
+  "name": "Mayliane Lefebvre – Portfolio",
+  "short_name": "Mayliane L.",
+  "description": "Portfolio : identités visuelles, stratégies publicitaires, personas et événementiel.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ebebea",
+  "theme_color": "#ebebea",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
