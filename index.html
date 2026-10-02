@@ -80,12 +80,12 @@ function render(){
   const d=i-cur,a=Math.abs(d),c=cards[i],it=items[i];
   if(a>8){c.style.opacity=0;c.style.visibility="hidden";it.style.visibility="hidden";continue}
   c.style.visibility="visible";it.style.visibility="visible";
-  const center=Math.max(0,1-a),diag=mobile?innerWidth*.17:innerWidth*.22;
-  const x=-d*diag + ptx*(16-a*2);
-  const y=d*(mobile?innerHeight*.32:innerHeight*.29) + pty*(12-a*1.5);
+  const center=Math.max(0,1-a); const stepX=mobile?innerWidth*.30:innerWidth*.31; const stepY=mobile?innerHeight*.30:innerHeight*.30;
+  const x=-d*stepX + ptx*(14-a*2);
+  const y=d*stepY + pty*(12-a*1.5);
   const z=-a*240 + center*220;
-  const scale=(mobile?.66:.66)+center*(mobile?.34:.52)-Math.min(a,2)*.025;
-  const rot=-d*4+ptx*(a<.7?2.4:1.1);
+  const scale=(mobile?.62:.62)+center*(mobile?.38:.55)-Math.min(a,2)*.02;
+  const rot=-d*3.5+ptx*(a<.7?2.2:1);
   const textZone=innerWidth*.33;const cardX=Math.abs(x);const overlapsText=cardX < textZone && (innerWidth>860 || Math.abs(y)<innerHeight*.46);c.classList.toggle("over-text",overlapsText && a>.55);c.style.opacity=Math.max(0,1-a*.17);c.style.zIndex=100-Math.round(a*10);c.style.filter=(a<1.15 ? "blur("+Math.max(0,(1-a)*1.8)+"px)" : "none");
   c.style.transform=`translate3d(calc(-50% + ${x}px),calc(-50% + ${y}px),${z}px) rotateZ(${rot}deg) rotateX(${-pty*(a<.7?2:1)}deg) rotateY(${ptx*(a<.7?2:1)}deg) scale(${scale})`;
   const op=mobile?Math.max(0,1-a*1.8):Math.max(.02,1-a*.55);it.style.opacity=op;it.style.transform=`translate3d(0,${d*(mobile?55:innerHeight*.16)}px,0)`;
