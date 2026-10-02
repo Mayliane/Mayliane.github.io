@@ -3,45 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ebebea">
 <title>Mayliane Lefebvre – Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#ebebea;--ink:#141414;--mute:#8d8d8b;--line:#cfcfcd;--font:"Archivo","Helvetica Neue",Arial,sans-serif}
-*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ebebea;--ink:#141414;--mute:#8d8d8b;--line:#cfcfcd;
+  --font:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
+  --sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;overflow:hidden;overscroll-behavior:none;touch-action:none;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;overflow:hidden;overscroll-behavior:none;touch-action:none;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
 :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 
-/* nom vertical + menu */
-.brand{position:fixed;left:22px;top:22px;writing-mode:vertical-rl;transform:rotate(180deg);font-weight:800;font-size:32px;line-height:1;z-index:10;text-transform:uppercase}
-.nav{position:fixed;left:16vw;top:26px;z-index:10}
+/* ---------- nom vertical + menu ---------- */
+.brand{position:fixed;left:calc(22px + var(--sl));top:calc(22px + var(--st));writing-mode:vertical-rl;transform:rotate(180deg);font-weight:800;font-size:32px;line-height:1;z-index:10;text-transform:uppercase}
+.nav{position:fixed;left:16vw;top:calc(26px + var(--st));z-index:10}
 .nav small{display:block;color:var(--mute);margin-bottom:34px}
 .nav button{display:block;font-weight:700;font-size:34px;line-height:.92;text-transform:uppercase}
 .nav button[aria-current=true]::before{content:"—";margin-right:10px;font-weight:400}
 
-/* infos à gauche */
+/* ---------- infos à gauche (ordinateur) ---------- */
 .meta{position:fixed;left:calc(4vw + 8px);top:36vh;width:20vw;z-index:10;display:grid;grid-template-columns:5.5em 1fr;gap:18px 14px;font-weight:600}
 .meta dt{color:var(--mute);font-weight:500}
 .meta dd{max-width:30ch}
 
-/* scène 3D */
+/* ---------- scène 3D ---------- */
 .stage{position:fixed;inset:0;perspective:1500px;perspective-origin:50% 50%;overflow:hidden;pointer-events:none}
 .card{position:absolute;left:50%;top:50%;width:min(30vw,500px);aspect-ratio:16/9;overflow:hidden;background:var(--line);border-radius:2px;
   box-shadow:0 28px 70px rgba(0,0,0,.15),0 2px 8px rgba(0,0,0,.08);transform-style:preserve-3d;will-change:transform,opacity;pointer-events:auto;cursor:pointer}
-.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.8,.2,1);-webkit-user-drag:none}
 .card:hover img{transform:scale(1.04)}
 .card::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.1),transparent 38%,rgba(0,0,0,.08));pointer-events:none}
 
-/* numéro */
-.counter{position:fixed;left:16vw;bottom:3vh;z-index:10;display:flex;align-items:flex-start;gap:14px;line-height:.8;pointer-events:none}
+/* ---------- numéro + indices ---------- */
+.counter{position:fixed;left:16vw;bottom:calc(3vh + var(--sb));z-index:10;display:flex;align-items:flex-start;gap:14px;line-height:.8;pointer-events:none}
 .counter b{font-weight:300;font-size:clamp(120px,27vh,300px);letter-spacing:-.05em}
 .counter span{font-weight:600;margin-top:1.1em}
-.hint{position:fixed;left:calc(4vw + 8px);bottom:26px;color:var(--mute);z-index:10}
+.hint{position:fixed;left:calc(4vw + 8px);bottom:calc(26px + var(--sb));color:var(--mute);z-index:10;pointer-events:none}
+.hint .m{display:none}
 
-/* liste de droite */
+/* ---------- liste de droite ---------- */
 .list{position:fixed;right:0;top:0;bottom:0;width:30vw;z-index:9;pointer-events:none}
 .item{position:absolute;left:0;right:0;top:50%;display:flex;justify-content:center;pointer-events:none;will-change:transform,opacity}
 .item button{width:100%;max-width:340px;text-align:center;padding:0 12px;pointer-events:auto;transform:translateY(-50%)}
@@ -50,53 +58,99 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .item .bar{display:block;width:18px;height:1px;background:currentColor;margin:16px auto}
 .item .dsc{display:block;max-width:34ch;margin:auto}
 
-/* fiche projet (clic sur une image) */
-.project-modal{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:6vh 7vw;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .45s ease,visibility .45s}
+/* ---------- fenêtre projet ---------- */
+.project-modal{position:fixed;inset:0;z-index:100;background:var(--bg);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .4s ease,visibility .4s}
 .project-modal.open{opacity:1;visibility:visible;pointer-events:auto}
-.modal-inner{width:min(1180px,100%);height:min(82vh,760px);display:grid;grid-template-columns:minmax(0,1.45fr) minmax(260px,.55fr);gap:5vw;align-items:center;transform:translateY(35px) scale(.97);transition:transform .6s cubic-bezier(.2,.8,.2,1)}
-.project-modal.open .modal-inner{transform:none}
-.modal-image{width:100%;height:100%;object-fit:contain;max-height:76vh}
-.modal-copy{border-left:1px solid var(--line);padding-left:3vw}
-.modal-number{color:var(--mute);font-size:13px;margin-bottom:20px}
+.modal-scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;
+  transform:translateY(28px);transition:transform .55s cubic-bezier(.2,.8,.2,1)}
+.project-modal.open .modal-scroll{transform:none}
+.modal-bar{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;
+  padding:calc(20px + var(--st)) calc(28px + var(--sr)) 18px calc(28px + var(--sl));
+  background:linear-gradient(var(--bg) 62%,rgba(235,235,234,0))}
+.modal-number{color:var(--mute);font-size:13px}
+.modal-close{text-transform:uppercase;font-weight:600;padding:8px 0 8px 14px}
+.modal-layout{display:grid;grid-template-columns:minmax(280px,.75fr) minmax(0,1.65fr);gap:6vw;padding:2vh calc(5vw + var(--sr)) 8vh calc(5vw + var(--sl));max-width:1600px;margin:0 auto}
+.modal-info{position:sticky;top:96px;align-self:start}
 .modal-type{color:var(--mute);margin-bottom:12px}
-.modal-title{font-size:clamp(38px,5vw,76px);line-height:.9;text-transform:uppercase;letter-spacing:-.04em;margin-bottom:26px}
-.modal-desc{font-size:17px;line-height:1.45;max-width:35ch;margin-bottom:28px}
-.modal-team{color:var(--mute);line-height:1.4}
-.modal-close{position:absolute;right:28px;top:26px;text-transform:uppercase;font-weight:600}
-.modal-nav{display:flex;gap:18px;margin-top:30px}
-.modal-nav button{color:var(--mute)}
+.modal-title{font-size:clamp(38px,5vw,76px);line-height:.9;text-transform:uppercase;letter-spacing:-.04em;margin-bottom:26px;overflow-wrap:anywhere}
+.modal-desc{font-size:17px;line-height:1.45;max-width:35ch;margin-bottom:26px}
+.modal-details{display:grid;grid-template-columns:5.5em 1fr;gap:10px 14px;line-height:1.35;margin-bottom:28px}
+.modal-details dt{color:var(--mute)}
+.modal-details dd{font-weight:600}
+.modal-nav{display:flex;gap:22px}
+.modal-nav button{color:var(--mute);padding:6px 0}
 .modal-nav button:hover{color:var(--ink)}
+.modal-nav-end{display:none}
 
-/* à propos / contact */
-.panel{position:fixed;inset:0;z-index:90;background:var(--bg);display:none;padding:26px 22px;overflow:auto;touch-action:pan-y}
+/* blocs de contenu */
+.modal-blocks{display:flex;flex-direction:column;gap:18px;min-width:0}
+.b-img{margin:0}
+.b-img img{display:block;width:100%;height:auto;background:var(--line)}
+.b-img figcaption{color:var(--mute);margin-top:8px;font-size:13px}
+.b-heading{font-size:clamp(22px,2.4vw,32px);font-weight:700;text-transform:uppercase;letter-spacing:-.02em;line-height:1;margin-top:14px}
+.b-text{font-size:17px;line-height:1.55;max-width:60ch}
+.b-text p+p{margin-top:12px}
+.b-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.b-gallery img{display:block;width:100%;height:100%;object-fit:cover;aspect-ratio:4/3;background:var(--line)}
+.b-video,.b-embed{width:100%;aspect-ratio:16/9;background:#000;border:0;display:block}
+.b-link{align-self:flex-start;display:inline-block;border:1px solid var(--ink);padding:12px 20px;text-transform:uppercase;font-weight:600;text-decoration:none;transition:background .25s,color .25s}
+.b-link:hover{background:var(--ink);color:var(--bg)}
+
+/* ---------- à propos / contact ---------- */
+.panel{position:fixed;inset:0;z-index:90;background:var(--bg);display:none;padding:calc(26px + var(--st)) calc(22px + var(--sr)) calc(26px + var(--sb)) calc(22px + var(--sl));overflow:auto;touch-action:pan-y}
 .panel.open{display:block}
 .panel .in{margin-left:16vw;max-width:640px;padding-top:6px}
 .panel h2{font-size:clamp(48px,9vw,120px);text-transform:uppercase;line-height:.9;margin-bottom:40px}
 .panel p{font-size:18px;line-height:1.4;margin-bottom:18px;max-width:46ch}
-.panel .close{position:fixed;right:22px;top:26px}
+.panel .close{position:fixed;right:calc(22px + var(--sr));top:calc(26px + var(--st));text-transform:uppercase;font-weight:600;padding:8px}
 
+/* =================== TÉLÉPHONE / TABLETTE PORTRAIT =================== */
 @media(max-width:860px){
-  .brand{font-size:22px;left:14px;top:16px}
-  .nav{left:56px;top:18px}
+  .brand{font-size:19px;left:calc(14px + var(--sl));top:calc(16px + var(--st))}
+  .nav{left:calc(48px + var(--sl));top:calc(16px + var(--st))}
   .nav small{display:none}
-  .nav button{font-size:24px}
+  .nav button{display:inline-block;font-size:15px;line-height:1;margin:0 16px 0 0;padding:8px 0;letter-spacing:.01em}
+  .nav button[aria-current=true]::before{content:none}
+  .nav button[aria-current=true]{text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:2px}
   .meta{display:none}
-  .card{width:72vw}
+  .card{width:72vw;max-width:520px}
   .list{left:0;width:100%;right:auto}
   .item{top:73%}
-  .item button{max-width:78vw}
-  .item .ttl{font-size:26px}
-  .counter{left:56px;bottom:14px}
-  .counter b{font-size:96px}
-  .hint{display:none}
-  .modal-inner{height:auto;display:flex;flex-direction:column;gap:24px;align-items:stretch;justify-content:center}
-  .modal-image{height:48vh;max-height:none}
-  .modal-copy{border-left:0;border-top:1px solid var(--line);padding:22px 0 0}
-  .modal-title{font-size:42px}
-  .modal-desc{font-size:15px}
-  .modal-close{right:18px;top:18px}
-  .panel .in{margin-left:34px}
+  .item button{max-width:84vw}
+  .item .ttl{font-size:27px}
+  .item .dsc{font-size:14px;max-width:32ch}
+  .counter{left:calc(18px + var(--sl));bottom:calc(14px + var(--sb))}
+  .counter b{font-size:88px}
+  .counter span{margin-top:.9em}
+  .hint{left:auto;right:calc(18px + var(--sr));bottom:calc(20px + var(--sb));text-align:right;max-width:34vw}
+  .hint .d{display:none}.hint .m{display:inline}
+
+  .modal-bar{padding:calc(14px + var(--st)) calc(18px + var(--sr)) 14px calc(18px + var(--sl))}
+  .modal-layout{display:block;padding:4px calc(18px + var(--sr)) 0 calc(18px + var(--sl))}
+  .modal-info{position:static;margin-bottom:26px}
+  .modal-info .modal-nav{display:none}
+  .modal-title{font-size:clamp(36px,12vw,56px);margin-bottom:18px}
+  .modal-desc{font-size:16px;margin-bottom:20px}
+  .modal-details{margin-bottom:0}
+  .modal-blocks{gap:14px}
+  .b-text{font-size:16px}
+  .b-gallery{gap:8px}
+  .modal-nav-end{display:flex;justify-content:space-between;padding:30px calc(18px + var(--sr)) calc(40px + var(--sb)) calc(18px + var(--sl))}
+  .modal-nav button{padding:12px 0}
+  .panel .in{margin-left:0;padding-top:50px}
+  .panel h2{font-size:clamp(44px,15vw,80px);margin-bottom:28px}
+  .panel p{font-size:17px}
 }
+/* téléphone en paysage : peu de hauteur */
+@media(max-height:520px){
+  .nav small{display:none}
+  .nav button{font-size:18px;margin:0 0 4px}
+  .counter b{font-size:84px}
+  .meta{top:32vh}
+  .item .ttl{font-size:20px}
+  .item .dsc,.item .bar{display:none}
+}
+@media(hover:none){.card:hover img{transform:none}}
 </style>
 </head>
 <body>
@@ -114,114 +168,198 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 <div class="stage" id="stage"></div>
 
-<div class="counter"><b id="num">01</b><span id="tot">/15</span></div>
-<div class="hint">Défiler</div>
+<div class="counter" aria-hidden="true"><b id="num">01</b><span id="tot">/15</span></div>
+<div class="hint"><span class="d">Défiler</span><span class="m">Glisser · toucher pour ouvrir</span></div>
 
 <div class="list" id="list" role="list" aria-label="Projets"></div>
 
-<section class="project-modal" id="projectModal" role="dialog" aria-modal="true" aria-label="Projet">
-  <button class="modal-close" id="modalClose">Fermer ×</button>
-  <div class="modal-inner">
-    <img class="modal-image" id="modalImage" alt="">
-    <div class="modal-copy">
-      <div class="modal-number" id="modalNumber"></div>
-      <div class="modal-type" id="modalType"></div>
-      <h2 class="modal-title" id="modalTitle"></h2>
-      <p class="modal-desc" id="modalDesc"></p>
-      <div class="modal-team" id="modalTeam"></div>
-      <div class="modal-nav"><button id="prevProject">← précédent</button><button id="nextProject">suivant →</button></div>
+<!-- fenêtre projet -->
+<section class="project-modal" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-scroll" id="modalScroll">
+    <div class="modal-bar">
+      <span class="modal-number" id="modalNumber"></span>
+      <button class="modal-close" id="modalClose">Fermer ×</button>
     </div>
+    <div class="modal-layout">
+      <aside class="modal-info">
+        <div class="modal-type" id="modalType"></div>
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <p class="modal-desc" id="modalDesc"></p>
+        <dl class="modal-details" id="modalDetails"></dl>
+        <div class="modal-nav"><button class="js-prev">← précédent</button><button class="js-next">suivant →</button></div>
+      </aside>
+      <div class="modal-blocks" id="modalBlocks"></div>
+    </div>
+    <div class="modal-nav modal-nav-end"><button class="js-prev">← précédent</button><button class="js-next">suivant →</button></div>
   </div>
 </section>
 
 <section class="panel" id="panel"><button class="close" id="close">Fermer</button><div class="in" id="panel-in"></div></section>
 
 <script>
-/* ============ À MODIFIER ============ */
+/* =====================================================================
+   À MODIFIER
+   ===================================================================== */
 const CONFIG = {
   name: "Mayliane Lefebvre",
   email: "prenom.nom@mail.com",
   about: "Portfolio de projets de communication réalisés en équipe : identités visuelles, personas, stratégies publicitaires, événementiel et supports de marque."
 };
 
-/* Ordre = ordre des images : le projet n°1 utilise 01.jpg, le n°2 utilise 02.jpg, etc.
-   Format : [titre, type, description, équipe] */
-const PROJECTS = [
-  ["Maison Lima","Identité de marque","Marque de denim. « Quand l’art rencontre l’indispensable ».","—"],
-  ["Cocon d’Éveil","Persona","Étude de persona pour une marque dédiée à l’univers du bébé.","Léa, Elsa K, Éva, Mayliane"],
-  ["Air Up","Stratégie publicitaire","Création de contenu et réalisation d’un spot TV.","—"],
-  ["Le Grain Doré","Identité visuelle","Logo et univers d’une boulangerie artisanale.","Samuel, Maëlle, Mayliane"],
-  ["Muddy Bites","Branding","Marque de douceurs chocolatées : gaufrettes, glaces et coulants.","—"],
-  ["Éclat","Agence de communication","Identité d’une agence de communication basée à Paris.","—"],
-  ["Pastelie","Identité visuelle","Café céramique aux formes douces et aux couleurs pastel.","—"],
-  ["Cartier","Projet de marque","Travail autour de l’univers de la maison de joaillerie.","Lucie, Arwen, Mayliane, Eva"],
-  ["Horizon Com","Présentation d’agence","Notre agence, première version, dans une palette dorée.","—"],
-  ["Horizon Com II","Présentation d’agence","Seconde version, plus épurée, de la présentation de l’agence.","—"],
-  ["Avenix","Identité visuelle","Une marque au style graffiti, posée sur un mur de briques.","—"],
-  ["Papeterie Neveu","Identité visuelle","Papeterie : formes organiques bleu nuit sur fond crème.","—"],
-  ["Carte d’infidélité","Programme de fidélité","Conception d’une carte de fidélité et de son univers visuel.","Hugues Thimoté, Mayliane Lefebvre, Noah Boutreau, Sixtine Périer Peau, Louna, Tiko, Arwen Vallin"],
-  ["Mariage franco-japonais","Événementiel","Organisation d’un mariage entre deux cultures : devis, activités, DJ, repas et lieu de réception.","—"],
-  ["Grain Doré","Identité visuelle","Seconde proposition pour la boulangerie, plus éditoriale.","—"]
-];
-/* Si tes images sont dans un dossier, mets "images/" ici */
+/* Dossier des fichiers (images, vidéos). "" = même dossier que index.html. Exemple : "images/" */
 const IMG_DIR = "";
-/* ================================== */
+
+/* ---------------------------------------------------------------------
+   PROJETS  (l'ordre = l'ordre des images : projet n°1 -> 01.jpg, n°2 -> 02.jpg …)
+
+   Champs d'un projet :
+     title   : titre
+     type    : catégorie
+     desc    : courte description
+     team    : équipe (laisse "" si aucune)
+     details : (optionnel) lignes d'infos affichées dans la fenêtre, ex. { "Année":"2026", "Outils":"Canva" }
+     cover   : (optionnel) autre image de couverture que NN.jpg
+     blocks  : (optionnel) contenu ajouté dans la fenêtre, sous l'image de couverture.
+
+   BLOCS DISPONIBLES (à mettre dans blocks:[ … ], dans l'ordre voulu) :
+     { heading: "Titre de section" }
+     { text: "Un paragraphe.\nUn 2e paragraphe (retour à la ligne = nouveau paragraphe)." }
+     { img: "ma-photo.jpg", caption: "Légende (optionnel)" }
+     { gallery: ["a.jpg", "b.jpg", "c.jpg", "d.jpg"] }            // grille de photos
+     { video: "ma-video.mp4" }                                      // vidéo envoyée avec le site
+     { youtube: "dQw4w9WgXcQ" }                                     // identifiant YouTube
+     { embed: "https://www.canva.com/design/xxx/view?embed" }       // Canva, Figma, Drive, PDF en ligne…
+     { link: "https://exemple.fr", label: "Voir le projet" }        // bouton lien
+   --------------------------------------------------------------------- */
+const PROJECTS = [
+  { title:"Maison Lima", type:"Identité de marque", team:"",
+    desc:"Marque de denim. « Quand l’art rencontre l’indispensable ».",
+    blocks:[] },
+
+  { title:"Cocon d’Éveil", type:"Persona", team:"Léa, Elsa K, Éva, Mayliane",
+    desc:"Étude de persona pour une marque dédiée à l’univers du bébé.",
+    blocks:[] },
+
+  { title:"Air Up", type:"Stratégie publicitaire", team:"",
+    desc:"Création de contenu et réalisation d’un spot TV.",
+    details:{ "Projet":"Pub TV Netflix / streaming", "Cible":"18-30 ans" },
+    blocks:[
+      { heading:"Concept" },
+      { text:"« Ton cerveau pense boire du goût. Il s’est encore fait avoir. »" },
+      { heading:"Promesse" },
+      { text:"« Boire de l’eau n’a jamais été aussi trompeur. »" },
+      { heading:"Objectifs" },
+      { text:"Cognitif : faire connaître Air Up comme boisson goût soda sans sucre.\nConatif : inciter à essayer et acheter Air Up.\nAffectif : créer du plaisir et du fun autour du produit." },
+      { heading:"Slogan" },
+      { text:"« Le soda ? Ton diabète dit non. Air Up dit oui. » Un ton décalé qui fait réagir, tout en restant adapté à la télévision." }
+    ] },
+
+  { title:"Le Grain Doré", type:"Identité visuelle", team:"Samuel, Maëlle, Mayliane",
+    desc:"Logo et univers d’une boulangerie artisanale.", blocks:[] },
+
+  { title:"Muddy Bites", type:"Branding", team:"",
+    desc:"Marque de douceurs chocolatées : gaufrettes, glaces et coulants.", blocks:[] },
+
+  { title:"Éclat", type:"Agence de communication", team:"",
+    desc:"Identité d’une agence de communication basée à Paris.", blocks:[] },
+
+  { title:"Pastelie", type:"Identité visuelle", team:"",
+    desc:"Café céramique aux formes douces et aux couleurs pastel.", blocks:[] },
+
+  { title:"Cartier", type:"Projet de marque", team:"Lucie, Arwen, Mayliane, Eva",
+    desc:"Travail autour de l’univers de la maison de joaillerie.", blocks:[] },
+
+  { title:"Horizon Com", type:"Présentation d’agence", team:"",
+    desc:"Notre agence, première version, dans une palette dorée.", blocks:[] },
+
+  { title:"Horizon Com II", type:"Présentation d’agence", team:"",
+    desc:"Seconde version, plus épurée, de la présentation de l’agence.", blocks:[] },
+
+  { title:"Avenix", type:"Identité visuelle", team:"",
+    desc:"Une marque au style graffiti, posée sur un mur de briques.", blocks:[] },
+
+  { title:"Papeterie Neveu", type:"Identité visuelle", team:"",
+    desc:"Papeterie : formes organiques bleu nuit sur fond crème.", blocks:[] },
+
+  { title:"Carte d’infidélité", type:"Programme de fidélité",
+    team:"Hugues Thimoté, Mayliane Lefebvre, Noah Boutreau, Sixtine Périer Peau, Louna, Tiko, Arwen Vallin",
+    desc:"Conception d’une carte de fidélité et de son univers visuel.", blocks:[] },
+
+  { title:"Mariage franco-japonais", type:"Événementiel", team:"",
+    desc:"Organisation d’un mariage entre deux cultures : devis, activités, DJ, repas et lieu de réception.", blocks:[] },
+
+  { title:"Grain Doré", type:"Identité visuelle", team:"",
+    desc:"Seconde proposition pour la boulangerie, plus éditoriale.", blocks:[] }
+];
+/* ===================================================================== */
 
 const N = PROJECTS.length;
 const $ = id => document.getElementById(id);
 const stage = $("stage"), list = $("list");
 const imgSrc = i => IMG_DIR + String(i + 1).padStart(2, "0") + ".jpg";
+const isRemote = s => /^(https?:)?\/\//i.test(s) || /^(data|blob):/i.test(s);
+const asset = s => isRemote(s) ? s : IMG_DIR + s;
+const safeUrl = s => (typeof s === "string" && !/^\s*(javascript|data|vbscript):/i.test(s)) ? s : "#";
 const cards = [], items = [];
 
 for (let i = 0; i < N; i++) {
-  const [title, type, desc] = PROJECTS[i];
+  const p = PROJECTS[i];
 
   const c = document.createElement("button");
   c.className = "card";
-  c.setAttribute("aria-label", "Ouvrir " + title);
+  c.setAttribute("aria-label", p.title);
   const im = document.createElement("img");
-  im.src = imgSrc(i); im.alt = title; im.draggable = false;
+  im.src = p.cover ? asset(p.cover) : imgSrc(i); im.alt = p.title; im.draggable = false; im.decoding = "async";
   c.appendChild(im);
-  c.addEventListener("click", () => openProject(i));
+  c.addEventListener("click", () => activate(i));
   stage.appendChild(c); cards.push(c);
 
   const it = document.createElement("div");
-  it.className = "item";
-  it.setAttribute("role", "listitem");
+  it.className = "item"; it.setAttribute("role", "listitem");
   it.innerHTML = '<button><span class="cat"></span><span class="ttl"></span><span class="bar"></span><span class="dsc"></span></button>';
-  it.querySelector(".cat").textContent = type;
-  it.querySelector(".ttl").textContent = title;
-  it.querySelector(".dsc").textContent = desc;
-  it.querySelector("button").addEventListener("click", () => openProject(i));
+  it.querySelector(".cat").textContent = p.type;
+  it.querySelector(".ttl").textContent = p.title;
+  it.querySelector(".dsc").textContent = p.desc;
+  it.querySelector("button").addEventListener("click", () => activate(i));
   list.appendChild(it); items.push(it);
 }
 $("tot").textContent = "/" + String(N).padStart(2, "0");
 
-/* ---------- défilement INFINI ---------- */
+/* ---------- défilement infini ---------- */
 let target = 0, cur = 0, shown = -1, raf = null, last = performance.now(), idle = null;
 let pointerX = 0, pointerY = 0, ptx = 0, pty = 0;
-const wrap = d => ((d + N / 2) % N + N) % N - N / 2;   // ramène la distance entre -N/2 et +N/2
+const wrap = d => ((d + N / 2) % N + N) % N - N / 2;
 
 function nudge(v) {
-  target += v;                                           // plus de limite : on tourne en boucle
-  kick();
+  target += v; kick();
   clearTimeout(idle);
   idle = setTimeout(() => { target = Math.round(target); kick(); }, 150);
 }
+function goTo(i) { const r = Math.round(cur); target = r + wrap(i - r); kick(); }
 function kick() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } }
+
+/* clic : si le projet est au centre -> on l'ouvre, sinon on le ramène au centre */
+let dragged = false;
+function activate(i) {
+  if (dragged) return;
+  const r = Math.round(cur);
+  if (Math.abs(wrap(i - r)) < .01 && Math.abs(target - cur) < .05) openProject(i);
+  else goTo(i);
+}
 
 function render() {
   const mobile = innerWidth <= 860;
+  const stepX = innerWidth * (mobile ? .40 : .31);
+  const stepY = innerHeight * (mobile ? .17 : .30);
+  const yOff  = mobile ? -innerHeight * .07 : 0;
   for (let i = 0; i < N; i++) {
     const d = wrap(i - cur), a = Math.abs(d), c = cards[i], it = items[i];
     if (a > 5) { c.style.visibility = "hidden"; c.style.opacity = 0; it.style.visibility = "hidden"; continue; }
     c.style.visibility = "visible"; it.style.visibility = "visible";
 
     const center = Math.max(0, 1 - a);
-    const stepX = innerWidth * (mobile ? .30 : .31);
-    const stepY = innerHeight * .30;
     const x = -d * stepX + ptx * (14 - a * 2);
-    const y =  d * stepY + pty * (12 - a * 1.5);
+    const y =  d * stepY + yOff + pty * (12 - a * 1.5);
     const z = -a * 240 + center * 220;
     const scale = .62 + center * (mobile ? .38 : .55) - Math.min(a, 2) * .02;
     const rot = -d * 3.5 + ptx * (a < .7 ? 2.2 : 1);
@@ -229,23 +367,25 @@ function render() {
 
     c.style.opacity = Math.max(0, 1 - a * .17);
     c.style.zIndex = 100 - Math.round(a * 10);
-    c.style.filter = a > .25 ? "blur(" + (Math.min(a, 1.5) * 1.1).toFixed(2) + "px)" : "none";   // flou léger sur les voisins, image active nette
+    c.style.filter = (!mobile && a > .25) ? "blur(" + (Math.min(a, 1.5) * 1.1).toFixed(2) + "px)" : "none";
     c.style.transform =
       `translate3d(calc(-50% + ${x}px),calc(-50% + ${y}px),${z}px) rotateZ(${rot}deg) rotateX(${-pty * k}deg) rotateY(${ptx * k}deg) scale(${scale})`;
 
     it.style.opacity = mobile ? Math.max(0, 1 - a * 1.8) : Math.max(.02, 1 - a * .55);
     it.style.transform = `translate3d(0,${d * (mobile ? 55 : innerHeight * .17)}px,0)`;
-    const so = Math.max(0, 1 - a * 2.6);               // description visible seulement sur le projet actif
+    const so = Math.max(0, 1 - a * 2.6);
     it.querySelector(".dsc").style.opacity = so;
     it.querySelector(".bar").style.opacity = so;
+    it.firstChild.tabIndex = (mobile && a > .5) ? -1 : 0;
+    it.firstChild.style.pointerEvents = (mobile && a > .5) ? "none" : "";   // sur mobile, seuls le titre actif est cliquable
   }
   const idx = ((Math.round(cur) % N) + N) % N;
   if (idx !== shown) {
     shown = idx;
     $("num").textContent = String(idx + 1).padStart(2, "0");
-    $("m-type").textContent = PROJECTS[idx][1];
-    $("m-team").textContent = PROJECTS[idx][3];
-    document.title = PROJECTS[idx][0] + " – " + CONFIG.name;
+    $("m-type").textContent = PROJECTS[idx].type;
+    $("m-team").textContent = PROJECTS[idx].team || "—";
+    document.title = PROJECTS[idx].title + " – " + CONFIG.name;
   }
 }
 
@@ -266,7 +406,7 @@ function tick(now) {
 }
 
 /* ---------- entrées ---------- */
-const modal = $("projectModal"), panel = $("panel");
+const modal = $("projectModal"), panel = $("panel"), modalScroll = $("modalScroll");
 const overlayOpen = () => modal.classList.contains("open") || panel.classList.contains("open");
 
 addEventListener("pointermove", e => {
@@ -284,13 +424,21 @@ addEventListener("wheel", e => {
   nudge(Math.max(-1.1, Math.min(1.1, dy / 420)));
 }, { passive: false });
 
-let ty = null;
-addEventListener("touchstart", e => { if (!overlayOpen()) ty = e.touches[0].clientY; }, { passive: true });
+/* tactile : glisser = défiler ; un simple appui n'est pas un glissement */
+let ty = null, startY = 0;
+addEventListener("touchstart", e => {
+  dragged = false;
+  if (overlayOpen()) { ty = null; return; }
+  ty = startY = e.touches[0].clientY;
+}, { passive: true });
 addEventListener("touchmove", e => {
   if (ty === null) return;
-  const y = e.touches[0].clientY; nudge((ty - y) / 260); ty = y;
+  const y = e.touches[0].clientY;
+  if (Math.abs(y - startY) > 9) dragged = true;
+  nudge((ty - y) / 240); ty = y;
 }, { passive: true });
-addEventListener("touchend", () => { ty = null; });
+addEventListener("touchend", () => { ty = null; setTimeout(() => { dragged = false; }, 60); });
+addEventListener("touchcancel", () => { ty = null; dragged = false; });
 
 addEventListener("keydown", e => {
   if (modal.classList.contains("open")) {
@@ -305,35 +453,94 @@ addEventListener("keydown", e => {
 });
 addEventListener("resize", render);
 
-/* ---------- fiche projet ---------- */
-const modalImage = $("modalImage");
-let currentProject = 0, previousFocus = null;
-function openProject(i) {
-  if (!modal.classList.contains("open")) previousFocus = document.activeElement;
-  currentProject = i;
+/* ---------- fenêtre projet ---------- */
+let currentProject = 0, previousFocus = null, historyPushed = false;
+
+function makeFigure(src, alt, caption) {
+  const f = document.createElement("figure"); f.className = "b-img";
+  const im = document.createElement("img");
+  im.src = src; im.alt = alt || ""; im.loading = "lazy"; im.decoding = "async";
+  f.appendChild(im);
+  if (caption) { const fc = document.createElement("figcaption"); fc.textContent = caption; f.appendChild(fc); }
+  return f;
+}
+function makeBlock(b) {
+  if (b.heading) { const h = document.createElement("h3"); h.className = "b-heading"; h.textContent = b.heading; return h; }
+  if (b.text) {
+    const d = document.createElement("div"); d.className = "b-text";
+    String(b.text).split("\n").filter(Boolean).forEach(line => { const p = document.createElement("p"); p.textContent = line; d.appendChild(p); });
+    return d;
+  }
+  if (b.img) return makeFigure(asset(b.img), b.alt || b.caption, b.caption);
+  if (b.gallery) {
+    const g = document.createElement("div"); g.className = "b-gallery";
+    b.gallery.forEach(s => { const im = document.createElement("img"); im.src = asset(s); im.alt = ""; im.loading = "lazy"; im.decoding = "async"; g.appendChild(im); });
+    return g;
+  }
+  if (b.video) {
+    const v = document.createElement("video"); v.className = "b-video"; v.src = asset(b.video);
+    v.controls = true; v.playsInline = true; v.preload = "metadata"; return v;
+  }
+  if (b.youtube || b.embed) {
+    const f = document.createElement("iframe"); f.className = "b-embed"; f.loading = "lazy"; f.allowFullscreen = true;
+    f.src = b.youtube ? "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(b.youtube) : safeUrl(b.embed);
+    f.title = b.title || "Contenu intégré";
+    f.setAttribute("allow", "fullscreen; picture-in-picture; encrypted-media");
+    return f;
+  }
+  if (b.link) {
+    const a = document.createElement("a"); a.className = "b-link"; a.href = safeUrl(b.link);
+    a.textContent = b.label || "Voir le projet";
+    if (isRemote(b.link)) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
+    return a;
+  }
+  return null;
+}
+function fillModal(i) {
   const p = PROJECTS[i];
-  modalImage.src = imgSrc(i); modalImage.alt = p[0];
   $("modalNumber").textContent = String(i + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
-  $("modalType").textContent = p[1];
-  $("modalTitle").textContent = p[0];
-  $("modalDesc").textContent = p[2];
-  $("modalTeam").textContent = p[3] !== "—" ? "Avec " + p[3] : "";
+  $("modalType").textContent = p.type;
+  $("modalTitle").textContent = p.title;
+  $("modalDesc").textContent = p.desc;
+
+  const dl = $("modalDetails"); dl.innerHTML = "";
+  const rows = Object.assign({}, p.team ? { "Équipe": p.team } : {}, p.details || {});
+  Object.keys(rows).forEach(k => {
+    const dt = document.createElement("dt"), dd = document.createElement("dd");
+    dt.textContent = k; dd.textContent = rows[k]; dl.append(dt, dd);
+  });
+  dl.style.display = Object.keys(rows).length ? "" : "none";
+
+  const box = $("modalBlocks"); box.innerHTML = "";
+  box.appendChild(makeFigure(p.cover ? asset(p.cover) : imgSrc(i), p.title));
+  (p.blocks || []).forEach(b => { const el = makeBlock(b); if (el) box.appendChild(el); });
+  modalScroll.scrollTop = 0;
+}
+function openProject(i) {
+  const wasOpen = modal.classList.contains("open");
+  if (!wasOpen) {
+    previousFocus = document.activeElement;
+    try { history.pushState({ project: true }, ""); historyPushed = true; } catch (e) { historyPushed = false; }
+  }
+  currentProject = i;
+  fillModal(i);
   modal.classList.add("open");
-  $("modalClose").focus();
+  $("modalClose").focus({ preventScroll: true });
 }
-function closeProject() {
+function closeProject(fromPop) {
+  if (!modal.classList.contains("open")) return;
   modal.classList.remove("open");
-  goToCurrent();
-  if (previousFocus) previousFocus.focus();
+  modal.querySelectorAll("video").forEach(v => v.pause());
+  modal.querySelectorAll("iframe").forEach(f => { f.src = "about:blank"; });   // coupe le son des vidéos intégrées
+  goTo(currentProject);
+  if (historyPushed && fromPop !== true) { historyPushed = false; try { history.back(); } catch (e) {} }
+  historyPushed = false;
+  if (previousFocus && previousFocus.focus) previousFocus.focus({ preventScroll: true });
 }
-function goToCurrent() {            // à la fermeture, la page se cale sur le projet qu'on vient de voir
-  const r = Math.round(cur);
-  target = r + wrap(currentProject - r);
-  kick();
-}
-$("modalClose").addEventListener("click", closeProject);
-$("prevProject").addEventListener("click", () => openProject((currentProject - 1 + N) % N));
-$("nextProject").addEventListener("click", () => openProject((currentProject + 1) % N));
+addEventListener("popstate", () => { if (modal.classList.contains("open")) { historyPushed = false; closeProject(true); } });
+$("modalClose").addEventListener("click", () => closeProject());
+document.querySelectorAll(".js-prev").forEach(b => b.addEventListener("click", () => openProject((currentProject - 1 + N) % N)));
+document.querySelectorAll(".js-next").forEach(b => b.addEventListener("click", () => openProject((currentProject + 1) % N)));
 
 /* ---------- à propos / contact ---------- */
 const pin = $("panel-in");
@@ -353,12 +560,12 @@ function openPanel(k) {
     a.href = "mailto:" + CONFIG.email; a.textContent = CONFIG.email; p2.appendChild(a); pin.appendChild(p2);
   }
   panel.classList.add("open");
-  $("close").focus();
+  $("close").focus({ preventScroll: true });
 }
 function closePanel() {
   panel.classList.remove("open");
   document.querySelectorAll(".nav button").forEach(b => b.setAttribute("aria-current", b.dataset.go === "work"));
-  if (opener) opener.focus();
+  if (opener && opener.focus) opener.focus({ preventScroll: true });
 }
 document.querySelectorAll(".nav button").forEach(b => b.addEventListener("click", () => {
   const k = b.dataset.go;
