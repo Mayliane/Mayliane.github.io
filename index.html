@@ -19,7 +19,11 @@
 <!-- ===== RÉFÉRENCEMENT / APERÇUS DE PARTAGE (à adapter) ===== -->
 <meta name="description" content="Portfolio de Mayliane Lefebvre : identités visuelles, stratégies publicitaires, personas, événementiel et supports de marque.">
 <meta name="author" content="Mayliane Lefebvre">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23141414'/%3E%3Ctext x='32' y='47' font-family='Arial,sans-serif' font-size='42' font-weight='800' text-anchor='middle' fill='%23ebebea'%3EM%3C/text%3E%3C/svg%3E">
+<link rel="canonical" href="https://VOTRE-DOMAINE.fr/">
+<link rel="manifest" href="site.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<!-- Google Search Console : remplace par le code donné lors de la validation par balise HTML -->
+<meta name="google-site-verification" content="CODE_DONNÉ_PAR_SEARCH_CONSOLE">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="Mayliane Lefebvre">
@@ -204,6 +208,8 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
 .panel h2{font-size:clamp(48px,9vw,120px);text-transform:uppercase;line-height:.9;margin-bottom:40px}
 .panel p{font-size:18px;line-height:1.4;margin-bottom:18px;max-width:46ch}
 .panel .close{position:fixed;right:calc(22px + var(--sr));top:calc(26px + var(--st));text-transform:uppercase;font-weight:600;padding:8px}
+.panel .legal{font-size:13px;color:var(--mute);margin-top:64px;line-height:1.6}
+.panel .legal a{text-underline-offset:3px}
 
 /* =================== TÉLÉPHONE / TABLETTE PORTRAIT =================== */
 @media(max-width:860px){
@@ -243,6 +249,7 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
   .panel .in{margin-left:0;padding-top:50px}
   .panel h2{font-size:clamp(44px,15vw,80px);margin-bottom:28px}
   .panel p{font-size:17px}
+  .panel .legal{font-size:13px;margin-top:48px}
 }
 /* téléphone en paysage : peu de hauteur */
 @media(max-height:520px){
@@ -375,6 +382,7 @@ const CONFIG = {
   name: "Mayliane Lefebvre",
   email: "prenom.nom@mail.com",
   about: "Portfolio de projets de communication réalisés en équipe : identités visuelles, personas, stratégies publicitaires, événementiel et supports de marque.",
+  host: "NOM DE L’HÉBERGEUR",             // contact : hébergeur affiché dans la ligne de mentions légales
   introLines: ["Mayliane", "Lefebvre"],   // intro : les 2 lignes du nom (vide = le nom est coupé automatiquement)
   introColor: "#d9474f",                  // intro : couleur du nom
   introFigure: "",                        // intro : "" = petit personnage intégré ; ou ton dessin : "mon-perso.svg" / ".png" (tourné vers la droite, mains au bord droit)
@@ -897,6 +905,16 @@ function openPanel(k) {
     const p1 = document.createElement("p"); p1.textContent = "Pour échanger sur un projet ou une collaboration :"; pin.appendChild(p1);
     const p2 = document.createElement("p"); const a = document.createElement("a");
     a.href = "mailto:" + CONFIG.email; a.textContent = CONFIG.email; p2.appendChild(a); pin.appendChild(p2);
+
+    /* ligne de mentions légales (éditeur, hébergeur, liens vers les pages légales) */
+    const p3 = document.createElement("p"); p3.className = "legal";
+    p3.appendChild(document.createTextNode(
+      "© " + new Date().getFullYear() + " " + CONFIG.name + " · Site édité par " + CONFIG.name +
+      ", hébergé par " + CONFIG.host + " · "));
+    const l1 = document.createElement("a"); l1.href = "mentions-legales.html"; l1.textContent = "Mentions légales";
+    const l2 = document.createElement("a"); l2.href = "cgu.html"; l2.textContent = "CGU";
+    p3.append(l1, document.createTextNode(" · "), l2);
+    pin.appendChild(p3);
   }
   panel.classList.add("open");
   $("close").focus({ preventScroll: true });
@@ -946,7 +964,7 @@ const PUSH_MS = REDUCED ? 0 : 2000;     // durée de la poussée : le panneau c�
 const WALK_MS = 700;                    // le personnage s'en va vers la droite
 const OPEN_AT = REDUCED ? 0 : 3000;     // le panneau ne s'ouvre jamais avant (même si tout est déjà chargé)
 const easeIn = t => Math.pow(t, 2.3);
-let tStart = null, shownPct = 0, opened = false;
+let tStart = null, shownPct = 0;
 
 function frame(now) {
   if (tStart === null) tStart = now;
@@ -975,13 +993,13 @@ function frame(now) {
   if (goal >= 100 && shownPct > 99.4) shownPct = 100;
   ldNum.textContent = String(Math.round(shownPct)).padStart(3, "0");
 
-  if (shownPct >= 100) { opened = true; setTimeout(openCurtain, 250); return; }
+  if (shownPct >= 100) { setTimeout(openCurtain, 250); return; }
   requestAnimationFrame(frame);
 }
 
 function openCurtain() {
   ldFig.style.opacity = 0;
-  loaderEl.classList.add(REDUCED ? "fade" : "open");       // « HUY » monte, « PHAN » descend
+  loaderEl.classList.add(REDUCED ? "fade" : "open");       // la ligne du haut monte, celle du bas descend
   if (initialIdx >= 0) openProject(initialIdx, { fromUrl: true });
   if (REDUCED) { cur = target; ready = true; uiOn = true; document.body.classList.add("ui"); render(); }
   else { sweeping = true; sweepT = 0; }                    // les cartes arrivent en diagonale
