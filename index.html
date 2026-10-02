@@ -48,11 +48,14 @@ a{color:inherit}
 .meta dd{max-width:30ch}
 
 /* scène centrale */
-.stage{position:fixed;inset:0;pointer-events:none}
+.stage{position:fixed;inset:0;pointer-events:none;perspective:1200px;perspective-origin:50% 48%;overflow:hidden}
 .card{position:absolute;left:50%;top:48%;width:min(31vw,520px);aspect-ratio:16/9;
   margin-left:calc(min(31vw,520px) / -2);margin-top:calc(min(31vw,520px) * .5625 / -2);
-  will-change:transform,opacity;overflow:hidden;background:var(--line);box-shadow:0 1px 0 rgba(0,0,0,.04)}
-.card img{width:100%;height:100%;object-fit:cover;display:block}
+  will-change:transform,opacity;overflow:hidden;background:var(--line);
+  border-radius:2px;box-shadow:0 24px 60px rgba(0,0,0,.13),0 2px 8px rgba(0,0,0,.08);
+  transform-style:preserve-3d;backface-visibility:hidden}
+.card img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.015);transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.card::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.12),transparent 38%,rgba(0,0,0,.08));pointer-events:none}
 
 /* grand numéro */
 .counter{position:fixed;left:calc(16vw);bottom:calc(env(safe-area-inset-bottom,0px) + 3vh);z-index:6;
@@ -198,33 +201,57 @@ function kick(){ if(!raf) { last = performance.now(); raf = requestAnimationFram
 function render(){
   const m = mobile();
   const h = stage.firstChild.getBoundingClientRect().height || 240;
-  const gap = h + innerHeight * (m ? .06 : .08);
+  const gap = h + innerHeight * (m ? .08 : .13);
   const lgap = m ? 60 : innerHeight * .2;
+
   for(let i=0;i<N;i++){
     const d = wrap(i - cur), a = Math.abs(d);
     const c = cards[i], it = items[i];
-    if(a > 1.6){ c.style.opacity = 0; c.style.visibility='hidden'; } else {
-      c.style.visibility='visible';
-      c.style.opacity = m ? Math.max(0, 1 - a*2.2) : Math.max(0, 1 - a * (a<1 ? .72 : 0.2));
-      const rot = d * -2.4;
-      c.style.transform = `translate3d(0,${d*gap}px,0) rotate(${rot}deg) scale(${1 - Math.min(a,1)*.06})`;
-      c.style.zIndex = 100 - Math.round(a*10);
+
+    if(a > 2.8){
+      c.style.opacity = 0;
+      c.style.visibility = 'hidden';
+    } else {
+      c.style.visibility = 'visible';
+      const opacity = Math.max(0, 1 - a * (m ? 1.35 : .48));
+      const scale = Math.max(.58, 1 - Math.min(a,2) * (m ? .09 : .12));
+      const z = Math.round(180 - a * 48);
+      const x = d * (m ? 0 : -innerWidth * .075);
+      const y = d * gap;
+      const zDepth = -a * 190;
+      const rotY = d * -8 + pointerX * (a < .7 ? 2.2 : 1.1);
+      const rotX = pointerY * (a < .7 ? -2.2 : -1);
+      const rotZ = d * -2.5;
+      const hover = i === ((Math.round(cur)%N)+N)%N ? 1 : 0;
+
+      c.style.opacity = opacity;
+      c.style.zIndex = z;
+      c.style.transform =
+        `translate3d(calc(-50% + ${x}px), calc(-50% + ${y}px), ${zDepth}px)
+         rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg)
+         scale(${scale + hover*.025})`;
+      c.querySelector('img').style.transform = `scale(${1.015 + hover*.025})`;
     }
+
     if(m){
       const o = Math.max(0, 1 - a*2.2);
-      it.style.visibility = o > 0.01 ? 'visible' : 'hidden';
+      it.style.visibility = o > .01 ? 'visible' : 'hidden';
       it.style.opacity = o;
       it.style.transform = `translate3d(0,${d*lgap}px,0)`;
-    } else if(a > 3.2){ it.style.visibility='hidden'; } else {
+    } else if(a > 3.2){
+      it.style.visibility='hidden';
+    } else {
       it.style.visibility='visible';
-      it.style.opacity = Math.max(.06, 1 - a*.78);
+      it.style.opacity = Math.max(.06, 1-a*.78);
       it.style.transform = `translate3d(0,${d*lgap}px,0)`;
     }
+
     const dsc = it.querySelector('.dsc'), bar = it.querySelector('.bar');
-    const so = Math.max(0, 1 - a*2.4);
+    const so = Math.max(0, 1-a*2.4);
     dsc.style.opacity = so; bar.style.opacity = so;
     it.firstChild.tabIndex = a < .5 || !m ? 0 : -1;
   }
+
   const idx = ((Math.round(cur) % N) + N) % N;
   if(idx !== shown){
     shown = idx;
@@ -237,6 +264,8 @@ function render(){
 
 function tick(now){
   const dt = Math.min(48, now - last); last = now;
+  pointerX += (pointerTargetX - pointerX) * .08;
+  pointerY += (pointerTargetY - pointerY) * .08;
   const diff = target - cur;
   if(reduce || Math.abs(diff) < .0008){ cur = target; render(); raf = null;
     if(Math.abs(cur) > 1000){ const s = Math.round(cur/N)*N; cur -= s; target -= s; }
@@ -246,6 +275,21 @@ function tick(now){
 }
 
 /* entrées */
+let pointerX = 0, pointerY = 0;
+let pointerTargetX = 0, pointerTargetY = 0;
+
+addEventListener('pointermove', e=>{
+  if(mobile()) return;
+  pointerTargetX = (e.clientX / innerWidth - .5) * 2;
+  pointerTargetY = (e.clientY / innerHeight - .5) * 2;
+  kick();
+},{passive:true});
+
+addEventListener('pointerleave', ()=>{
+  pointerTargetX = 0;
+  pointerTargetY = 0;
+},{passive:true});
+
 addEventListener('wheel', e=>{
   if($('panel').classList.contains('open')) return;
   e.preventDefault();
