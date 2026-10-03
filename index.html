@@ -1330,18 +1330,6 @@ render();
     document.body.insertBefore(el, document.body.firstChild);
   });
 
-  /* ---------- bandeau tartan dans le panneau à propos / contact ---------- */
-  var panel = document.getElementById("panel");
-  if (panel) {
-    var words = ["Keep fashion weird", "★", "No passion… no fashion", "★", "London", "★", "★"];
-    var set = words.map(function (w) { return "<span>" + w + "</span>"; }).join("");
-    var m = document.createElement("div");
-    m.className = "may-marquee tartan";
-    m.setAttribute("aria-hidden", "true");
-    m.innerHTML = '<div class="tr">' + set + set + set + set + "</div>";
-    panel.appendChild(m);
-  }
-
   /* ---------- titres du panneau : lettres découpées façon ransom note ---------- */
   function ransom(el) {
     if (el.dataset.r) return;
