@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="light">
+<html lang="fr" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#ebebea">
+<meta name="theme-color" content="#121212">
 <title>Mayliane Lefebvre – Portfolio</title>
 
 <!-- Thème : appliqué tout de suite pour éviter le flash blanc/noir -->
@@ -11,7 +11,7 @@
 (function(){
   var t=null;
   try{t=localStorage.getItem("theme")}catch(e){}
-  if(t!=="dark"&&t!=="light")t=(window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches)?"dark":"light";
+  if(t!=="dark"&&t!=="light")t="dark";
   document.documentElement.setAttribute("data-theme",t);
   /* univers "May" : mémorisé */
   try{if(localStorage.getItem("may-mode")==="off")document.documentElement.classList.add("no-may")}catch(e){}
@@ -748,7 +748,7 @@ themeBtn.addEventListener("click", () => {
 });
 if (window.matchMedia) {
   const mq = matchMedia("(prefers-color-scheme:dark)");
-  const onChange = e => { if (!savedTheme()) applyTheme(e.matches ? "dark" : "light"); };
+  const onChange = e => { if (!savedTheme()) applyTheme("dark"); };
   if (mq.addEventListener) mq.addEventListener("change", onChange); else if (mq.addListener) mq.addListener(onChange);
 }
 
