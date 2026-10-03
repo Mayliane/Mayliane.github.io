@@ -29,12 +29,12 @@
 <meta property="og:site_name" content="Mayliane Lefebvre">
 <meta property="og:title" content="Mayliane Lefebvre – Portfolio">
 <meta property="og:description" content="Identités visuelles, stratégies publicitaires, personas et événementiel.">
-<!-- IMPORTANT : mets l'adresse complète de l'image, ex. https://tonsite.fr/01.jpg -->
-<meta property="og:image" content="01.jpg">
+<!-- IMPORTANT : mets l'adresse complète de l'image, ex. https://tonsite.fr/04.jpg (04.jpg = Maison Lima) -->
+<meta property="og:image" content="04.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Mayliane Lefebvre – Portfolio">
 <meta name="twitter:description" content="Identités visuelles, stratégies publicitaires, personas et événementiel.">
-<meta name="twitter:image" content="01.jpg">
+<meta name="twitter:image" content="04.jpg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -393,18 +393,25 @@ const CONFIG = {
 const IMG_DIR = "";
 
 /* ---------------------------------------------------------------------
-   PROJETS  (l'ordre = l'ordre des images : projet n°1 -> 01.jpg, n°2 -> 02.jpg …)
+   PROJETS  (l'ordre ci-dessous = l'ordre dans le carrousel)
+
+   IMAGES : chaque projet a un champ  cover  qui indique son image de couverture.
+   Numérotation de tes fichiers :
+     01 carte d'infidélité · 02 mariage franco-japonais · 03 Grain Doré boulangerie · 04 Maison Lima
+     05 persona Cocon d'Éveil · 06 gourde Air Up · 07 Le Grain Doré · 08 Muddy Bites
+     09 Éclat (agence de communication) · 10 Pastelie · 11 Cartier · 12 Horizon Com (doré)
+     13 Horizon Com (blanc) · 14 Avenix · 15 Papeterie Neveu
 
    Champs d'un projet :
      title   : titre
      type    : catégorie
      desc    : courte description
      team    : équipe (laisse "" si aucune)
+     cover   : image de couverture, ex. "04.jpg"
      slug    : (optionnel) adresse du projet, ex. "air-up" -> tonsite.fr/#air-up
                Sans slug, elle est créée à partir du titre.
                Mets-en un si tu changes un titre et veux garder l'ancien lien.
      details : (optionnel) lignes d'infos affichées dans la fenêtre, ex. { "Année":"2026", "Outils":"Canva" }
-     cover   : (optionnel) autre image de couverture que NN.jpg
      blocks  : (optionnel) contenu ajouté dans la fenêtre, sous l'image de couverture.
 
    BLOCS DISPONIBLES (à mettre dans blocks:[ … ], dans l'ordre voulu) :
@@ -419,15 +426,15 @@ const IMG_DIR = "";
    Les images (img et gallery) s'agrandissent au clic dans la fenêtre projet.
    --------------------------------------------------------------------- */
 const PROJECTS = [
-  { title:"Maison Lima", type:"Création d’un produit", team:"",
+  { title:"Maison Lima", type:"Création d’un produit", team:"", cover:"04.jpg",
     desc:"Nous avons imaginé et lancé Maison Lima, une marque de sacs de voyage à l’apparence de sacs à main. De la conception du produit aux matériaux, en passant par le site internet, les réseaux sociaux, les partenariats, les événements et le lancement, nous avons développé le projet de A à Z.",
     blocks:[] },
 
-  { title:"Cocon d’Éveil", type:"Persona", team:"Léa, Elsa K, Éva, Mayliane",
+  { title:"Cocon d’Éveil", type:"Persona", team:"Léa, Elsa K, Éva, Mayliane", cover:"05.jpg",
     desc:"Étude de persona pour une marque dédiée à l’univers du bébé.",
     blocks:[] },
 
-  { title:"Gourde Air-Up", slug:"air-up", type:"Création de contenu", team:"",
+  { title:"Gourde Air-Up", slug:"air-up", type:"Création de contenu", team:"", cover:"06.jpg",
     desc:"Création d’un spot TV pour mettre en avant la gourde Air Up à travers une campagne publicitaire pensée de la conception à la réalisation.",
     details:{ "Projet":"Pub TV Netflix / streaming", "Cible":"18-30 ans" },
     blocks:[
@@ -441,41 +448,41 @@ const PROJECTS = [
       { text:"« Le soda ? Ton diabète dit non. Air Up dit oui. » Un ton décalé qui fait réagir, tout en restant adapté à la télévision." }
     ] },
 
-  { title:"Le Grain Doré", type:"Identité visuelle", team:"Samuel, Maëlle, Mayliane",
+  { title:"Le Grain Doré", type:"Identité visuelle", team:"Samuel, Maëlle, Mayliane", cover:"07.jpg",
     desc:"Logo et univers d’une boulangerie artisanale.", blocks:[] },
 
-  { title:"Muddy Bites", type:"Branding", team:"",
+  { title:"Muddy Bites", type:"Branding", team:"", cover:"08.jpg",
     desc:"Marque de douceurs chocolatées : gaufrettes, glaces et coulants.", blocks:[] },
 
-  { title:"Éclat", type:"Agence de communication", team:"",
+  { title:"Éclat", type:"Agence de communication", team:"", cover:"09.jpg",
     desc:"Identité d’une agence de communication basée à Paris.", blocks:[] },
 
-  { title:"Pastelie", type:"Identité visuelle", team:"",
+  { title:"Pastelie", type:"Identité visuelle", team:"", cover:"10.jpg",
     desc:"Café céramique aux formes douces et aux couleurs pastel.", blocks:[] },
 
-  { title:"Cartier", type:"Projet de marque", team:"Lucie, Arwen, Mayliane, Eva",
+  { title:"Cartier", type:"Projet de marque", team:"Lucie, Arwen, Mayliane, Eva", cover:"11.jpg",
     desc:"Travail autour de l’univers de la maison de joaillerie.", blocks:[] },
 
-  { title:"Horizon Com", type:"Présentation d’agence", team:"",
+  { title:"Horizon Com", type:"Présentation d’agence", team:"", cover:"12.jpg",
     desc:"Notre agence, première version, dans une palette dorée.", blocks:[] },
 
-  { title:"Horizon Com II", type:"Présentation d’agence", team:"",
+  { title:"Horizon Com II", type:"Présentation d’agence", team:"", cover:"13.jpg",
     desc:"Seconde version, plus épurée, de la présentation de l’agence.", blocks:[] },
 
-  { title:"Avenix", type:"Identité visuelle", team:"",
+  { title:"Avenix", type:"Identité visuelle", team:"", cover:"14.jpg",
     desc:"Une marque au style graffiti, posée sur un mur de briques.", blocks:[] },
 
-  { title:"Papeterie Neveu", type:"Identité visuelle", team:"",
+  { title:"Papeterie Neveu", type:"Identité visuelle", team:"", cover:"15.jpg",
     desc:"Papeterie : formes organiques bleu nuit sur fond crème.", blocks:[] },
 
-  { title:"La carte d’infidélité", type:"Lancement d’un concept",
+  { title:"La carte d’infidélité", type:"Lancement d’un concept", cover:"01.jpg",
     team:"Hugues Thimoté, Mayliane Lefebvre, Noah Boutreau, Sixtine Périer Peau, Louna, Tiko, Arwen Vallin",
     desc:"Et si vous trompiez votre bar habituel ? Cette carte ludique invite à découvrir de nouvelles adresses et à sortir de ses habitudes. Grâce à des défis et récompenses, elle transforme la découverte des bars locaux en une expérience fun et conviviale.", blocks:[] },
 
-  { title:"Mariage franco-japonais", type:"Wedding planner", team:"",
+  { title:"Mariage franco-japonais", type:"Wedding planner", team:"", cover:"02.jpg",
     desc:"Un mariage entre deux cultures. Dans ce projet, nous avons endossé le rôle de wedding planners pour organiser un mariage franco-japonais de A à Z : choix du lieu de réception, repas, activités, DJ, décoration et gestion des différents devis.", blocks:[] },
 
-  { title:"Grain Doré", type:"Identité visuelle", team:"",
+  { title:"Grain Doré", type:"Identité visuelle", team:"", cover:"03.jpg",
     desc:"Seconde proposition pour la boulangerie, plus éditoriale.", blocks:[] }
 ];
 /* ===================================================================== */
