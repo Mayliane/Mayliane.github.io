@@ -13,8 +13,8 @@
   try{t=localStorage.getItem("theme")}catch(e){}
   if(t!=="dark"&&t!=="light")t=(window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches)?"dark":"light";
   document.documentElement.setAttribute("data-theme",t);
-  /* univers punk "May" : mémorisé */
-  try{if(localStorage.getItem("may-punk")==="off")document.documentElement.classList.add("no-may")}catch(e){}
+  /* univers "May" : mémorisé */
+  try{if(localStorage.getItem("may-")==="off")document.documentElement.classList.add("no-may")}catch(e){}
 })();
 </script>
 
@@ -268,10 +268,10 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
 }
 </style>
 
-<!-- ===== UNIVERS PUNK / LONDON ("May") ===== -->
+<!-- ===== UNIVERS/ LONDON ("May") ===== -->
 <style>
 /* =====================================================================
-   PUNK / LONDON — univers "May"
+    / LONDON — univers "May"
    Tout est scopé sur  :root:not(.no-may)  -> le bouton "May" l'éteint.
    ===================================================================== */
 
@@ -1250,16 +1250,16 @@ Promise.race([
 render();
 </script>
 
-<!-- ===== UNIVERS PUNK / LONDON ("May") : bouton, décors, lettres découpées ===== -->
+<!-- ===== UNIVERS / LONDON ("May") : bouton, décors, lettres découpées ===== -->
 <script>
 /* =====================================================================
-   PUNK / LONDON — bouton "May" + décors + titres en lettres découpées
+   / LONDON — bouton "May" + décors + titres en lettres découpées
    À charger APRÈS le script principal
    ===================================================================== */
 (function () {
-  var root = document.documentElement, KEY = "may-punk";
+  var root = document.documentElement, KEY = "may-";
 
-  /* état mémorisé : "off" = univers punk éteint */
+  /* état mémorisé : "off" = universéteint */
   try { if (localStorage.getItem(KEY) === "off") root.classList.add("no-may"); } catch (e) {}
 
   /* ---------- bouton May ---------- */
@@ -1270,8 +1270,8 @@ render();
   function sync() {
     var on = !root.classList.contains("no-may");
     btn.setAttribute("aria-pressed", on ? "true" : "false");
-    btn.setAttribute("aria-label", on ? "Désactiver l’univers punk" : "Activer l’univers punk");
-    btn.title = on ? "Univers punk : activé" : "Univers punk : désactivé";
+    btn.setAttribute("aria-label", on ? "Désactiver l’univers" : "Activer l’univers");
+    btn.title = on ? "Univers: activé" : "Univers : désactivé";
   }
   btn.addEventListener("click", function () {
     var off = root.classList.toggle("no-may");
@@ -1333,7 +1333,7 @@ render();
   /* ---------- bandeau tartan dans le panneau à propos / contact ---------- */
   var panel = document.getElementById("panel");
   if (panel) {
-    var words = ["Keep fashion weird", "★", "No passion… no fashion", "★", "London", "★", "Punk", "★"];
+    var words = ["Keep fashion weird", "★", "No passion… no fashion", "★", "London", "★", "★"];
     var set = words.map(function (w) { return "<span>" + w + "</span>"; }).join("");
     var m = document.createElement("div");
     m.className = "may-marquee tartan";
