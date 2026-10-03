@@ -14,7 +14,7 @@
   if(t!=="dark"&&t!=="light")t=(window.matchMedia&&matchMedia("(prefers-color-scheme:dark)").matches)?"dark":"light";
   document.documentElement.setAttribute("data-theme",t);
   /* univers "May" : mémorisé */
-  try{if(localStorage.getItem("may-")==="off")document.documentElement.classList.add("no-may")}catch(e){}
+  try{if(localStorage.getItem("may-mode")==="off")document.documentElement.classList.add("no-may")}catch(e){}
 })();
 </script>
 
@@ -599,7 +599,7 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
 const CONFIG = {
   name: "Mayliane Lefebvre",
   email: "lefebvremayliane@gmail.com",
-  about: "Portfolio de projets de communication réalisés par ma personne.
+  about: "Portfolio de projets de communication réalisés par ma personne.",
   host: "Github",             // contact : hébergeur affiché dans la ligne de mentions légales
   introLines: ["Mayliane", "Lefebvre"],   // intro : les 2 lignes du nom (vide = le nom est coupé automatiquement)
   introColor: "#d9474f",                  // intro : couleur du nom
@@ -1257,7 +1257,7 @@ render();
    À charger APRÈS le script principal
    ===================================================================== */
 (function () {
-  var root = document.documentElement, KEY = "may-";
+  var root = document.documentElement, KEY = "may-mode";
 
   /* état mémorisé : "off" = universéteint */
   try { if (localStorage.getItem(KEY) === "off") root.classList.add("no-may"); } catch (e) {}
