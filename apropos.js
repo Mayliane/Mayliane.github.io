@@ -80,7 +80,7 @@
      STYLE (injecté une seule fois)
      --------------------------------------------------------------- */
   const css = `
-.panel.about .in{max-width:1280px;margin-left:16vw;margin-right:4vw;padding-bottom:150px}
+.panel.is-about .in{max-width:1280px;margin-left:16vw;margin-right:4vw;padding-bottom:150px}
 .about{display:grid;grid-template-columns:minmax(240px,.8fr) minmax(0,1.5fr);gap:6vw;align-items:start}
 .about-3d{position:sticky;top:calc(26px + var(--st,0px))}
 .about-stage{position:relative;width:100%;max-width:380px;aspect-ratio:3/4;perspective:1100px;touch-action:pan-y;cursor:grab;
@@ -148,7 +148,7 @@
 :root[data-theme="dark"]:not(.no-may) .about-hint{color:var(--pink)}
 
 @media(max-width:860px){
-  .panel.about .in{margin:0;padding-top:50px;padding-bottom:120px}
+  .panel.is-about .in{margin:0;padding-top:50px;padding-bottom:120px}
   .about{display:block}
   .about-3d{position:static;margin-bottom:30px}
   .about-stage{max-width:250px;margin:0 auto}
@@ -380,11 +380,11 @@
     const r = baseOpen.apply(this, arguments);
     const panel = $("panel");
     if (k === "about") {
-      panel.classList.add("about");
+      panel.classList.add("is-about");
       buildAbout($("panel-in"));
       panel.scrollTop = 0;
     } else {
-      panel.classList.remove("about");
+      panel.classList.remove("is-about");
       tok++;                                              // coupe l'animation 3D
     }
     return r;
