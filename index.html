@@ -145,7 +145,7 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
 .item{position:absolute;left:0;right:0;top:50%;display:flex;justify-content:center;pointer-events:none;will-change:transform,opacity}
 .item button{width:100%;max-width:340px;text-align:center;padding:0 12px;pointer-events:auto;transform:translateY(-50%)}
 .item .cat{display:block;color:var(--mute);margin-bottom:10px}
-.item .ttl{display:block;font-weight:600;font-size:clamp(22px,2.3vw,36px);text-transform:uppercase;line-height:1}
+.item .ttl{display:block;font-weight:600;font-size:clamp(22px,2.3vw,36px);text-transform:uppercase;line-height:1.05}
 .item .bar{display:block;width:18px;height:1px;background:currentColor;margin:16px auto}
 .item .dsc{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;line-clamp:5;overflow:hidden;max-width:34ch;margin:auto}
 
@@ -167,7 +167,7 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
 @keyframes inL{from{opacity:0;transform:translateX(-44px)}to{opacity:1;transform:none}}
 .modal-info{position:sticky;top:96px;align-self:start}
 .modal-type{color:var(--mute);margin-bottom:12px}
-.modal-title{font-size:clamp(38px,5vw,76px);line-height:.9;text-transform:uppercase;letter-spacing:-.04em;margin-bottom:26px;overflow-wrap:anywhere}
+.modal-title{font-size:clamp(28px,3.1vw,60px);line-height:1.04;text-transform:uppercase;letter-spacing:-.035em;margin-bottom:26px;overflow-wrap:break-word;text-wrap:balance}
 .modal-desc{font-size:17px;line-height:1.45;max-width:35ch;margin-bottom:26px}
 .modal-details{display:grid;grid-template-columns:5.5em 1fr;gap:10px 14px;line-height:1.35;margin-bottom:28px}
 .modal-details dt{color:var(--mute)}
@@ -224,10 +224,10 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
   .meta{display:none}
   .card{width:72vw;max-width:520px}
   .list{left:0;width:100%;right:auto}
-  .item{top:73%}
+  .item{top:76%}
   .item button{max-width:84vw}
   .item .ttl{font-size:27px}
-  .item .dsc{font-size:14px;max-width:32ch}
+  .item .dsc{font-size:14px;max-width:32ch;-webkit-line-clamp:3;line-clamp:3}
   .counter{left:calc(18px + var(--sl));bottom:calc(14px + var(--sb))}
   .counter b{font-size:88px}
   .counter span{margin-top:.9em}
@@ -238,7 +238,7 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
   .modal-layout{display:block;padding:4px calc(18px + var(--sr)) 0 calc(18px + var(--sl))}
   .modal-info{position:static;margin-bottom:26px}
   .modal-info .modal-nav{display:none}
-  .modal-title{font-size:clamp(36px,12vw,56px);margin-bottom:18px}
+  .modal-title{font-size:clamp(30px,10.2vw,52px);margin-bottom:18px}
   .modal-desc{font-size:16px;margin-bottom:20px}
   .modal-details{margin-bottom:0}
   .modal-blocks{gap:14px}
@@ -586,7 +586,7 @@ function activate(i) {
 function render() {
   const mobile = innerWidth <= 860;
   const stepX = innerWidth * (mobile ? .40 : .31);
-  const stepY = innerHeight * (mobile ? .17 : .30);
+  const stepY = innerHeight * (mobile ? .15 : .30);
   const yOff  = mobile ? -innerHeight * .07 : 0;
   for (let i = 0; i < N; i++) {
     const d = wrap(i - cur), a = Math.abs(d), c = cards[i], it = items[i];
@@ -608,10 +608,15 @@ function render() {
       `translate3d(calc(-50% + ${x}px),calc(-50% + ${y}px),${z}px) rotateZ(${rot}deg) rotateX(${-pty * k}deg) rotateY(${ptx * k}deg) scale(${scale})`;
 
     it.style.opacity = (mobile ? Math.max(0, 1 - a * 2.4) : Math.max(.02, 1 - a * .55));
-    it.style.transform = `translate3d(0,${d * (mobile ? 90 : Math.max(innerHeight * .17, 170))}px,0)`;
+    const base = mobile ? 90 : Math.max(innerHeight * .15, 125);
+    const ext  = mobile ? 0 : 62;                         // écarte les voisins pour laisser la place à la description du projet actif
+    const iy = d * base + Math.sign(d) * Math.min(a, 1) * ext;
+    it.style.transform = `translate3d(0,${iy}px,0)`;
     const so = Math.max(0, 1 - a * 2.6);
-    it.querySelector(".dsc").style.opacity = so;
-    it.querySelector(".bar").style.opacity = so;
+    const dsc = it.querySelector(".dsc"), bar = it.querySelector(".bar");
+    dsc.style.opacity = so; bar.style.opacity = so;
+    dsc.style.maxHeight = (so * 140).toFixed(1) + "px";                 // la description des projets voisins ne prend plus de place
+    bar.style.marginTop = bar.style.marginBottom = (so * 16).toFixed(1) + "px";
     it.firstChild.tabIndex = (mobile && a > .5) ? -1 : 0;
     it.firstChild.style.pointerEvents = (mobile && a > .5) ? "none" : "";   // sur mobile, seuls le titre actif est cliquable
   }
