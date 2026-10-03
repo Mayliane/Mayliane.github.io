@@ -44,7 +44,7 @@
      STYLE
      --------------------------------------------------------------- */
   const css = `
-.panel.is-contact .in{max-width:1180px;margin-left:16vw;margin-right:4vw;padding-bottom:150px}
+.panel.is-contact .in{max-width:1180px;margin-left:16vw;margin-right:4vw;padding-bottom:70px}
 .panel.is-contact .legal{margin-top:60px}
 .c-lead{font-size:clamp(17px,1.6vw,22px);line-height:1.4;max-width:34em;margin-bottom:40px}
 .c-grid{display:grid;grid-template-columns:minmax(260px,.9fr) minmax(0,1.25fr);gap:5vw;align-items:start}
@@ -111,7 +111,7 @@ textarea.c-in{min-height:120px}
 @keyframes cShake{20%{transform:translateX(-7px)}45%{transform:translateX(6px)}70%{transform:translateX(-4px)}100%{transform:none}}
 
 @media(max-width:860px){
-  .panel.is-contact .in{margin:0;padding-top:50px;padding-bottom:120px}
+  .panel.is-contact .in{margin:0;padding-top:50px;padding-bottom:60px}
   .c-grid{display:block}
   .c-card{margin-bottom:38px;padding:44px 18px 22px}
   .c-pm{width:120px;right:62px}
