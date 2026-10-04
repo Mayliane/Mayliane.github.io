@@ -87,9 +87,20 @@
   user-select:none;-webkit-user-select:none}
 .about-stage:active{cursor:grabbing}
 .about-stage.is-model{aspect-ratio:2/3.1;max-width:340px}
-.about-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;
-  color:var(--mute);font-size:13px;letter-spacing:.08em;text-transform:uppercase;pointer-events:none}
-.about-stage model-viewer{width:100%;height:100%;background:transparent;--poster-color:transparent;outline:none}
+.about-loading{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  text-align:center;padding:20px;pointer-events:none;opacity:1;transition:opacity .4s ease}
+.about-loading.out{opacity:0}
+.ld3-flower{width:64px;height:64px;animation:ld3Spin 2.4s linear infinite}
+.ld3-txt{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);max-width:24ch;line-height:1.4}
+.ld3-bar{position:relative;width:min(78%,230px);height:14px;border:3px solid var(--ink);overflow:hidden;background:transparent}
+.ld3-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:#c8102e;transition:width .3s ease}
+.ld3-bar.ind .ld3-fill{width:36%;animation:ld3Slide 1.1s ease-in-out infinite alternate}
+.ld3-pct{min-height:1.2em;font-size:13px;font-variant-numeric:tabular-nums;color:var(--mute)}
+@keyframes ld3Spin{to{transform:rotate(360deg)}}
+@keyframes ld3Slide{from{left:0}to{left:64%}}
+@media(prefers-reduced-motion:reduce){.ld3-flower{animation:none}.ld3-bar.ind .ld3-fill{animation:none}}
+.about-stage model-viewer{width:100%;height:100%;background:transparent;--poster-color:transparent;outline:none;opacity:0;transition:opacity .6s ease}
+.about-stage model-viewer.ready{opacity:1}
 .about-hint{margin-top:12px;color:var(--mute);font-size:13px}
 
 .stand{position:absolute;inset:4% 10% 9%;transform-style:preserve-3d}
@@ -126,6 +137,9 @@
 .chip{padding:7px 14px 6px;border:1px solid var(--ink);border-radius:999px;font-size:14px;line-height:1.2}
 
 /* ---- univers May ---- */
+:root:not(.no-may) .ld3-txt{font-family:var(--mk);font-size:17px;letter-spacing:.02em;text-transform:none}
+:root:not(.no-may) .ld3-bar{border-width:3px;box-shadow:4px 4px 0 var(--hard)}
+:root:not(.no-may) .ld3-fill{background:repeating-linear-gradient(135deg,var(--red) 0 8px,var(--pink) 8px 16px)}
 :root:not(.no-may) .ab-h{display:inline-block;margin-bottom:22px;padding:4px 14px 2px;background:var(--yellow);color:var(--black);
   font-family:var(--mk);font-weight:400;font-size:clamp(20px,2vw,26px);letter-spacing:0;transform:rotate(-1.5deg)}
 :root:not(.no-may) .ab-h::after{content:none}
@@ -170,6 +184,52 @@
     if (cls) e.className = cls;
     if (text != null) e.textContent = text;
     return e;
+  }
+
+  /* ---------------------------------------------------------------
+     LOADING du modèle 3D (fleur qui tourne + barre de progression)
+     --------------------------------------------------------------- */
+  const FLOWER =
+    '<svg class="ld3-flower" viewBox="0 0 100 100" aria-hidden="true">' +
+    [0, 72, 144, 216, 288].map(a => {
+      const r = a * Math.PI / 180;
+      return '<circle cx="' + (50 + Math.sin(r) * 24).toFixed(1) + '" cy="' + (50 - Math.cos(r) * 24).toFixed(1) +
+             '" r="19" fill="#ff5fa2" stroke="#0b0b0b" stroke-width="3"/>';
+    }).join("") +
+    '<circle cx="50" cy="50" r="15" fill="#c8102e" stroke="#0b0b0b" stroke-width="3"/>' +
+    '<circle cx="50" cy="50" r="7" fill="#efece4" stroke="#0b0b0b" stroke-width="2.5"/></svg>';
+
+  function makeLoader() {
+    const node = el("div", "about-loading");
+    node.setAttribute("role", "status");
+    node.setAttribute("aria-live", "polite");
+    node.insertAdjacentHTML("afterbegin", FLOWER);
+    const txt = el("div", "ld3-txt", "Mayliane arrive…");
+    const bar = el("div", "ld3-bar ind");
+    const fill = el("i", "ld3-fill");
+    bar.appendChild(fill);
+    const pct = el("div", "ld3-pct", "");
+    node.append(txt, bar, pct);
+
+    let shown = 0, finished = false;
+    const slow = setTimeout(() => { if (!finished) txt.textContent = "Un peu de patience, le modèle est lourd…"; }, 9000);
+    return {
+      node,
+      progress(p) {                                   // p : 0 → 1
+        if (finished || !(p >= 0)) return;
+        shown = Math.max(shown, Math.min(.95, p));            // plafonné à 95 % : les derniers % = décodage du modèle, jusqu'à « load »
+        bar.classList.remove("ind");
+        fill.style.width = (shown * 100).toFixed(1) + "%";
+        pct.textContent = Math.round(shown * 100) + " %";
+      },
+      done() {
+        if (finished) return; finished = true; clearTimeout(slow);
+        bar.classList.remove("ind"); fill.style.width = "100%"; pct.textContent = "100 %";
+        setTimeout(() => node.classList.add("out"), 150);
+        setTimeout(() => node.remove(), 650);
+      },
+      fail() { finished = true; clearTimeout(slow); node.remove(); }
+    };
   }
 
   let tok = 0, mvPromise = null;
@@ -218,16 +278,17 @@
     if (ABOUT.poster) set("poster", asset(ABOUT.poster));
     if (REDUCED) mv.removeAttribute("auto-rotate");
     stage.classList.add("is-model");
-    const loading = el("div", "about-loading", "Chargement du modèle 3D…");
-    mv.addEventListener("load", () => loading.remove());
+    const L = stage._ld3;
+    mv.addEventListener("progress", e => { if (L && e.detail) L.progress(e.detail.totalProgress); });
+    mv.addEventListener("load", () => { mv.classList.add("ready"); if (L) L.done(); });
     mv.addEventListener("error", () => {
       if (token !== tok) return;
+      if (L) L.fail();
       stage.innerHTML = "";
       stage.classList.remove("is-model");
       mountStand(stage, token);              // le .glb n'a pas pu se charger : on bascule sur la photo
     });
     stage.appendChild(mv);
-    stage.appendChild(loading);
   }
 
   /* ---------------------------------------------------------------
@@ -304,8 +365,11 @@
   function mount3D(stage) {
     const token = ++tok;
     if (ABOUT.model) {
+      const L = makeLoader();                 // visible dès l'ouverture : le temps de charger la librairie, puis le .glb
+      stage._ld3 = L;
+      stage.appendChild(L.node);
       loadMV().then(() => { if (token === tok && stage.isConnected) mountModel(stage, token); })
-              .catch(() => { if (token === tok && stage.isConnected) mountStand(stage, token); });
+              .catch(() => { L.fail(); if (token === tok && stage.isConnected) mountStand(stage, token); });
       return;
     }
     mountStand(stage, token);
