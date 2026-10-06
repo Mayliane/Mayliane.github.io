@@ -28,7 +28,7 @@
     /* Décorations */
     decor: [
       {
-        file: "pin.svg",
+        file: "",
         className: "d-pin",
         pos: {
           left: "35vw",
@@ -39,7 +39,7 @@
       },
 
       {
-        file: "star.svg",
+        file: "",
         className: "d-star",
         pos: {
           right: "29vw",
@@ -51,7 +51,7 @@
       },
 
       {
-        file: "flower.svg",
+        file: "",
         className: "d-flower",
         pos: {
           left: "1.5vw",
@@ -71,7 +71,7 @@
       },
 
       {
-        file: "lips.svg",
+        file: "",
         className: "d-lips",
         pos: {
           right: "1.8vw",
