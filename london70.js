@@ -53,7 +53,7 @@
      --------------------------------------------------------------- */
   const P  = "html:root.uk:not(.no-may)";                       // mode Londres actif
   // UK 70 est toujours en clair : le mode sombre n'est jamais utilisé ici.
-  const PD = 'html:root.uk[data-theme="white"]:not(.no-may)';    // compatibilité (désactivée pendant UK)
+  const PD = 'html:root.uk[data-theme="light"]:not(.no-may)';    // compatibilité (désactivée pendant UK)
   const SPECK = "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='6' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  9 0 0 0 -5.6'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")";
   const TARTAN = "repeating-linear-gradient(90deg,rgba(0,0,0,.55) 0 9px,transparent 9px 26px,rgba(190,255,60,.5) 26px 28px,transparent 28px 40px)," +
                  "repeating-linear-gradient(0deg,rgba(0,0,0,.55) 0 9px,transparent 9px 26px,rgba(190,255,60,.5) 26px 28px,transparent 28px 40px),#b3121f";
@@ -162,7 +162,7 @@ ${P} .uk-layer{display:block;position:fixed;inset:0;z-index:1;pointer-events:non
   font-family:"Permanent Marker","Marker Felt",cursive;font-size:19px;line-height:1;padding:8px 14px 5px;
   background:#0b0b0b;color:#efece3;border:3px solid #0b0b0b;border-radius:0;box-shadow:4px 4px 0 #ff2d8a;transform:rotate(3deg);
   transition:transform .2s,box-shadow .2s,background .2s,color .2s}
-:root[data-theme="dark"] .uk-btn{border-color:#efece3}
+:root[data-theme="light"] .uk-btn{border-color:#efece3}
 .uk-btn:hover{transform:rotate(-3deg) scale(1.08)}
 .uk-btn:active{transform:translate(3px,3px) rotate(3deg);box-shadow:1px 1px 0 #ff2d8a}
 ${P} .uk-btn{background:#ff2d8a;color:#0b0b0b;border-color:#0b0b0b;box-shadow:4px 4px 0 #0b0b0b}
@@ -277,7 +277,7 @@ ${PD} .uk-btn{border-color:#efece3;box-shadow:4px 4px 0 #efece3}
   }
 
   function restoreThemeAfterUK() {
-    const t = themeBeforeUK === "dark" ? "dark" : "light";
+    const t = themeBeforeUK === "light" ? "dark" : "light";
     root.setAttribute("data-theme", t);
     const themeBtn = document.getElementById("themeBtn");
     if (themeBtn) {
