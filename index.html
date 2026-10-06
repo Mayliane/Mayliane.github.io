@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="light">
+<html lang="fr" data-theme="dark">
 <head>
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -12,12 +12,12 @@
 <meta name="theme-color" content="#121212">
 <title>Mayliane Lefebvre – Portfolio</title>
 
-<!-- Thème : appliqué tout de suite pour éviter le flash blanc/noir -->
+<!-- Thème : appliqué tout de suite pour éviter le flash blanc/noir (sombre par défaut) -->
 <script>
 (function(){
   var t=null;
   try{t=localStorage.getItem("theme")}catch(e){}
-  if(t!=="dark"&&t!=="light")t="light";
+  if(t!=="dark"&&t!=="light")t="dark";
   document.documentElement.setAttribute("data-theme",t);
   /* May est chargé séparément par may.js */
   /* aucun état May ici */
@@ -372,7 +372,7 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
   <button class="uk-btn" id="ukModeBtn" type="button" aria-pressed="false">UK 70</button>
 </div>
 
-<button class="themebtn" id="themeBtn" aria-label="Passer en mode sombre" title="Mode clair / sombre">
+<button class="themebtn" id="themeBtn" aria-label="Passer en mode clair" title="Mode clair / sombre">
   <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
 </button>
 
