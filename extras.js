@@ -173,21 +173,23 @@ html.may-active .loader.has-pop .ld-bot{background-position:var(--pop-x) var(--p
   const POP = encodeURI(DIR + "Transition pop.svg");
   const loaderEl = document.getElementById("loader");
   if (loaderEl) {
-    const pop = new Image();
-    pop.onload = () => {
-      const nw = pop.naturalWidth || 1600, nh = pop.naturalHeight || 900;
-      const fit = () => {                                   // « cover » sur tout l'écran, réparti sur les 2 moitiés
-        const vw = innerWidth, vh = innerHeight, s = Math.max(vw / nw, vh / nh);
-        const w = nw * s, h = nh * s, x = (vw - w) / 2, y = (vh - h) / 2;
-        const set = (k, v) => loaderEl.style.setProperty(k, v + "px");
-        set("--pop-w", w); set("--pop-h", h); set("--pop-x", x); set("--pop-y", y); set("--pop-yb", y - vh / 2);
-      };
-      fit();
-      addEventListener("resize", fit);
-      loaderEl.style.setProperty("--pop-img", 'url("' + POP + '")');
-      loaderEl.classList.add("has-pop");
+    let nw = 1600, nh = 900;                                // dimensions provisoires, corrigées dès que l'image est lue
+    const fit = () => {                                     // « cover » sur tout l'écran, réparti sur les 2 moitiés
+      const vw = innerWidth, vh = innerHeight, s = Math.max(vw / nw, vh / nh);
+      const w = nw * s, h = nh * s, x = (vw - w) / 2, y = (vh - h) / 2;
+      const set = (k, v) => loaderEl.style.setProperty(k, v + "px");
+      set("--pop-w", w); set("--pop-h", h); set("--pop-x", x); set("--pop-y", y); set("--pop-yb", y - vh / 2);
     };
-    pop.src = POP;                                          // si le fichier est absent : l'intro d'origine reste
+    /* appliqué TOUT DE SUITE : le navigateur charge l'image en même temps, plus d'attente avant l'affichage */
+    fit();
+    addEventListener("resize", fit);
+    loaderEl.style.setProperty("--pop-img", 'url("' + POP + '")');
+    loaderEl.classList.add("has-pop");
+
+    const pop = new Image();
+    pop.onload = () => { if (pop.naturalWidth) { nw = pop.naturalWidth; nh = pop.naturalHeight; fit(); } };
+    pop.onerror = () => loaderEl.classList.remove("has-pop");   // fichier absent : l'intro d'origine revient
+    pop.src = POP;
   }
 
   const baseOpen = window.openPanel;
