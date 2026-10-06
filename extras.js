@@ -63,8 +63,8 @@ html .c-stamp{width:84px;padding:6px;background:#fff;outline:2px dashed rgba(11,
 @media(max-width:860px){.stickers-may{left:150px;bottom:22px;width:64px}}
 
 /* May : nom « Mayliane Lefebvre » de l'intro plus lisible (jaune + contour noir épais).
-   Pour changer la couleur : modifie ##6d071a */
-html.may-active .loader .ld-line{color:#6d071a!important;-webkit-text-stroke:.05em #0b0b0b;paint-order:stroke fill;
+   Pour changer la couleur : modifie #800020 */
+html.may-active .loader .ld-line{color:#800020!important;-webkit-text-stroke:.05em #0b0b0b;paint-order:stroke fill;
   text-shadow:.06em .06em 0 #0b0b0b}
 
 /* May : intro avec « Transition pop.svg » (l'image est coupée en deux, haut/bas, comme le panneau) */
