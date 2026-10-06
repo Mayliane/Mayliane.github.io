@@ -32,7 +32,7 @@
     { file: "safety-pin.svg", pos: { left: "35vw",  top: "8px"     }, w: "270px", rot: -4 },
     { file: "burst.svg",      pos: { right: "29vw", top: "5vh"     }, w: "145px", rot: 0,  float: true },
     { file: "scissors.svg",   pos: { left: "1.5vw", bottom: "21vh" }, w: "120px", rot: 18 },
-    { file: "flower.svg",     pos: { right: "1.5vw", bottom: "4vh" }, w: "100px", rot: 8,  float: true,
+    { file: "favicon.png",     pos: { right: "1.5vw", bottom: "4vh" }, w: "100px", rot: 8,  float: true,
       mobile: { pos: { right: "5vw", top: "36vh" }, w: "62px" } },
     { file: "label.svg",      pos: { left: "39vw",  bottom: "2.5vh" }, w: "300px", rot: -3 }
   ];
