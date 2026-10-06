@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+<html lang="fr" data-theme="light">
 <head>
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -17,10 +17,10 @@
 (function(){
   var t=null;
   try{t=localStorage.getItem("theme")}catch(e){}
-  if(t!=="dark"&&t!=="light")t="dark";
+  if(t!=="dark"&&t!=="light")t="light";
   document.documentElement.setAttribute("data-theme",t);
-  /* univers "May" : mémorisé */
-  try{if(localStorage.getItem("may-mode")==="off")document.documentElement.classList.add("no-may")}catch(e){}
+  /* May est chargé séparément par may.js */
+  /* aucun état May ici */
   /* mode Londres 70 : mémorisé */
   try{if(localStorage.getItem("uk-mode")==="on")document.documentElement.classList.add("uk")}catch(e){}
 })();
@@ -274,223 +274,32 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
 @media(prefers-reduced-motion:reduce){
   .modal-layout.in-r,.modal-layout.in-l{animation:none}
 }
-</style>
 
-<!-- ===== UNIVERS/ LONDON ("May") ===== -->
-<style>
-/* =====================================================================
-    / LONDON — univers "May"
-   Tout est scopé sur  :root:not(.no-may)  -> le bouton "May" l'éteint.
-   ===================================================================== */
 
-:root:not(.no-may){
-  --bg:#efece4;--bg0:rgba(239,236,228,0);--ink:#0b0b0b;--mute:#6b655c;--line:#cfc9bc;
-  --sh1:rgba(0,0,0,.2);--sh2:rgba(0,0,0,.1);
-  --font:"Special Elite","Courier New",monospace;
-  --mk:"Permanent Marker","Marker Felt",cursive;
-  --red:#c8102e;--pink:#ff3c8e;--yellow:#ffd400;--paper:#f6f3ec;--black:#0b0b0b;
-  --hard:#0b0b0b;
+/* ---------- base sobre + verrouillage du thème dans UK 70 ---------- */
+:root.uk .themebtn{
+  opacity:.35;
+  pointer-events:none;
+  cursor:not-allowed;
 }
-:root[data-theme="dark"]:not(.no-may){
-  --bg:#0b0b0b;--bg0:rgba(11,11,11,0);--ink:#f1eee6;--mute:#8c867b;--line:#2a2927;
-  --sh1:rgba(0,0,0,.6);--sh2:rgba(0,0,0,.4);
-  --hard:#ff3c8e;
-}
-
-/* ---------- fond : papier + trame de points + grain ---------- */
-:root:not(.no-may) body{
-  background:
-    radial-gradient(circle,rgba(200,16,46,.16) 1.3px,transparent 1.7px) 0 0/8px 8px,
-    var(--bg);
-}
-:root[data-theme="dark"]:not(.no-may) body{
-  background:
-    radial-gradient(circle,rgba(255,60,142,.2) 1.3px,transparent 1.7px) 0 0/8px 8px,
-    var(--bg);
-}
-:root:not(.no-may) body::after{
-  content:"";position:fixed;inset:0;z-index:120;pointer-events:none;opacity:.4;mix-blend-mode:multiply;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-}
-:root[data-theme="dark"]:not(.no-may) body::after{mix-blend-mode:screen;filter:invert(1);opacity:.12}
-
-/* ---------- tartan (intro + bandeau) ---------- */
-:root:not(.no-may) .tartan,
-:root:not(.no-may) .loader .ld-half{
-  background:
-    repeating-linear-gradient(90deg,rgba(0,0,0,.5) 0 12px,transparent 12px 44px,rgba(190,255,60,.6) 44px 47px,transparent 47px 66px),
-    repeating-linear-gradient(0deg,rgba(0,0,0,.5) 0 12px,transparent 12px 44px,rgba(190,255,60,.6) 44px 47px,transparent 47px 66px),
-    #c8102e;
-}
-
-/* ---------- intro ---------- */
-:root:not(.no-may) .loader{--ld-font:"Permanent Marker","Marker Felt",cursive}
-:root:not(.no-may) .loader .ld-line{
-  color:#f6f3ec !important;text-transform:uppercase;letter-spacing:.01em;
-  text-shadow:.05em .05em 0 #0b0b0b;transform:rotate(-2deg);
-}
-:root:not(.no-may) .loader .ld-bot .ld-line{transform:rotate(1.5deg)}
-:root:not(.no-may) .loader .ld-count{color:#f6f3ec;font-family:"Special Elite",monospace}
-
-/* ---------- nom vertical : étiquette scotchée ---------- */
-:root:not(.no-may) .brand{
-  font-family:var(--mk);font-weight:400;color:var(--black);background:var(--yellow);
-  padding:10px 5px;box-shadow:4px 4px 0 var(--hard);letter-spacing:.02em;
-}
-
-/* ---------- menu ---------- */
-:root:not(.no-may) .nav small{font-family:var(--font);text-transform:uppercase;letter-spacing:.12em}
-:root:not(.no-may) .nav button{font-family:var(--mk);font-weight:400;letter-spacing:.01em;transition:transform .2s}
-:root:not(.no-may) .nav button:hover{transform:rotate(-3deg) translateX(4px)}
-:root:not(.no-may) .nav button[aria-current=true]{
-  background:linear-gradient(transparent 52%,var(--yellow) 52% 92%,transparent 92%);color:var(--black);
-  padding:0 .2em;margin-left:-.2em;
-}
-:root:not(.no-may) .nav button[aria-current=true]::before{content:none}
-
-/* ---------- infos à gauche ---------- */
-:root:not(.no-may) .meta dt{font-family:var(--mk);font-weight:400;color:var(--red);text-transform:uppercase}
-:root:not(.no-may) .meta dd{font-family:var(--font);font-weight:400}
-
-/* ---------- cartes : polaroïds scotchés ---------- */
-:root:not(.no-may) .card{
-  overflow:visible;padding:8px;background:var(--paper);border-radius:0;
-  box-shadow:9px 9px 0 var(--hard);
-}
-:root:not(.no-may) .card img{height:100%;filter:contrast(1.05) saturate(1.1)}
-:root:not(.no-may) .card:hover img{transform:none}
-:root:not(.no-may) .card::before{
-  content:"";position:absolute;z-index:3;top:-15px;left:50%;width:34%;height:28px;margin-left:-17%;
-  background:rgba(255,212,0,.82);transform:rotate(-4deg);
-  clip-path:polygon(0 8%,4% 0,8% 10%,12% 0,100% 0,96% 25%,100% 50%,96% 75%,100% 100%,10% 100%,6% 88%,0 100%,3% 50%);
-}
-:root:not(.no-may) .card:nth-child(even)::before{background:rgba(255,60,142,.8);transform:rotate(3deg)}
-:root:not(.no-may) .card:nth-child(3n)::before{background:rgba(246,243,236,.85);transform:rotate(-1deg)}
-
-/* ---------- numéro géant ---------- */
-:root:not(.no-may) .counter b{
-  font-family:var(--mk);font-weight:400;color:var(--red);letter-spacing:-.02em;
-  -webkit-text-stroke:2px var(--black);paint-order:stroke fill;text-shadow:7px 7px 0 var(--black);
-}
-:root[data-theme="dark"]:not(.no-may) .counter b{-webkit-text-stroke:0;text-shadow:7px 7px 0 var(--pink)}
-:root:not(.no-may) .counter span{font-family:var(--font);font-weight:400}
-:root:not(.no-may) .hint{font-family:var(--font);text-transform:uppercase;letter-spacing:.1em}
-
-/* ---------- liste de droite ---------- */
-:root:not(.no-may) .item .cat{
-  display:inline-block;background:var(--black);color:var(--paper);padding:3px 9px 1px;
-  font-family:var(--font);text-transform:uppercase;letter-spacing:.08em;font-size:12px;transform:rotate(-2deg);
-}
-:root[data-theme="dark"]:not(.no-may) .item .cat{background:var(--pink);color:var(--black)}
-:root:not(.no-may) .item .ttl{font-family:var(--mk);font-weight:400;letter-spacing:.005em}
-:root:not(.no-may) .item .bar{
-  width:44px;height:10px;background:
-    linear-gradient(135deg,var(--red) 25%,transparent 25%) -5px 0/10px 10px,
-    linear-gradient(225deg,var(--red) 25%,transparent 25%) -5px 0/10px 10px;
-}
-:root:not(.no-may) .item .dsc{font-family:var(--font)}
-
-/* ---------- fenêtre projet ---------- */
-:root:not(.no-may) .modal-bar{background:linear-gradient(var(--bg) 62%,var(--bg0))}
-:root:not(.no-may) .modal-number,
-:root:not(.no-may) .modal-type{font-family:var(--font);text-transform:uppercase;letter-spacing:.1em}
-:root:not(.no-may) .modal-close{font-family:var(--mk);font-weight:400;font-size:18px}
-:root:not(.no-may) .modal-title{
-  font-family:var(--mk);font-weight:400;letter-spacing:-.01em;color:var(--red);
-  text-shadow:4px 4px 0 var(--black);
-}
-:root[data-theme="dark"]:not(.no-may) .modal-title{text-shadow:4px 4px 0 var(--pink);color:var(--paper)}
-:root:not(.no-may) .modal-desc,
-:root:not(.no-may) .b-text{font-family:var(--font)}
-:root:not(.no-may) .modal-details dt{font-family:var(--mk);color:var(--red);font-weight:400}
-:root:not(.no-may) .modal-details dd{font-family:var(--font);font-weight:400}
-:root:not(.no-may) .modal-nav button{font-family:var(--mk)}
-:root:not(.no-may) .b-heading{
-  font-family:var(--mk);font-weight:400;display:inline-block;align-self:flex-start;
-  background:var(--yellow);color:var(--black);padding:4px 12px 2px;transform:rotate(-1.5deg);letter-spacing:0;
-}
-:root:not(.no-may) .b-img img,
-:root:not(.no-may) .b-gallery img{border:3px solid var(--black);box-shadow:8px 8px 0 var(--red)}
-:root[data-theme="dark"]:not(.no-may) .b-img img,
-:root[data-theme="dark"]:not(.no-may) .b-gallery img{border-color:var(--paper);box-shadow:8px 8px 0 var(--pink)}
-:root:not(.no-may) .b-img{margin-bottom:6px}
-:root:not(.no-may) .b-link{
-  font-family:var(--mk);font-weight:400;border:3px solid var(--black);background:var(--pink);color:var(--black);
-  box-shadow:5px 5px 0 var(--black);transition:transform .15s,box-shadow .15s;
-}
-:root:not(.no-may) .b-link:hover{background:var(--pink);color:var(--black);transform:translate(3px,3px);box-shadow:2px 2px 0 var(--black)}
-
-/* ---------- à propos / contact : titre en lettres découpées ---------- */
-:root:not(.no-may) .panel{
-  background:radial-gradient(circle,rgba(200,16,46,.16) 1.3px,transparent 1.7px) 0 0/8px 8px,var(--bg);
-}
-:root[data-theme="dark"]:not(.no-may) .panel{
-  background:radial-gradient(circle,rgba(255,60,142,.2) 1.3px,transparent 1.7px) 0 0/8px 8px,var(--bg);
-}
-:root:not(.no-may) .panel h2{font-size:clamp(38px,7vw,92px);line-height:1.15;margin-bottom:44px;font-weight:400}
-:root:not(.no-may) .panel p{font-family:var(--font)}
-:root:not(.no-may) .panel .close{font-family:var(--mk);font-weight:400;font-size:18px}
-:root:not(.no-may) .panel .legal{font-family:var(--font)}
-
-:root:not(.no-may) .rn{display:inline-block;padding:.03em .1em 0;margin:0 .03em .08em;line-height:1.05;transform:rotate(var(--rot,0deg));box-shadow:2px 2px 0 rgba(0,0,0,.35)}
-:root:not(.no-may) .rn.r0{background:var(--paper);color:var(--black);font-family:"Special Elite",monospace}
-:root:not(.no-may) .rn.r1{background:var(--black);color:var(--paper);font-family:Gloock,Georgia,serif}
-:root:not(.no-may) .rn.r2{background:var(--red);color:var(--paper);font-family:var(--mk)}
-:root:not(.no-may) .rn.r3{background:var(--yellow);color:var(--black);font-family:Archivo,sans-serif;font-weight:900}
-:root:not(.no-may) .rn.r4{background:var(--pink);color:var(--black);font-family:Gloock,Georgia,serif}
-:root:not(.no-may) .rn.r5{background:#d9d6cd;color:var(--black);font-family:"Special Elite",monospace;font-weight:700}
-
-/* ---------- bandeau défilant (dans le panneau) ---------- */
-.may-marquee{display:none}
-:root:not(.no-may) .may-marquee{
-  display:block;position:fixed;left:0;right:0;bottom:calc(18px + var(--sb));overflow:hidden;
-  transform:rotate(-1.4deg);box-shadow:0 4px 0 var(--black);pointer-events:none;
-}
-:root:not(.no-may) .may-marquee .tr{
-  display:flex;width:max-content;animation:mayRoll 26s linear infinite;
-  font-family:var(--mk);font-size:26px;color:var(--paper);padding:10px 0 6px;text-shadow:2px 2px 0 var(--black);white-space:nowrap;
-}
-:root:not(.no-may) .may-marquee .tr span{padding:0 22px}
-@keyframes mayRoll{to{transform:translateX(-50%)}}
-
-/* ---------- décors (stickers) ---------- */
-.may-deco{display:none}
-:root:not(.no-may) .may-deco{display:block;position:fixed;pointer-events:none;z-index:1}
-:root:not(.no-may) .may-deco svg{display:block;width:100%;height:auto;overflow:visible}
-.d-pin{left:35vw;top:9px;width:210px;transform:rotate(-3deg)}
-.d-star{right:29vw;top:5vh;width:150px;animation:mayFloat 9s ease-in-out infinite}
-.d-flower{left:1.5vw;bottom:24vh;width:92px;animation:mayFloat 7s ease-in-out -2s infinite}
-.d-lips{right:1.8vw;bottom:2.5vh;width:120px;transform:rotate(6deg)}
-@keyframes mayFloat{50%{transform:translateY(-12px) rotate(5deg)}}
-
-/* ---------- bouton "May" ---------- */
-.may-btn{
-  position:fixed;z-index:11;right:calc(70px + var(--sr));top:calc(14px + var(--st));
-  font-family:"Permanent Marker","Marker Felt",cursive;font-size:21px;line-height:1;
-  padding:8px 16px 5px;background:#ff3c8e;color:#0b0b0b;border:3px solid #0b0b0b;border-radius:40px;
-  box-shadow:4px 4px 0 #0b0b0b;transform:rotate(-6deg);transition:transform .2s,box-shadow .2s,background .2s,color .2s;
-}
-.may-btn:hover{transform:rotate(3deg) scale(1.08)}
-.may-btn:active{transform:translate(3px,3px) rotate(-6deg);box-shadow:1px 1px 0 #0b0b0b}
-:root.no-may .may-btn{background:transparent;color:var(--ink);border-color:var(--ink);box-shadow:none;text-decoration:line-through;text-decoration-thickness:2px}
-:root[data-theme="dark"]:not(.no-may) .may-btn{box-shadow:4px 4px 0 #f1eee6}
-
 @media(max-width:860px){
-  .d-pin,.d-star,.d-lips{display:none !important}
-  .d-flower{left:auto;right:5vw;top:34vh;bottom:auto;width:64px}
-  .may-btn{right:calc(10px + var(--sr));top:calc(52px + var(--st));font-size:17px;padding:6px 12px 3px}
-  :root:not(.no-may) .brand{padding:7px 3px;box-shadow:3px 3px 0 var(--hard)}
-  :root:not(.no-may) .nav button{font-size:17px}
-  :root:not(.no-may) .card{padding:6px;box-shadow:6px 6px 0 var(--hard)}
-  :root:not(.no-may) .counter b{text-shadow:4px 4px 0 var(--black)}
-  :root:not(.no-may) .may-marquee .tr{font-size:20px}
+  .themebtn{width:32px;height:32px}
+  .themebtn svg{width:20px;height:20px}
+  .card{box-shadow:0 18px 45px var(--sh1),0 2px 7px var(--sh2)}
+  .item button{padding-left:18px;padding-right:18px}
+  .b-gallery{grid-template-columns:1fr}
+  .modal-title{overflow-wrap:anywhere}
 }
-@media(prefers-reduced-motion:reduce){
-  .d-star,.d-flower{animation:none}
-  :root:not(.no-may) .may-marquee .tr{animation:none}
-}
-
+/* Accès aux modes */
+.mode-switch{position:fixed;top:calc(14px + var(--st));right:calc(64px + var(--sr));z-index:30;display:flex;align-items:center;gap:12px}
+.mode-switch > button{position:static!important;display:inline-flex!important;visibility:visible!important;opacity:1!important;align-items:center;justify-content:center;cursor:pointer}
+.mode-switch .may-btn{font-family:"Permanent Marker","Marker Felt",cursive;font-size:18px;line-height:1;padding:8px 15px 5px;background:#ff3c8e;color:#0b0b0b;border:3px solid #0b0b0b;border-radius:40px;box-shadow:4px 4px 0 #0b0b0b;transform:rotate(-4deg)}
+.mode-switch .uk-btn{font-family:"Permanent Marker","Marker Felt",cursive;font-size:18px;line-height:1;padding:8px 14px 5px;background:#0b0b0b;color:#efece3;border:3px solid #0b0b0b;border-radius:0;box-shadow:4px 4px 0 #ff2d8a;transform:rotate(3deg)}
+.mode-switch .may-btn:hover,.mode-switch .uk-btn:hover{transform:rotate(0deg) scale(1.06)}
+.mode-switch .uk-btn[aria-pressed="true"]{background:#ff3c8e;color:#0b0b0b;box-shadow:4px 4px 0 #0b0b0b}
+@media(max-width:860px){.mode-switch{top:calc(50px + var(--st));right:calc(8px + var(--sr));gap:7px}.mode-switch .may-btn,.mode-switch .uk-btn{font-size:15px;padding:6px 10px 3px}}
 </style>
+
 </head>
 <body>
 
@@ -556,6 +365,12 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
   <button data-go="about">À propos</button>
   <button data-go="contact">Contact</button>
 </nav>
+
+<!-- Accès direct aux univers -->
+<div class="mode-switch" aria-label="Changer d’univers">
+  <button class="may-btn" id="mayModeBtn" type="button" aria-pressed="false">May</button>
+  <button class="uk-btn" id="ukModeBtn" type="button" aria-pressed="false">UK 70</button>
+</div>
 
 <button class="themebtn" id="themeBtn" aria-label="Passer en mode sombre" title="Mode clair / sombre">
   <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
@@ -750,6 +565,7 @@ function applyTheme(t) {
 }
 applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light");
 themeBtn.addEventListener("click", () => {
+  if (document.documentElement.classList.contains("uk")) return;
   const t = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
   applyTheme(t);
   try { localStorage.setItem("theme", t); } catch (e) {}
@@ -1258,117 +1074,9 @@ Promise.race([
 render();
 </script>
 
-<!-- ===== UNIVERS / LONDON ("May") : bouton, décors, lettres découpées ===== -->
-<script>
-/* =====================================================================
-   / LONDON — bouton "May" + décors + titres en lettres découpées
-   À charger APRÈS le script principal
-   ===================================================================== */
-(function () {
-  var root = document.documentElement, KEY = "may-mode";
-
-  /* état mémorisé : "off" = universéteint */
-  try { if (localStorage.getItem(KEY) === "off") root.classList.add("no-may"); } catch (e) {}
-
-  /* ---------- bouton May ---------- */
-  var btn = document.createElement("button");
-  btn.className = "may-btn";
-  btn.type = "button";
-  btn.textContent = "May";
-  function sync() {
-    var on = !root.classList.contains("no-may");
-    btn.setAttribute("aria-pressed", on ? "true" : "false");
-    btn.setAttribute("aria-label", on ? "Désactiver l’univers" : "Activer l’univers");
-    btn.title = on ? "Univers: activé" : "Univers : désactivé";
-  }
-  btn.addEventListener("click", function () {
-    var off = root.classList.toggle("no-may");
-    try { localStorage.setItem(KEY, off ? "off" : "on"); } catch (e) {}
-    sync();
-  });
-  sync();
-  document.body.appendChild(btn);
-
-  /* ---------- décors ---------- */
-  function star(cx, cy, ro, ri, n) {
-    var pts = [];
-    for (var i = 0; i < n * 2; i++) {
-      var a = Math.PI * i / n - Math.PI / 2, r = i % 2 ? ri : ro;
-      pts.push((cx + Math.cos(a) * r).toFixed(1) + "," + (cy + Math.sin(a) * r).toFixed(1));
-    }
-    return pts.join(" ");
-  }
-
-  var pinTags = ["M", "A", "Y", "★", "!"].map(function (ch, i) {
-    var x = 18 + i * 38, rot = [-5, 4, -3, 6, 0][i];
-    return '<line x1="' + (x + 13) + '" y1="22" x2="' + (x + 13) + '" y2="34" stroke="#8d8d8b" stroke-width="2.5"/>' +
-      '<g transform="rotate(' + rot + ' ' + (x + 13) + ' 34)">' +
-      '<rect x="' + x + '" y="34" width="27" height="34" fill="' + (i % 2 ? "#cfcfcd" : "#f6f3ec") + '" stroke="#0b0b0b" stroke-width="2.5"/>' +
-      '<text x="' + (x + 13.5) + '" y="60" text-anchor="middle" font-family="Special Elite,monospace" font-weight="700" font-size="26" fill="#0b0b0b">' + ch + '</text></g>';
-  }).join("");
-
-  var DECO = [
-    ["d-pin",
-      '<svg viewBox="0 0 210 74" aria-hidden="true">' +
-      '<rect x="6" y="8" width="198" height="14" rx="7" fill="none" stroke="#8a6d2f" stroke-width="4.5"/>' +
-      '<circle cx="14" cy="15" r="6" fill="#efece4" stroke="#8a6d2f" stroke-width="3"/>' + pinTags + '</svg>'],
-    ["d-star",
-      '<svg viewBox="0 0 150 150" aria-hidden="true">' +
-      '<polygon points="' + star(75, 75, 72, 24, 9) + '" fill="#2f9e44" stroke="#0b0b0b" stroke-width="3.5" stroke-linejoin="round"/>' +
-      '<polygon points="' + star(75, 75, 52, 18, 9) + '" fill="none" stroke="#bfe8c4" stroke-width="2" stroke-linejoin="round" opacity=".7"/>' +
-      '<circle cx="75" cy="75" r="9" fill="#d9d6cd" stroke="#0b0b0b" stroke-width="3"/><circle cx="75" cy="75" r="3" fill="#0b0b0b"/></svg>'],
-    ["d-flower",
-      '<svg viewBox="0 0 100 100" aria-hidden="true">' +
-      [0, 72, 144, 216, 288].map(function (a) {
-        var r = a * Math.PI / 180;
-        return '<circle cx="' + (50 + Math.sin(r) * 24).toFixed(1) + '" cy="' + (50 - Math.cos(r) * 24).toFixed(1) + '" r="19" fill="#ff5fa2" stroke="#0b0b0b" stroke-width="3"/>';
-      }).join("") +
-      '<circle cx="50" cy="50" r="15" fill="#c8102e" stroke="#0b0b0b" stroke-width="3"/><circle cx="50" cy="50" r="7" fill="#efece4" stroke="#0b0b0b" stroke-width="2.5"/></svg>'],
-    ["d-lips",
-      '<svg viewBox="0 0 120 84" aria-hidden="true">' +
-      '<path d="M6,40 Q30,4 60,22 Q90,4 114,40 Q60,54 6,40Z" fill="#c8102e" stroke="#0b0b0b" stroke-width="3" stroke-linejoin="round"/>' +
-      '<path d="M8,42 Q60,56 112,42 Q98,80 60,80 Q22,80 8,42Z" fill="#c8102e" stroke="#0b0b0b" stroke-width="3" stroke-linejoin="round"/>' +
-      '<ellipse cx="60" cy="45" rx="24" ry="11" fill="#fff" stroke="#0b0b0b" stroke-width="2.5"/>' +
-      '<circle cx="60" cy="45" r="10" fill="#3b7fc4" stroke="#0b0b0b" stroke-width="2"/><circle cx="60" cy="45" r="4.5" fill="#0b0b0b"/><circle cx="56" cy="41" r="2" fill="#fff"/></svg>']
-  ];
-  DECO.forEach(function (d) {
-    var el = document.createElement("div");
-    el.className = "may-deco " + d[0];
-    el.innerHTML = d[1];
-    document.body.insertBefore(el, document.body.firstChild);
-  });
-
-  /* ---------- titres du panneau : lettres découpées façon ransom note ---------- */
-  function ransom(el) {
-    if (el.dataset.r) return;
-    el.dataset.r = "1";
-    var t = el.textContent;
-    el.setAttribute("aria-label", t);
-    el.textContent = "";
-    var i = 0;
-    for (var k = 0; k < t.length; k++) {
-      var ch = t.charAt(k);
-      if (ch === " ") { el.appendChild(document.createTextNode(" ")); continue; }
-      var s = document.createElement("span");
-      s.textContent = ch;
-      s.className = "rn r" + ((i * 5 + 1) % 6);
-      s.style.setProperty("--rot", ((i * 37) % 9 - 4) + "deg");
-      s.setAttribute("aria-hidden", "true");
-      el.appendChild(s);
-      i++;
-    }
-  }
-  var pin = document.getElementById("panel-in");
-  if (pin) {
-    new MutationObserver(function () {
-      var h = pin.querySelector("h2");
-      if (h) ransom(h);
-    }).observe(pin, { childList: true });
-  }
-})();
-
-</script>
 <!-- ===== PAGE À PROPOS : mannequin 3D + infos ===== -->
+<!-- ===== MODE MAY : thème + décors configurables ===== -->
+<script src="may.js"></script>
 <script src="apropos.js"></script>
 <!-- ===== PAGE CONTACT : enveloppe + lettre découpée ===== -->
 <script src="contact.js"></script>
