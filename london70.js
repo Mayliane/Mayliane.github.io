@@ -27,6 +27,7 @@
      Pour en ajouter : copie une ligne, change le nom du fichier.
      ================================================================= */
   const FOLDER = "uk/";
+  const BG = "f1616a3c-1.svg";   // fond UK (dans le dossier uk/). "" = fond papier d'origine
   const DECOR = [
     { file: "safety-pin.svg", pos: { left: "35vw",  top: "8px"     }, w: "270px", rot: -4 },
     { file: "burst.svg",      pos: { right: "29vw", top: "5vh"     }, w: "145px", rot: 0,  float: true },
@@ -56,6 +57,8 @@
   const TARTAN = "repeating-linear-gradient(90deg,rgba(0,0,0,.55) 0 9px,transparent 9px 26px,rgba(190,255,60,.5) 26px 28px,transparent 28px 40px)," +
                  "repeating-linear-gradient(0deg,rgba(0,0,0,.55) 0 9px,transparent 9px 26px,rgba(190,255,60,.5) 26px 28px,transparent 28px 40px),#b3121f";
 
+  const BGL = BG ? `url("${src(BG)}") center/cover no-repeat fixed,` : "";
+
   const css = `
 /* ---- variables : noir / papier photocopié / UN rose / un peu de tartan ---- */
 ${P}{
@@ -70,8 +73,8 @@ ${PD}{
 }
 
 /* ---- fond : papier trame + poussière de photocopieuse ---- */
-${P} body{background:radial-gradient(circle,rgba(0,0,0,.14) 1px,transparent 1.5px) 0 0/6px 6px,var(--bg)}
-${PD} body{background:radial-gradient(circle,rgba(255,255,255,.09) 1px,transparent 1.5px) 0 0/6px 6px,var(--bg)}
+${P} body{background:${BGL}radial-gradient(circle,rgba(0,0,0,.14) 1px,transparent 1.5px) 0 0/6px 6px,var(--bg)}
+${PD} body{background:${BGL}radial-gradient(circle,rgba(255,255,255,.09) 1px,transparent 1.5px) 0 0/6px 6px,var(--bg)}
 ${P} body::after{background-image:${SPECK};background-size:240px 240px;opacity:.34;mix-blend-mode:multiply;filter:none}
 ${PD} body::after{opacity:.24;mix-blend-mode:screen;filter:invert(1)}
 
@@ -134,8 +137,8 @@ ${P} .b-link{font-family:var(--stn);font-weight:700;background:var(--ink);color:
 ${P} .b-link:hover{background:var(--ink);color:var(--bg);transform:translate(3px,3px);box-shadow:2px 2px 0 #ff2d8a}
 
 /* ---- panneaux À propos / Contact ---- */
-${P} .panel{background:radial-gradient(circle,rgba(0,0,0,.14) 1px,transparent 1.5px) 0 0/6px 6px,var(--bg)}
-${PD} .panel{background:radial-gradient(circle,rgba(255,255,255,.09) 1px,transparent 1.5px) 0 0/6px 6px,var(--bg)}
+${P} .panel{background:${BGL}radial-gradient(circle,rgba(0,0,0,.14) 1px,transparent 1.5px) 0 0/6px 6px,var(--bg)}
+${PD} .panel{background:${BGL}radial-gradient(circle,rgba(255,255,255,.09) 1px,transparent 1.5px) 0 0/6px 6px,var(--bg)}
 ${P} .panel .close{font-family:var(--stn);font-weight:700}
 ${P} .tl-p,${P} .sk-n,${P} .about-hint{font-family:var(--stn);font-weight:700;color:var(--pink)}
 ${P} .tl-t{font-family:var(--stn);font-weight:700}
