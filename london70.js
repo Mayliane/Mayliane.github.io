@@ -52,7 +52,8 @@
      STYLE
      --------------------------------------------------------------- */
   const P  = "html:root.uk:not(.no-may)";                       // mode Londres actif
-  const PD = 'html:root.uk[data-theme="dark"]:not(.no-may)';    // …en thème sombre
+  // UK 70 est toujours en clair : le mode sombre n'est jamais utilisé ici.
+  const PD = 'html:root.uk[data-theme="dark"]:not(.no-may)';    // compatibilité (désactivée pendant UK)
   const SPECK = "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='6' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  9 0 0 0 -5.6'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")";
   const TARTAN = "repeating-linear-gradient(90deg,rgba(0,0,0,.55) 0 9px,transparent 9px 26px,rgba(190,255,60,.5) 26px 28px,transparent 28px 40px)," +
                  "repeating-linear-gradient(0deg,rgba(0,0,0,.55) 0 9px,transparent 9px 26px,rgba(190,255,60,.5) 26px 28px,transparent 28px 40px),#b3121f";
@@ -253,10 +254,8 @@ ${PD} .uk-btn{border-color:#efece3;box-shadow:4px 4px 0 #efece3}
   /* ---------------------------------------------------------------
      BOUTON + ÉTAT
      --------------------------------------------------------------- */
-  const btn = document.createElement("button");
-  btn.className = "uk-btn";
-  btn.type = "button";
-  btn.textContent = "UK 70";
+  const btn = document.getElementById("ukModeBtn") || document.querySelector(".uk-btn") || document.createElement("button");
+  if (!btn.id) { btn.className="uk-btn"; btn.type="button"; btn.textContent="UK 70"; }
 
   function sync() {
     const on = root.classList.contains("uk") && !root.classList.contains("no-may");
@@ -264,15 +263,44 @@ ${PD} .uk-btn{border-color:#efece3;box-shadow:4px 4px 0 #efece3}
     btn.setAttribute("aria-label", on ? "Quitter le mode Londres 70" : "Activer le mode Londres 70");
     btn.title = on ? "Mode Londres 70 : activé" : "Mode Londres 70 : désactivé";
   }
+  let themeBeforeUK = null;
+
+  function setThemeLightForUK() {
+    themeBeforeUK = root.getAttribute("data-theme") || "light";
+    root.setAttribute("data-theme", "light");
+    const themeBtn = document.getElementById("themeBtn");
+    if (themeBtn) {
+      themeBtn.setAttribute("aria-disabled", "true");
+      themeBtn.setAttribute("tabindex", "-1");
+    }
+    try { localStorage.setItem("theme", "light"); } catch (e) {}
+  }
+
+  function restoreThemeAfterUK() {
+    const t = themeBeforeUK === "dark" ? "dark" : "light";
+    root.setAttribute("data-theme", t);
+    const themeBtn = document.getElementById("themeBtn");
+    if (themeBtn) {
+      themeBtn.removeAttribute("aria-disabled");
+      themeBtn.removeAttribute("tabindex");
+    }
+    try { localStorage.setItem("theme", t); } catch (e) {}
+    themeBeforeUK = null;
+  }
+
   function setUK(on) {
-    root.classList.toggle("uk", on);
-    store.set(on ? "on" : "off");
     if (on) {
-      if (root.classList.contains("no-may")) {                    // le mode Londres s'appuie sur le mode May : on le rallume
-        root.classList.remove("no-may");
-        try { localStorage.setItem("may-mode", "on"); } catch (e) {}
-      }
+      if (!root.classList.contains("uk")) setThemeLightForUK();
+      root.classList.add("uk");
+      // UK70 et May sont deux univers séparés : UK70 prend la main.
+      root.classList.remove("no-may");
+      root.classList.remove("may-active");
+      store.set("on");
       loadFont(); ensureDecor(); watchActive();
+    } else {
+      root.classList.remove("uk");
+      store.set("off");
+      restoreThemeAfterUK();
     }
     sync();
   }
@@ -291,6 +319,12 @@ ${PD} .uk-btn{border-color:#efece3;box-shadow:4px 4px 0 #efece3}
 
   document.body.appendChild(btn);
 
-  if (store.get() === "on") { root.classList.add("uk"); loadFont(); ensureDecor(); watchActive(); }
+  if (store.get() === "on") {
+    root.classList.add("uk");
+    setThemeLightForUK();
+    root.classList.remove("no-may");
+    root.classList.remove("may-active");
+    loadFont(); ensureDecor(); watchActive();
+  }
   sync();
 })();
