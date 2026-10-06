@@ -296,11 +296,18 @@ ${PD} .uk-btn{border-color:#efece3;box-shadow:4px 4px 0 #efece3}
       root.classList.remove("no-may");
       root.classList.remove("may-active");
       store.set("on");
+      try { localStorage.setItem("may-mode", "off"); } catch (e) {}
       loadFont(); ensureDecor(); watchActive();
     } else {
       root.classList.remove("uk");
+      /* on éteint aussi May : sinon ses styles restent actifs (classe no-may absente) */
+      root.classList.remove("may-active");
+      root.classList.add("no-may");
       store.set("off");
+      try { localStorage.setItem("may-mode", "off"); } catch (e) {}
       restoreThemeAfterUK();
+      var mb = document.getElementById("mayModeBtn");
+      if (mb) mb.setAttribute("aria-pressed", "false");
     }
     sync();
   }
