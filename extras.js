@@ -51,7 +51,7 @@ html .c-stamp{width:84px;padding:6px;background:#fff;outline:2px dashed rgba(11,
 @media(max-width:860px){.pins-rose{left:150px;bottom:22px;width:56px}}
 
 /* UK70 : panneau en bas à droite (invisible dans les autres modes) */
-.panneau-uk{display:none;position:fixed;z-index:11;right:2.5vw;bottom:4vh;width:350px;height:auto;
+.panneau-uk{display:none;position:fixed;z-index:11;right:2.5vw;bottom:4vh;width:150px;height:auto;
   pointer-events:none;user-select:none;-webkit-user-drag:none}
 :root.uk .panneau-uk{display:block}
 @media(max-width:860px){.panneau-uk{right:4vw;bottom:62px;width:60px}}
@@ -61,6 +61,11 @@ html .c-stamp{width:84px;padding:6px;background:#fff;outline:2px dashed rgba(11,
   transform:rotate(-6deg);pointer-events:none;user-select:none;-webkit-user-drag:none}
 :root.may-active .stickers-may{display:block}
 @media(max-width:860px){.stickers-may{left:150px;bottom:22px;width:64px}}
+
+/* May : nom « Mayliane Lefebvre » de l'intro plus lisible (jaune + contour noir épais).
+   Pour changer la couleur : modifie ##6d071a */
+html.may-active .loader .ld-line{color:#6d071a!important;-webkit-text-stroke:.05em #0b0b0b;paint-order:stroke fill;
+  text-shadow:.06em .06em 0 #0b0b0b}
 
 /* May : intro avec « Transition pop.svg » (l'image est coupée en deux, haut/bas, comme le panneau) */
 html.may-active .loader.has-pop .ld-half{background-image:var(--pop-img);background-repeat:no-repeat;
