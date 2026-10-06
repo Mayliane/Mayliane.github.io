@@ -26,6 +26,7 @@
        mobile  : (facultatif) { pos:{…}, w:"…" } = version téléphone. Sans « mobile », il est caché sur téléphone.
      Pour en ajouter : copie une ligne, change le nom du fichier.
      ================================================================= */
+  const FOLDER = "";
   const BG = "f1616a3c-1.svg";   // fond UK (dans le dossier uk/). "" = fond papier d'origine
   const DECOR = [
     { file: "safety-pin.svg", pos: { left: "35vw",  top: "8px"     }, w: "270px", rot: -4 },
