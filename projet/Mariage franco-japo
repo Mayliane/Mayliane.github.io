@@ -1,1 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#121212">
+<title>Mariage franco-japonais – Mayliane Lefebvre</title>
+<meta name="description" content="Un mariage entre deux cultures. Dans ce projet, nous avons endossé le rôle de wedding planners pour organiser un mariage franco-japonais de A à Z : ch">
+<meta property="og:title" content="Mariage franco-japonais – Mayliane Lefebvre">
+<link rel="icon" href="favicon.ico">
+<script>
+(function(){var t=null;try{t=localStorage.getItem("theme")}catch(e){}
+if(t!=="dark"&&t!=="light")t="dark";document.documentElement.setAttribute("data-theme",t);
+try{if(localStorage.getItem("uk-mode")==="on")document.documentElement.classList.add("uk")}catch(e){}})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<style>
+/* mêmes variables, polices et comportements que la page d'accueil */
+:root{
+  --bg:#ebebea;--bg0:rgba(235,235,234,0);--ink:#141414;--mute:#8d8d8b;--line:#cfcfcd;
+  --font:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
+  --sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px);
+  color-scheme:light;
+}
+:root[data-theme="dark"]{--bg:#121212;--bg0:rgba(18,18,18,0);--ink:#ececea;--mute:#7e7e7c;--line:#2b2b2a;color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 
+/* nom vertical + menu (identiques à l'accueil) */
+.brand{position:fixed;left:calc(22px + var(--sl));top:calc(22px + var(--st));writing-mode:vertical-rl;transform:rotate(180deg);font-weight:800;font-size:32px;line-height:1;z-index:10;text-transform:uppercase}
+.nav{position:absolute;left:16vw;top:calc(26px + var(--st));z-index:10}
+.nav small{display:block;color:var(--mute);margin-bottom:34px}
+.nav a{display:block;font-weight:700;font-size:34px;line-height:.92;text-transform:uppercase;text-decoration:none}
+.nav a[aria-current=true]::before{content:"—";margin-right:10px;font-weight:400}
+.themebtn{position:fixed;right:calc(22px + var(--sr));top:calc(22px + var(--st));z-index:10;width:34px;height:34px;display:grid;place-items:center}
+.themebtn svg{width:22px;height:22px;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+:root[data-theme="dark"] .themebtn svg{transform:rotate(180deg)}
+:root.uk .themebtn{opacity:.35;pointer-events:none;cursor:not-allowed}
+
+/* mise en page = celle de la fenêtre projet */
+.page{padding-top:calc(230px + var(--st))}
+.modal-layout{display:grid;grid-template-columns:minmax(280px,.75fr) minmax(0,1.65fr);gap:6vw;padding:2vh calc(5vw + var(--sr)) 8vh 16vw;max-width:1900px;margin:0 auto}
+.modal-info{position:sticky;top:40px;align-self:start}
+.modal-number{color:var(--mute);font-size:13px;margin-bottom:22px}
+.modal-type{color:var(--mute);margin-bottom:12px}
+.modal-title{font-size:clamp(28px,3.1vw,60px);line-height:1.04;text-transform:uppercase;letter-spacing:-.035em;margin-bottom:26px;overflow-wrap:break-word;text-wrap:balance}
+.modal-desc{font-size:17px;line-height:1.45;max-width:35ch;margin-bottom:26px}
+.modal-details{display:grid;grid-template-columns:5.5em 1fr;gap:10px 14px;line-height:1.35;margin-bottom:28px}
+.modal-details:empty{display:none}
+.modal-details dt{color:var(--mute)}
+.modal-details dd{font-weight:600}
+.modal-nav{display:flex;gap:22px}
+.modal-nav a{color:var(--mute);padding:6px 0;text-decoration:none}
+.modal-nav a:hover{color:var(--ink)}
+.modal-nav-end{display:none}
+
+/* images + petites notes sur les côtés */
+.modal-blocks{display:flex;flex-direction:column;gap:18px;min-width:0}
+.b-img{margin:0}
+.b-img img{display:block;width:100%;height:auto;background:var(--line);cursor:zoom-in}
+.row{display:grid;gap:22px;align-items:start;margin-top:30px}
+.row.r{grid-template-columns:minmax(0,1fr) 170px}
+.row.l{grid-template-columns:170px minmax(0,1fr)}
+.row.l .b-img{order:2}.row.l .note{order:1}
+.note{padding-top:2px}
+.note h3{font-size:14px;font-weight:700;margin-bottom:8px}
+.note h3::before{content:"—";margin-right:8px;font-weight:400}
+.note p{color:var(--mute);font-size:13px;line-height:1.5}
+.ph{display:grid;place-items:center;aspect-ratio:16/9;border:1px dashed var(--mute);color:var(--mute);text-align:center;padding:20px;font-size:13px;background:var(--bg)}
+
+/* zoom plein écran */
+.lightbox{position:fixed;inset:0;z-index:150;background:var(--bg);display:none;align-items:center;justify-content:center;overflow:hidden;touch-action:none;cursor:zoom-in;user-select:none;-webkit-user-select:none}
+.lightbox.open{display:flex}
+.lightbox.zoomed{cursor:grab}.lightbox.drag{cursor:grabbing}
+.lightbox img{display:block;max-width:96vw;max-height:92vh;transform-origin:50% 50%;transition:transform .35s cubic-bezier(.2,.8,.2,1);will-change:transform;-webkit-user-drag:none}
+.lightbox.drag img{transition:none}
+.lb-close{position:absolute;z-index:2;top:calc(20px + var(--st));right:calc(24px + var(--sr));text-transform:uppercase;font-weight:600;padding:8px;cursor:pointer}
+.lb-hint{position:absolute;left:0;right:0;bottom:calc(16px + var(--sb));text-align:center;color:var(--mute);pointer-events:none;font-size:13px}
+
+/* téléphone / tablette portrait */
+@media(max-width:860px){
+  .brand{font-size:19px;left:calc(14px + var(--sl));top:calc(16px + var(--st))}
+  .nav{position:absolute;left:calc(48px + var(--sl));top:calc(16px + var(--st))}
+  .nav small{display:none}
+  .nav a{display:inline-block;font-size:15px;line-height:1;margin:0 16px 0 0;padding:8px 0;letter-spacing:.01em}
+  .nav a[aria-current=true]::before{content:none}
+  .nav a[aria-current=true]{text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:2px}
+  .themebtn{right:calc(10px + var(--sr));top:calc(11px + var(--st));width:32px;height:32px}
+  .themebtn svg{width:20px;height:20px}
+  .page{padding-top:calc(70px + var(--st))}
+  .modal-layout{display:block;padding:4px calc(18px + var(--sr)) 0 calc(18px + var(--sl))}
+  .modal-info{position:static;margin-bottom:26px}
+  .modal-info .modal-nav{display:none}
+  .modal-title{font-size:clamp(30px,10.2vw,52px);margin-bottom:18px;overflow-wrap:anywhere}
+  .modal-desc{font-size:16px;margin-bottom:20px}
+  .modal-details{margin-bottom:0}
+  .row,.row.r,.row.l{display:block;margin-top:14px}
+  .row.l .b-img,.row.l .note{order:0}
+  .note{margin-top:10px}
+  .modal-nav-end{display:flex;justify-content:space-between;padding:30px calc(18px + var(--sr)) calc(40px + var(--sb)) calc(18px + var(--sl))}
+  .modal-nav a{padding:12px 0}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+
+/* bouton fermer : retour à l'accueil */
+.closebtn{position:fixed;right:calc(70px + var(--sr));top:calc(22px + var(--st));z-index:10;height:34px;display:inline-flex;align-items:center;
+  text-transform:uppercase;font-weight:600;text-decoration:none;padding:0 4px}
+.closebtn:hover{opacity:.6}
+@media(max-width:860px){
+  .closebtn{right:calc(48px + var(--sr));top:calc(11px + var(--st));height:32px;font-size:13px}
+  .nav a{margin-right:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="brand">Mayliane Lefebvre ©</div>
+
+<nav class="nav" aria-label="Navigation">
+  <small>Menu</small>
+  <a href="index.html" aria-current="true">Travaux</a>
+  <a href="index.html?p=about">À propos</a>
+  <a href="index.html?p=contact">Contact</a>
+</nav>
+
+<a class="closebtn" href="index.html" aria-label="Fermer et revenir à l’accueil">Fermer ×</a>
+
+<button class="themebtn" id="themeBtn" aria-label="Changer de thème" title="Mode clair / sombre">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+</button>
+
+<main class="page">
+  <div class="modal-layout">
+    <aside class="modal-info">
+      <div class="modal-number">14 / 15</div>
+      <div class="modal-type">Wedding planner</div>
+      <h1 class="modal-title">Mariage franco-japonais</h1>
+      <p class="modal-desc">Un mariage entre deux cultures. Dans ce projet, nous avons endossé le rôle de wedding planners pour organiser un mariage franco-japonais de A à Z : choix du lieu de réception, repas, activités, DJ, décoration et gestion des différents devis.</p>
+      <dl class="modal-details"></dl>
+      <div class="modal-nav"><a href="la-carte-dinfidelite.html">← précédent</a><a href="grain-dore.html">suivant →</a></div>
+    </aside>
+
+    <div class="modal-blocks">
+      <figure class="b-img"><img src="02.jpg" alt="Mariage franco-japonais"></figure>
+      <section class="row r">
+        <figure class="b-img"><img src="mariage-franco-japonais-1.jpg" alt="Mariage franco-japonais – Les deux cultures" loading="lazy" decoding="async" onerror="miss(this)"></figure>
+        <aside class="note"><h3>Les deux cultures</h3><p>Traditions françaises et japonaises à réunir.</p></aside>
+      </section>
+      <section class="row l">
+        <figure class="b-img"><img src="mariage-franco-japonais-2.jpg" alt="Mariage franco-japonais – Le lieu et le repas" loading="lazy" decoding="async" onerror="miss(this)"></figure>
+        <aside class="note"><h3>Le lieu et le repas</h3><p>Choix du lieu de réception et du menu.</p></aside>
+      </section>
+      <section class="row r">
+        <figure class="b-img"><img src="mariage-franco-japonais-3.jpg" alt="Mariage franco-japonais – Activités, DJ, décoration" loading="lazy" decoding="async" onerror="miss(this)"></figure>
+        <aside class="note"><h3>Activités, DJ, décoration</h3><p>L’ambiance de la journée.</p></aside>
+      </section>
+      <section class="row l">
+        <figure class="b-img"><img src="mariage-franco-japonais-4.jpg" alt="Mariage franco-japonais – Les devis" loading="lazy" decoding="async" onerror="miss(this)"></figure>
+        <aside class="note"><h3>Les devis</h3><p>Budget et comparatif des prestataires.</p></aside>
+      </section>
+    </div>
+  </div>
+  <div class="modal-nav modal-nav-end"><a href="la-carte-dinfidelite.html">← précédent</a><a href="grain-dore.html">suivant →</a></div>
+</main>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image agrandie">
+  <button class="lb-close" id="lbClose">Fermer ×</button>
+  <img id="lbImg" alt="" draggable="false">
+  <div class="lb-hint">Appuyer pour zoomer · glisser pour déplacer</div>
+</div>
+
+<script>
+function miss(img){
+  var d=document.createElement("div");d.className="ph";
+  d.textContent="Ajoute ici l’image « "+img.getAttribute("src")+" »";
+  img.replaceWith(d);
+}
+var $=function(id){return document.getElementById(id)};
+$("themeBtn").addEventListener("click",function(){
+  if(document.documentElement.classList.contains("uk"))return;
+  var t=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",t);
+  var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",t==="dark"?"#121212":"#ebebea");
+  try{localStorage.setItem("theme",t)}catch(e){}
+});
+
+/* zoom plein écran (même comportement que sur la page d’accueil) */
+var lb=$("lightbox"),lbImg=$("lbImg"),LV=[1,2.5,5],S=1,X=0,Y=0,L=0,D=null;
+function clamp(){var w=lbImg.offsetWidth*S,h=lbImg.offsetHeight*S,mx=Math.max(0,(w-innerWidth)/2),my=Math.max(0,(h-innerHeight)/2);X=Math.max(-mx,Math.min(mx,X));Y=Math.max(-my,Math.min(my,Y))}
+function apply(){lbImg.style.transform="translate3d("+X+"px,"+Y+"px,0) scale("+S+")";lb.classList.toggle("zoomed",S>1)}
+function zoomTo(l,cx,cy){var s0=S,s1=LV[l],px=cx-innerWidth/2,py=cy-innerHeight/2;X=px-(px-X)*(s1/s0);Y=py-(py-Y)*(s1/s0);S=s1;L=l;if(s1===1){X=0;Y=0}clamp();apply()}
+function openLb(src,alt){lbImg.src=src;lbImg.alt=alt||"";S=1;X=0;Y=0;L=0;apply();lb.classList.add("open");$("lbClose").focus({preventScroll:true})}
+function closeLb(){lb.classList.remove("open","zoomed","drag");D=null}
+document.querySelector(".modal-blocks").addEventListener("click",function(e){var im=e.target.closest("img");if(im)openLb(im.currentSrc||im.src,im.alt)});
+$("lbClose").addEventListener("click",closeLb);
+lb.addEventListener("pointerdown",function(e){if(e.target.closest(".lb-close"))return;D={x:e.clientX,y:e.clientY,ox:X,oy:Y,m:false}});
+lb.addEventListener("pointermove",function(e){if(!D)return;var dx=e.clientX-D.x,dy=e.clientY-D.y;if(Math.abs(dx)+Math.abs(dy)>6)D.m=true;if(D.m&&S>1){lb.classList.add("drag");X=D.ox+dx;Y=D.oy+dy;clamp();apply()}});
+lb.addEventListener("pointerup",function(e){if(!D)return;var d=D;D=null;lb.classList.remove("drag");if(d.m)return;if(e.target!==lbImg){closeLb();return}zoomTo((L+1)%LV.length,e.clientX,e.clientY)});
+lb.addEventListener("wheel",function(e){e.preventDefault();if(S>1){X-=e.deltaX;Y-=e.deltaY;clamp();apply()}},{passive:false});
+addEventListener("keydown",function(e){
+  if(lb.classList.contains("open")){if(e.key==="Escape")closeLb();return}
+  if(e.key==="Escape")location.href="index.html";
+  if(e.key==="ArrowRight")location.href="grain-dore.html";
+  if(e.key==="ArrowLeft")location.href="la-carte-dinfidelite.html";
+});
+</script>
+</body>
+</html>
