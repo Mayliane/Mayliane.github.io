@@ -13,6 +13,9 @@
 if(t!=="dark"&&t!=="light")t="dark";document.documentElement.setAttribute("data-theme",t);
 try{if(localStorage.getItem("uk-mode")==="on")document.documentElement.classList.add("uk")}catch(e){}})();
 </script>
+<script>
+try{if(sessionStorage.getItem("flyIn")==="1"){sessionStorage.removeItem("flyIn");document.documentElement.classList.add("flying","hold")}}catch(e){}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
@@ -119,10 +122,21 @@ a{color:inherit}
   .nav a{margin-right:12px}
 }
 .wipe{position:fixed;inset:0;z-index:400;background:var(--bg);pointer-events:none}
+.fly{display:none;position:fixed;left:0;top:0;width:100%;height:100%;z-index:410;overflow:hidden;background:var(--line)}
+.fly img{display:block;width:100%;height:100%;object-fit:cover}
+.flying .fly{display:block}
+.fly.go{transition:left .75s cubic-bezier(.76,0,.24,1),top .75s cubic-bezier(.76,0,.24,1),width .75s cubic-bezier(.76,0,.24,1),height .75s cubic-bezier(.76,0,.24,1),opacity .5s ease}
+
+
+/* texte : flou -> net une fois l'image arrivée */
+.modal-info,.modal-blocks>section{transition:opacity 1s ease,filter 1s ease}
+.modal-info{transition-delay:.05s}.modal-blocks>section{transition-delay:.2s}
+html.hold .modal-info,html.hold .modal-blocks>section{opacity:0;filter:blur(12px)}
 </style>
 </head>
 <body>
 <div class="wipe" id="wipe"></div>
+<div class="fly" id="fly" aria-hidden="true"><img src="../01.jpg" alt=""></div>
 
 <div class="brand">Mayliane Lefebvre ©</div>
 
@@ -215,24 +229,61 @@ addEventListener("keydown",function(e){
 });
 </script>
 <script>
-/* transition : le rideau se lève à l'arrivée, et se ferme avant de quitter la page */
+/* transitions : la couverture grandit / rétrécit entre l'accueil et la page ; d'un projet à l'autre, elle s'agrandit puis laisse place à la couverture suivante */
 (function(){
-  var w=document.getElementById("wipe"),E="transform .6s cubic-bezier(.76,0,.24,1)";
+  var COVERS={"air-up": "../06.jpg", "avenix": "../14.jpg", "cartier": "../11.jpg", "cocon-deveil": "../05.jpg", "eclat": "../09.jpg", "grain-dore": "../03.jpg", "horizon-com-ii": "../13.jpg", "horizon-com": "../12.jpg", "la-carte-dinfidelite": "../01.jpg", "le-grain-dore": "../07.jpg", "maison-lima": "../04.jpg", "mariage-franco-japonais": "../02.jpg", "muddy-bites": "../08.jpg", "papeterie-neveu": "../15.jpg", "pastelie": "../10.jpg"};
+  var de=document.documentElement;
+  var w=document.getElementById("wipe"),f=document.getElementById("fly"),E="transform .6s cubic-bezier(.76,0,.24,1)";
   var reduced=window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches;
-  function reveal(){w.style.transition=E;w.style.transform="translateY(-100%)"}
+  var flying=de.classList.contains("flying");
+  var slug=decodeURIComponent(location.pathname.split("/").pop()).replace(/\.html$/,"");
+  function setRect(r){f.style.left=r.left+"px";f.style.top=r.top+"px";f.style.width=r.width+"px";f.style.height=r.height+"px"}
+  function hero(){return document.querySelector(".modal-blocks img")}
+  function heroReady(cb){
+    var im=hero(),done=false;
+    function fin(){if(done)return;done=true;cb(im)}
+    if(!im||im.complete)fin();else{im.addEventListener("load",fin);im.addEventListener("error",fin);setTimeout(fin,1500)}
+  }
+  function curtainReveal(){w.style.transition=E;w.style.transform="translateY(-100%)"}
+  function endHold(){de.classList.remove("hold")}
+  setTimeout(endHold,3500); /* sécurité */
+
   window.leave=function(url){
     if(reduced){location.href=url;return}
-    if(url.indexOf("index.html")>-1){
-      try{
-        sessionStorage.setItem("fromProject","1");
-        var s=decodeURIComponent(location.pathname.split("/").pop()).replace(/\.html$/,"");
-        sessionStorage.setItem("lastSlug",s);
-      }catch(e){}
+    var key=decodeURIComponent(url.split("?")[0]).replace(/^.*\//,"").replace(/\.html$/,"");
+    var toIndex=url.indexOf("index.html")>-1;
+    var next=(!toIndex&&COVERS[key])||null;
+    if(toIndex){try{sessionStorage.setItem("fromProject","1");sessionStorage.setItem("lastSlug",slug)}catch(e){}}
+    var im=hero();
+    if(((toIndex&&url.indexOf("?")<0)||next)&&im&&f){
+      /* la couverture grandit jusqu'au plein écran */
+      try{sessionStorage.setItem(toIndex?"flyOut":"flyIn","1")}catch(e){}
+      var r=im.getBoundingClientRect(),vis=r.bottom>0&&r.top<innerHeight;
+      f.classList.remove("go");f.style.opacity="1";f.style.display="block";
+      var n2=null;
+      if(next){
+        /* couverture du projet suivant, prête sous la première : fondu une fois en plein écran */
+        n2=new Image();n2.alt="";n2.src=next;
+        n2.style.cssText="position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s ease";
+        f.appendChild(n2);
+      }
+      setRect(vis?r:{left:innerWidth*.25,top:innerHeight*.25,width:innerWidth*.5,height:innerHeight*.5});
+      w.style.display="block";w.style.transition="none";w.style.transform="none";w.style.opacity="0";
+      void f.offsetWidth;f.classList.add("go");
+      requestAnimationFrame(function(){
+        setRect({left:0,top:0,width:innerWidth,height:innerHeight});
+        w.style.transition="opacity .5s ease";w.style.opacity="1";
+      });
+      if(n2)setTimeout(function(){n2.style.opacity="1"},720);
+      setTimeout(function(){location.href=url},n2?1040:780);
+      return;
     }
-    w.style.pointerEvents="auto";w.style.transition="none";w.style.transform="translateY(100%)";void w.offsetWidth;
+    w.style.display="block";w.style.opacity="1";w.style.pointerEvents="auto";
+    w.style.transition="none";w.style.transform="translateY(100%)";void w.offsetWidth;
     w.style.transition=E;w.style.transform="none";
     setTimeout(function(){location.href=url},620);
   };
+
   document.addEventListener("click",function(e){
     var a=e.target.closest&&e.target.closest("a[href]");
     if(!a||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||a.target)return;
@@ -240,9 +291,24 @@ addEventListener("keydown",function(e){
     if(/^(https?:|mailto:|tel:|#)/.test(u))return;
     e.preventDefault();leave(u);
   });
-  if(reduced){w.style.display="none"}
-  else{requestAnimationFrame(function(){requestAnimationFrame(reveal)})}
-  addEventListener("pageshow",function(e){if(e.persisted){w.style.transition="none";w.style.transform="translateY(-100%)";w.style.pointerEvents="none"}});
+
+  if(reduced){w.style.display="none";if(f)f.style.display="none";endHold()}
+  else if(flying&&f){
+    /* arrivée : l'image plein écran rétrécit jusqu'à sa place, puis les textes passent du flou au net */
+    heroReady(function(im){
+      requestAnimationFrame(function(){requestAnimationFrame(function(){
+        var r=im?im.getBoundingClientRect():null;
+        setRect({left:0,top:0,width:innerWidth,height:innerHeight});
+        void f.offsetWidth;f.classList.add("go");
+        w.style.transition="opacity .6s ease .1s";w.style.opacity="0";
+        if(r&&r.top<innerHeight-40&&r.bottom>0)setRect(r);else f.style.opacity="0";
+        setTimeout(endHold,450);
+        setTimeout(function(){f.style.display="none";w.style.display="none"},800);
+      })});
+    });
+  }
+  else{requestAnimationFrame(function(){requestAnimationFrame(curtainReveal)})}
+  addEventListener("pageshow",function(e){if(e.persisted){w.style.display="none";if(f)f.style.display="none";endHold()}});
 })();
 </script>
 <noscript><style>.wipe{display:none}</style></noscript>
