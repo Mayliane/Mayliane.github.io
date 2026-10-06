@@ -50,6 +50,12 @@ html .c-stamp{width:84px;padding:6px;background:#fff;outline:2px dashed rgba(11,
 :root.uk .pins-rose{display:block}
 @media(max-width:860px){.pins-rose{left:150px;bottom:22px;width:56px}}
 
+/* May : stickers en bas à gauche, à côté du numéro (invisible dans les autres modes) */
+.stickers-may{display:none;position:fixed;z-index:11;left:4.5vw;bottom:9vh;width:130px;height:auto;
+  transform:rotate(-6deg);pointer-events:none;user-select:none;-webkit-user-drag:none}
+:root.may-active .stickers-may{display:block}
+@media(max-width:860px){.stickers-may{left:150px;bottom:22px;width:64px}}
+
 /* May : intro avec « Transition pop.svg » (l'image est coupée en deux, haut/bas, comme le panneau) */
 html.may-active .loader.has-pop .ld-half{background-image:var(--pop-img);background-repeat:no-repeat;
   background-color:#000;background-size:var(--pop-w) var(--pop-h)}
@@ -166,6 +172,16 @@ html.may-active .loader.has-pop .ld-bot{background-position:var(--pop-x) var(--p
   pins.src = encodeURI(DIR + "pins rose.svg");
   pins.onerror = () => { pins.style.display = "none"; };
   document.body.appendChild(pins);
+
+  /* ---------------------------------------------------------------
+     MAY : stickers (affichés seulement en mode May, voir CSS)
+     --------------------------------------------------------------- */
+  const stickers = new Image();
+  stickers.className = "stickers-may";
+  stickers.alt = ""; stickers.draggable = false;
+  stickers.src = encodeURI(DIR + "stickers.svg");
+  stickers.onerror = () => { stickers.style.display = "none"; };
+  document.body.appendChild(stickers);
 
   /* ---------------------------------------------------------------
      MAY : intro avec « Transition pop.svg » (fichier à côté de index.html)
