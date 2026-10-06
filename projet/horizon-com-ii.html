@@ -7,7 +7,7 @@
 <title>Horizon Com II – Mayliane Lefebvre</title>
 <meta name="description" content="Seconde version, plus épurée, de la présentation de l’agence.">
 <meta property="og:title" content="Horizon Com II – Mayliane Lefebvre">
-<link rel="icon" href="favicon.ico">
+<link rel="icon" href="../favicon.ico">
 <script>
 (function(){var t=null;try{t=localStorage.getItem("theme")}catch(e){}
 if(t!=="dark"&&t!=="light")t="dark";document.documentElement.setAttribute("data-theme",t);
@@ -118,20 +118,22 @@ a{color:inherit}
   .closebtn{right:calc(48px + var(--sr));top:calc(11px + var(--st));height:32px;font-size:13px}
   .nav a{margin-right:12px}
 }
+.wipe{position:fixed;inset:0;z-index:400;background:var(--bg);pointer-events:none}
 </style>
 </head>
 <body>
+<div class="wipe" id="wipe"></div>
 
 <div class="brand">Mayliane Lefebvre ©</div>
 
 <nav class="nav" aria-label="Navigation">
   <small>Menu</small>
-  <a href="index.html" aria-current="true">Travaux</a>
-  <a href="index.html?p=about">À propos</a>
-  <a href="index.html?p=contact">Contact</a>
+  <a href="../index.html" aria-current="true">Travaux</a>
+  <a href="../index.html?p=about">À propos</a>
+  <a href="../index.html?p=contact">Contact</a>
 </nav>
 
-<a class="closebtn" href="index.html" aria-label="Fermer et revenir à l’accueil">Fermer ×</a>
+<a class="closebtn" href="../index.html" aria-label="Fermer et revenir à l’accueil">Fermer ×</a>
 
 <button class="themebtn" id="themeBtn" aria-label="Changer de thème" title="Mode clair / sombre">
   <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
@@ -149,7 +151,7 @@ a{color:inherit}
     </aside>
 
     <div class="modal-blocks">
-      <figure class="b-img"><img src="13.jpg" alt="Horizon Com II"></figure>
+      <figure class="b-img"><img src="../13.jpg" alt="Horizon Com II"></figure>
       <section class="row r">
         <figure class="b-img"><img src="horizon-com-ii-1.jpg" alt="Horizon Com II – Pourquoi une V2" loading="lazy" decoding="async" onerror="miss(this)"></figure>
         <aside class="note"><h3>Pourquoi une V2</h3><p>Ce qui a changé par rapport à la première version.</p></aside>
@@ -207,10 +209,42 @@ lb.addEventListener("pointerup",function(e){if(!D)return;var d=D;D=null;lb.class
 lb.addEventListener("wheel",function(e){e.preventDefault();if(S>1){X-=e.deltaX;Y-=e.deltaY;clamp();apply()}},{passive:false});
 addEventListener("keydown",function(e){
   if(lb.classList.contains("open")){if(e.key==="Escape")closeLb();return}
-  if(e.key==="Escape")location.href="index.html";
-  if(e.key==="ArrowRight")location.href="avenix.html";
-  if(e.key==="ArrowLeft")location.href="horizon-com.html";
+  if(e.key==="Escape")leave("../index.html");
+  if(e.key==="ArrowRight")leave("avenix.html");
+  if(e.key==="ArrowLeft")leave("horizon-com.html");
 });
 </script>
+<script>
+/* transition : le rideau se lève à l'arrivée, et se ferme avant de quitter la page */
+(function(){
+  var w=document.getElementById("wipe"),E="transform .6s cubic-bezier(.76,0,.24,1)";
+  var reduced=window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches;
+  function reveal(){w.style.transition=E;w.style.transform="translateY(-100%)"}
+  window.leave=function(url){
+    if(reduced){location.href=url;return}
+    if(url.indexOf("index.html")>-1){
+      try{
+        sessionStorage.setItem("fromProject","1");
+        var s=decodeURIComponent(location.pathname.split("/").pop()).replace(/\.html$/,"");
+        sessionStorage.setItem("lastSlug",s);
+      }catch(e){}
+    }
+    w.style.pointerEvents="auto";w.style.transition="none";w.style.transform="translateY(100%)";void w.offsetWidth;
+    w.style.transition=E;w.style.transform="none";
+    setTimeout(function(){location.href=url},620);
+  };
+  document.addEventListener("click",function(e){
+    var a=e.target.closest&&e.target.closest("a[href]");
+    if(!a||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||a.target)return;
+    var u=a.getAttribute("href");
+    if(/^(https?:|mailto:|tel:|#)/.test(u))return;
+    e.preventDefault();leave(u);
+  });
+  if(reduced){w.style.display="none"}
+  else{requestAnimationFrame(function(){requestAnimationFrame(reveal)})}
+  addEventListener("pageshow",function(e){if(e.persisted){w.style.transition="none";w.style.transform="translateY(-100%)";w.style.pointerEvents="none"}});
+})();
+</script>
+<noscript><style>.wipe{display:none}</style></noscript>
 </body>
 </html>
