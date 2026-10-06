@@ -76,12 +76,19 @@ html.may-active .loader.has-pop .ld-bot{background-position:var(--pop-x) var(--p
     if (!nav) return;
     const r = nav.getBoundingClientRect();
     const mobile = innerWidth <= 860;
-    const size = mobile ? 30 : 64;
-    let left = r.right + (mobile ? 14 : 28);
-    if (mobile) left = Math.min(left, innerWidth - 50 - size);   // reste à gauche du bouton clair/sombre
+    let size, left;
+    if (mobile) {                                   // téléphone : pas de place à gauche (nom vertical), on garde la droite
+      size = 30;
+      left = Math.min(r.right + 14, innerWidth - 50 - size);
+    } else {                                        // ordinateur : à gauche du menu
+      const gap = 28, brandZone = 64;               // brandZone = place prise par le nom vertical
+      size = Math.max(0, Math.min(64, r.left - brandZone - gap));
+      left = r.left - gap - size;
+    }
+    logo.style.display = size < 28 ? "none" : "";
     logo.style.width = logo.style.height = size + "px";
     logo.style.left = left + "px";
-    logo.style.top = (mobile ? r.top + (r.height - size) / 2 : r.top) + "px";
+    logo.style.top = (r.top + (r.height - size) / 2) + "px";   // centré sur la hauteur du menu
   }
   placeLogo();
   addEventListener("resize", placeLogo);
