@@ -29,7 +29,7 @@
   const FOLDER = "";
   const BG = "f1616a3c-1.svg";
   const DECOR = [
-    { file: "", pos: { left: "35vw",  top: "8px"     }, w: "270px", rot: -4 },
+    { file: "epingle.svg", pos: { left: "35vw",  top: "8px"     }, w: "270px", rot: -4 },
     { file: "",      pos: { right: "29vw", top: "5vh"     }, w: "145px", rot: 0,  float: true },
     { file: "",   pos: { left: "1.5vw", bottom: "21vh" }, w: "120px", rot: 18 },
     { file: "favicon.png",     pos: { right: "1.5vw", bottom: "4vh" }, w: "100px", rot: 8,  float: true,
