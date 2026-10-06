@@ -30,53 +30,34 @@
       {
         file: "",
         className: "d-pin",
-        pos: {
-          left: "35vw",
-          top: "9px"
-        },
+        pos: { left: "35vw", top: "9px" },
         w: "210px",
         rot: -3
       },
-
       {
         file: "",
         className: "d-star",
-        pos: {
-          right: "29vw",
-          top: "5vh"
-        },
+        pos: { right: "29vw", top: "5vh" },
         w: "150px",
         rot: 0,
         float: true
       },
-
       {
         file: "",
         className: "d-flower",
-        pos: {
-          left: "1.5vw",
-          bottom: "24vh"
-        },
+        pos: { left: "1.5vw", bottom: "24vh" },
         w: "92px",
         rot: 0,
         float: true,
-
         mobile: {
-          pos: {
-            right: "5vw",
-            top: "34vh"
-          },
+          pos: { right: "5vw", top: "34vh" },
           w: "64px"
         }
       },
-
       {
         file: "",
         className: "d-lips",
-        pos: {
-          right: "1.8vw",
-          bottom: "2.5vh"
-        },
+        pos: { right: "1.8vw", bottom: "2.5vh" },
         w: "120px",
         rot: 6
       }
@@ -884,7 +865,7 @@
 
   .may-btn {
     right: calc(10px + var(--sr));
-    top: calc(52px + var(--st);
+    top: calc(52px + var(--st));
 
     font-size: 17px;
 
@@ -944,36 +925,12 @@
      ================================================================ */
 
   function applyVars() {
-
-    root.style.setProperty(
-      "--may-bg",
-      CONFIG.colors.bg
-    );
-
-    root.style.setProperty(
-      "--may-ink",
-      CONFIG.colors.ink
-    );
-
-    root.style.setProperty(
-      "--may-red",
-      CONFIG.colors.red
-    );
-
-    root.style.setProperty(
-      "--may-pink",
-      CONFIG.colors.pink
-    );
-
-    root.style.setProperty(
-      "--may-yellow",
-      CONFIG.colors.yellow
-    );
-
-    root.style.setProperty(
-      "--may-paper",
-      CONFIG.colors.paper
-    );
+    root.style.setProperty("--may-bg", CONFIG.colors.bg);
+    root.style.setProperty("--may-ink", CONFIG.colors.ink);
+    root.style.setProperty("--may-red", CONFIG.colors.red);
+    root.style.setProperty("--may-pink", CONFIG.colors.pink);
+    root.style.setProperty("--may-yellow", CONFIG.colors.yellow);
+    root.style.setProperty("--may-paper", CONFIG.colors.paper);
   }
 
 
@@ -982,43 +939,23 @@
      ================================================================ */
 
   try {
-
     var saved = localStorage.getItem(KEY);
 
     if (saved === "on") {
-
       root.classList.add("may-active");
-
     } else if (saved === "off") {
-
       root.classList.remove("may-active");
-
     } else {
-
-      root.classList.toggle(
-        "may-active",
-        !!CONFIG.active
-      );
+      root.classList.toggle("may-active", !!CONFIG.active);
     }
-
   } catch (e) {
-
-    root.classList.toggle(
-      "may-active",
-      !!CONFIG.active
-    );
+    root.classList.toggle("may-active", !!CONFIG.active);
   }
-
 
   applyVars();
 
-
   /* Compatibilité avec l'ancien système */
-
-  root.classList.toggle(
-    "no-may",
-    !root.classList.contains("may-active")
-  );
+  root.classList.toggle("no-may", !root.classList.contains("may-active"));
 
 
   /* ================================================================
@@ -1029,101 +966,59 @@
     document.getElementById("mayModeBtn") ||
     document.querySelector(".may-btn");
 
-
   if (!btn) {
-
     btn = document.createElement("button");
-
     btn.className = "may-btn";
     btn.type = "button";
     btn.textContent = "May";
-
     document.body.appendChild(btn);
   }
 
-
   function sync() {
+    var on = root.classList.contains("may-active");
 
-    var on =
-      root.classList.contains("may-active");
-
-
-    btn.setAttribute(
-      "aria-pressed",
-      on ? "true" : "false"
-    );
-
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
 
     btn.setAttribute(
       "aria-label",
-      on
-        ? "Désactiver le mode May"
-        : "Activer le mode May"
+      on ? "Désactiver le mode May" : "Activer le mode May"
     );
 
-
-    btn.title =
-      on
-        ? "Mode May : activé"
-        : "Mode May : désactivé";
+    btn.title = on ? "Mode May : activé" : "Mode May : désactivé";
   }
 
+  btn.addEventListener("click", function () {
+    var on = !root.classList.contains("may-active");
 
-  btn.addEventListener(
-    "click",
-    function () {
+    root.classList.toggle("may-active", on);
+    root.classList.toggle("no-may", !on);
 
-      var on =
-        !root.classList.contains("may-active");
+    try { localStorage.setItem(KEY, on ? "on" : "off"); } catch (e) {}
 
-
-      root.classList.toggle(
-        "may-active",
-        on
-      );
-
-
-      root.classList.toggle(
-        "no-may",
-        !on
-      );
-
-
-      try {
-
-        localStorage.setItem(
-          KEY,
-          on ? "on" : "off"
-        );
-
-      } catch (e) {}
-
-
-      sync();
+    /* en quittant May : retour au mode normal sombre */
+    if (!on) {
+      root.setAttribute("data-theme", "dark");
+      try { localStorage.setItem("theme", "dark"); } catch (e) {}
+      var tm = document.querySelector('meta[name="theme-color"]');
+      if (tm) tm.setAttribute("content", "#121212");
+      var tb = document.getElementById("themeBtn");
+      if (tb) tb.setAttribute("aria-label", "Passer en mode clair");
     }
-  );
+
+    sync();
+  });
 
 
   /* ================================================================
      CALQUE DES DÉCORATIONS
      ================================================================ */
 
-  var layer =
-    document.createElement("div");
+  var layer = document.createElement("div");
 
-  layer.className =
-    "may-layer";
+  layer.className = "may-layer";
+  layer.setAttribute("aria-hidden", "true");
 
-  layer.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-
-
-  document.body.insertBefore(
-    layer,
-    document.body.firstChild
-  );
+  document.body.insertBefore(layer, document.body.firstChild);
 
 
   /* ================================================================
@@ -1131,64 +1026,37 @@
      ================================================================ */
 
   function place(el, cfg) {
-
     var mobile =
       window.matchMedia &&
-      window.matchMedia(
-        "(max-width:860px)"
-      ).matches;
-
+      window.matchMedia("(max-width:860px)").matches;
 
     el.style.left = "auto";
     el.style.right = "auto";
     el.style.top = "auto";
     el.style.bottom = "auto";
 
-
     if (mobile && !cfg.mobile) {
-
       el.style.display = "none";
-
       return;
     }
 
-
     el.style.display = "";
 
-
     var pos =
-      (
-        mobile &&
-        cfg.mobile &&
-        cfg.mobile.pos
-      ) ||
+      (mobile && cfg.mobile && cfg.mobile.pos) ||
       cfg.pos ||
       {};
 
-
-    Object.keys(pos).forEach(
-      function (key) {
-
-        el.style[key] = pos[key];
-
-      }
-    );
-
+    Object.keys(pos).forEach(function (key) {
+      el.style[key] = pos[key];
+    });
 
     el.style.width =
-      (
-        mobile &&
-        cfg.mobile &&
-        cfg.mobile.w
-      ) ||
+      (mobile && cfg.mobile && cfg.mobile.w) ||
       cfg.w ||
       "100px";
 
-
-    el.style.setProperty(
-      "--may-rot",
-      (cfg.rot || 0) + "deg"
-    );
+    el.style.setProperty("--may-rot", (cfg.rot || 0) + "deg");
   }
 
 
@@ -1196,100 +1064,57 @@
      CRÉATION DES DÉCORATIONS
      ================================================================ */
 
-  CONFIG.decor.forEach(
-    function (cfg) {
+  CONFIG.decor.forEach(function (cfg) {
+    var el = document.createElement("div");
 
-      var el =
-        document.createElement("div");
+    el.className =
+      "may-deco " +
+      (cfg.className || "") +
+      (cfg.float ? " may-float" : "");
 
+    var img = new Image();
 
-      el.className =
-        "may-deco " +
-        (cfg.className || "") +
-        (cfg.float ? " may-float" : "");
+    img.alt = "";
+    img.draggable = false;
+    img.decoding = "async";
+    img.src = CONFIG.folder + cfg.file;
 
+    img.onerror = function () {
+      el.style.display = "none";
+    };
 
-      var img =
-        new Image();
+    el.appendChild(img);
+    layer.appendChild(el);
 
+    place(el, cfg);
 
-      img.alt = "";
-      img.draggable = false;
-      img.decoding = "async";
-
-
-      img.src =
-        CONFIG.folder +
-        cfg.file;
-
-
-      img.onerror =
-        function () {
-
-          el.style.display = "none";
-        };
-
-
-      el.appendChild(img);
-
-
-      layer.appendChild(el);
-
-
-      place(el, cfg);
-
-
-      if (cfg.float) {
-
-        el.style.animationDuration =
-          cfg.duration || "8s";
-      }
-
+    if (cfg.float) {
+      el.style.animationDuration = cfg.duration || "8s";
     }
-  );
+  });
 
 
   /* ================================================================
      RESPONSIVE
      ================================================================ */
 
-  var mq =
-    window.matchMedia
-      ? window.matchMedia(
-          "(max-width:860px)"
-        )
-      : null;
-
+  var mq = window.matchMedia
+    ? window.matchMedia("(max-width:860px)")
+    : null;
 
   if (mq) {
-
-    var reflow =
-      function () {
-
-        [].forEach.call(
-          layer.querySelectorAll(
-            ".may-deco"
-          ),
-          function (el, i) {
-
-            place(
-              el,
-              CONFIG.decor[i]
-            );
-          }
-        );
-      };
-
+    var reflow = function () {
+      [].forEach.call(
+        layer.querySelectorAll(".may-deco"),
+        function (el, i) {
+          place(el, CONFIG.decor[i]);
+        }
+      );
+    };
 
     if (mq.addEventListener) {
-
-      mq.addEventListener(
-        "change",
-        reflow
-      );
-
+      mq.addEventListener("change", reflow);
     } else if (mq.addListener) {
-
       mq.addListener(reflow);
     }
   }
@@ -1300,78 +1125,35 @@
      ================================================================ */
 
   function ransom(el) {
-
     if (el.dataset.r) {
       return;
     }
 
-
     el.dataset.r = "1";
 
+    var text = el.textContent;
 
-    var text =
-      el.textContent;
-
-
-    el.setAttribute(
-      "aria-label",
-      text
-    );
-
-
+    el.setAttribute("aria-label", text);
     el.textContent = "";
-
 
     var i = 0;
 
-
-    for (
-      var k = 0;
-      k < text.length;
-      k++
-    ) {
-
-      var ch =
-        text.charAt(k);
-
+    for (var k = 0; k < text.length; k++) {
+      var ch = text.charAt(k);
 
       if (ch === " ") {
-
-        el.appendChild(
-          document.createTextNode(" ")
-        );
-
+        el.appendChild(document.createTextNode(" "));
         continue;
       }
 
-
-      var span =
-        document.createElement("span");
-
+      var span = document.createElement("span");
 
       span.textContent = ch;
-
-
-      span.className =
-        "rn r" +
-        ((i * 5 + 1) % 6);
-
-
-      span.style.setProperty(
-        "--rot",
-        ((i * 37) % 9 - 4) +
-        "deg"
-      );
-
-
-      span.setAttribute(
-        "aria-hidden",
-        "true"
-      );
-
+      span.className = "rn r" + ((i * 5 + 1) % 6);
+      span.style.setProperty("--rot", ((i * 37) % 9 - 4) + "deg");
+      span.setAttribute("aria-hidden", "true");
 
       el.appendChild(span);
-
 
       i++;
     }
@@ -1382,32 +1164,16 @@
      OBSERVATION DU PANNEAU
      ================================================================ */
 
-  var pin =
-    document.getElementById(
-      "panel-in"
-    );
-
+  var pin = document.getElementById("panel-in");
 
   if (pin) {
+    new MutationObserver(function () {
+      var h = pin.querySelector("h2");
 
-    new MutationObserver(
-      function () {
-
-        var h =
-          pin.querySelector("h2");
-
-
-        if (h) {
-          ransom(h);
-        }
-
+      if (h) {
+        ransom(h);
       }
-    ).observe(
-      pin,
-      {
-        childList: true
-      }
-    );
+    }).observe(pin, { childList: true });
   }
 
 
