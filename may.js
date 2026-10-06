@@ -153,7 +153,7 @@
 
 :root:not(.no-may) body {
   background:
-    url("may/Fond pop.svg")
+    url("Fond pop.svg")
     center center /
     cover
     no-repeat
@@ -574,7 +574,7 @@
 
 :root:not(.no-may) .panel {
   background:
-    url("may/Fond pop.svg")
+    url("Fond pop.svg")
     center center /
     cover
     no-repeat
