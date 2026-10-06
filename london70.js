@@ -6,8 +6,8 @@
    + mets le dossier  uk/  (les SVG) à côté de index.html.
 
    Un bouton « UK 70 » apparaît à côté du bouton « May » :
-     - clic sur « UK 70 » -> le mode Londres s'active (clic encore = retour au mode May)
-     - clic sur « May »    -> retour au mode May (ou tout éteindre si tu es déjà en May)
+     - clic sur « UK 70 » -> le mode Londres s'active (clic encore = retour au mode normal sombre)
+     - clic sur « May »    -> retour au mode normal sombre
 
    TES PROPRES IMAGES : remplace les fichiers du dossier uk/ (même nom),
    ou modifie / ajoute des lignes dans la liste DECOR ci-dessous.
@@ -263,10 +263,8 @@ ${PD} .uk-btn{border-color:#efece3;box-shadow:4px 4px 0 #efece3}
     btn.setAttribute("aria-label", on ? "Quitter le mode Londres 70" : "Activer le mode Londres 70");
     btn.title = on ? "Mode Londres 70 : activé" : "Mode Londres 70 : désactivé";
   }
-  let themeBeforeUK = null;
 
   function setThemeLightForUK() {
-    themeBeforeUK = root.getAttribute("data-theme") || "light";
     root.setAttribute("data-theme", "light");
     const themeBtn = document.getElementById("themeBtn");
     if (themeBtn) {
@@ -276,16 +274,18 @@ ${PD} .uk-btn{border-color:#efece3;box-shadow:4px 4px 0 #efece3}
     try { localStorage.setItem("theme", "light"); } catch (e) {}
   }
 
+  /* En quittant UK 70 : toujours retour au mode normal sombre */
   function restoreThemeAfterUK() {
-    const t = themeBeforeUK === "light" ? "dark" : "light";
-    root.setAttribute("data-theme", t);
+    root.setAttribute("data-theme", "dark");
+    const tm = document.querySelector('meta[name="theme-color"]');
+    if (tm) tm.setAttribute("content", "#121212");
     const themeBtn = document.getElementById("themeBtn");
     if (themeBtn) {
       themeBtn.removeAttribute("aria-disabled");
       themeBtn.removeAttribute("tabindex");
+      themeBtn.setAttribute("aria-label", "Passer en mode clair");
     }
-    try { localStorage.setItem("theme", t); } catch (e) {}
-    themeBeforeUK = null;
+    try { localStorage.setItem("theme", "dark"); } catch (e) {}
   }
 
   function setUK(on) {
@@ -307,7 +307,7 @@ ${PD} .uk-btn{border-color:#efece3;box-shadow:4px 4px 0 #efece3}
 
   btn.addEventListener("click", () => setUK(!root.classList.contains("uk")));
 
-  /* « May » pendant le mode Londres = retour au mode May (pas tout éteindre) */
+  /* « May » pendant le mode Londres = retour au mode normal sombre */
   document.addEventListener("click", e => {
     const m = e.target.closest && e.target.closest(".may-btn");
     if (m && root.classList.contains("uk") && !root.classList.contains("no-may")) {
