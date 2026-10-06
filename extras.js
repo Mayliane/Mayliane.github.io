@@ -51,7 +51,7 @@ html .c-stamp{width:84px;padding:6px;background:#fff;outline:2px dashed rgba(11,
 @media(max-width:860px){.pins-rose{left:150px;bottom:22px;width:56px}}
 
 /* UK70 : panneau en bas à droite (invisible dans les autres modes) */
-.panneau-uk{display:none;position:fixed;z-index:11;right:2.5vw;bottom:4vh;width:150px;height:auto;
+.panneau-uk{display:none;position:fixed;z-index:11;right:2.5vw;bottom:4vh;width:350px;height:auto;
   pointer-events:none;user-select:none;-webkit-user-drag:none}
 :root.uk .panneau-uk{display:block}
 @media(max-width:860px){.panneau-uk{right:4vw;bottom:62px;width:60px}}
