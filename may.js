@@ -148,12 +148,12 @@
    ================================================================ */
 
 /*
-   Fond pop.svg est utilisé uniquement lorsque May est actif.
+   fond pop.svg est utilisé uniquement lorsque May est actif.
 */
 
 :root:not(.no-may) body {
   background:
-    url("Fond pop.svg")
+    url("fond pop.svg")
     center center /
     cover
     no-repeat
@@ -574,7 +574,7 @@
 
 :root:not(.no-may) .panel {
   background:
-    url("Fond pop.svg")
+    url("fond pop.svg")
     center center /
     cover
     no-repeat
