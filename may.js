@@ -263,12 +263,7 @@
     active: false,
     folder: "may/",
     colors: {
-      bg: "#efece4",
-      ink: "#0b0b0b",
-      red: "#c8102e",
-      pink: "#ff3c8e",
-      yellow: "#ffd400",
-      paper: "#f6f3ec"
+      bg: "Fond pop.svg"
     },
     decor: [
       { file:"pin.svg",    className:"d-pin",    pos:{left:"35vw",top:"9px"},       w:"210px", rot:-3 },
