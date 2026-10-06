@@ -298,6 +298,8 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
 .mode-switch .may-btn:hover,.mode-switch .uk-btn:hover{transform:rotate(0deg) scale(1.06)}
 .mode-switch .uk-btn[aria-pressed="true"]{background:#ff3c8e;color:#0b0b0b;box-shadow:4px 4px 0 #0b0b0b}
 @media(max-width:860px){.mode-switch{top:calc(50px + var(--st));right:calc(8px + var(--sr));gap:7px}.mode-switch .may-btn,.mode-switch .uk-btn{font-size:15px;padding:6px 10px 3px}}
+/* ---------- transition entre l'accueil et les pages projet ---------- */
+.wipe{position:fixed;inset:0;z-index:300;background:var(--bg);transform:translateY(100%);pointer-events:none}
 </style>
 
 </head>
@@ -548,6 +550,21 @@ const slugIndex = h => {
 /* adresse de la page d'un projet : projet/<slug>.html */
 const pageOf = i => "projet/" + SLUGS[i] + ".html";
 
+/* rideau de transition : monte pour cacher l'accueil, puis la page projet le révèle */
+const wipe = document.createElement("div"); wipe.className = "wipe"; document.body.appendChild(wipe);
+const WIPE_EASE = "transform .6s cubic-bezier(.76,0,.24,1)";
+function go(url, i) {
+  if (REDUCED) { location.href = url; return; }
+  try { sessionStorage.setItem("lastSlug", SLUGS[i]); } catch (e) {}
+  wipe.style.pointerEvents = "auto";
+  wipe.style.transition = WIPE_EASE; wipe.style.transform = "none";
+  setTimeout(() => { location.href = url; }, 620);
+}
+/* bouton « précédent » du navigateur : on retire le rideau */
+addEventListener("pageshow", e => {
+  if (e.persisted) { wipe.style.transition = "none"; wipe.style.transform = "translateY(100%)"; wipe.style.pointerEvents = "none"; }
+});
+
 /* ---------- thème clair / sombre ---------- */
 const themeBtn = $("themeBtn");
 const themeMeta = document.querySelector('meta[name="theme-color"]');
@@ -615,7 +632,7 @@ let dragged = false;
 function activate(i) {
   if (dragged || !ready) return;
   const r = Math.round(cur);
-  if (Math.abs(wrap(i - r)) < .01 && Math.abs(target - cur) < .05) location.href = pageOf(i);
+  if (Math.abs(wrap(i - r)) < .01 && Math.abs(target - cur) < .05) go(pageOf(i), i);
   else goTo(i);
 }
 
@@ -984,7 +1001,15 @@ $("close").addEventListener("click", closePanel);
 /* ---------- intro : le personnage pousse le panneau, le nom apparaît, puis le panneau s'ouvre en deux ---------- */
 const initialIdx = slugIndex(location.hash);
 if (initialIdx >= 0) { location.replace(pageOf(initialIdx)); }   // ancien lien index.html#projet -> page du projet
-cur = target + SWEEP_FROM;                               // les cartes attendent en haut à droite, sous le panneau
+/* retour depuis une page projet : pas d'intro, on revient directement sur le projet quitté */
+let skipIntro = false;
+try {
+  if (sessionStorage.getItem("fromProject") === "1") {
+    sessionStorage.removeItem("fromProject"); skipIntro = true;
+    const k = SLUGS.indexOf(sessionStorage.getItem("lastSlug")); if (k >= 0) target = k;
+  }
+} catch (e) {}
+cur = target + (skipIntro ? 0 : SWEEP_FROM);                               // les cartes attendent en haut à droite, sous le panneau
 
 const loaderEl = $("loader"), ldPanels = $("ldPanels"), ldFig = $("ldFig"), ldNum = $("ldNum");
 const nameParts = String(CONFIG.name || "").trim().split(/\s+/);
@@ -1045,23 +1070,38 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
+/* index.html?p=about ou ?p=contact : ouvre le panneau demandé (liens du menu des pages projet) */
+function openFromQuery() {
+  const pp = new URLSearchParams(location.search).get("p");
+  if (pp === "about" || pp === "contact") {
+    document.querySelectorAll(".nav button").forEach(x => x.setAttribute("aria-current", x.dataset.go === pp));
+    openPanel(pp);
+  }
+}
+
+/* retour depuis une page projet : le rideau se lève et révèle directement le carrousel */
+function startReturn() {
+  loaderEl.classList.add("gone");
+  cur = target; ready = true; uiOn = true; document.body.classList.add("ui");
+  render(); kick();
+  wipe.style.transition = "none"; wipe.style.transform = "none"; void wipe.offsetWidth;
+  requestAnimationFrame(() => { wipe.style.transition = WIPE_EASE; wipe.style.transform = "translateY(-100%)"; });
+  setTimeout(() => { wipe.style.transition = "none"; wipe.style.transform = "translateY(100%)"; }, 750);
+  openFromQuery();
+}
+
 function openCurtain() {
   ldFig.style.opacity = 0;
   loaderEl.classList.add(REDUCED ? "fade" : "open");       // la ligne du haut monte, celle du bas descend
   if (REDUCED) { cur = target; ready = true; uiOn = true; document.body.classList.add("ui"); render(); }
   else { sweeping = true; sweepT = 0; }                    // les cartes arrivent en diagonale
   kick();
-  /* retour depuis une page projet : index.html?p=about ou ?p=contact ouvre le panneau demandé */
-  const pp = new URLSearchParams(location.search).get("p");
-  if (pp === "about" || pp === "contact") {
-    document.querySelectorAll(".nav button").forEach(x => x.setAttribute("aria-current", x.dataset.go === pp));
-    openPanel(pp);
-  }
+  openFromQuery();
   setTimeout(() => loaderEl.classList.add("gone"), REDUCED ? 600 : 1300);
 }
 
 /* on attend que la police du nom soit prête (1,5 s maximum) avant de lancer la poussée */
-Promise.race([
+if (skipIntro) startReturn(); else Promise.race([
   (document.fonts && document.fonts.load) ? document.fonts.load('1em "Gloock"') : Promise.resolve(),
   new Promise(r => setTimeout(r, 1500))
 ]).catch(() => {}).then(() => {
