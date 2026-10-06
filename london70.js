@@ -27,7 +27,7 @@
      Pour en ajouter : copie une ligne, change le nom du fichier.
      ================================================================= */
   const FOLDER = "";
-  const BG = "f1616a3c-1.svg";   // fond UK (dans le dossier uk/). "" = fond papier d'origine
+  const BG = "f1616a3c-1.svg";
   const DECOR = [
     { file: "safety-pin.svg", pos: { left: "35vw",  top: "8px"     }, w: "270px", rot: -4 },
     { file: "burst.svg",      pos: { right: "29vw", top: "5vh"     }, w: "145px", rot: 0,  float: true },
