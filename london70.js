@@ -29,12 +29,12 @@
   const FOLDER = "";
   const BG = "f1616a3c-1.svg";
   const DECOR = [
-    { file: "epingle.svg", pos: { left: "35vw",  top: "8px"     }, w: "270px", rot: -4 },
-    { file: "burst.svg",      pos: { right: "29vw", top: "5vh"     }, w: "145px", rot: 0,  float: true },
-    { file: "scissors.svg",   pos: { left: "1.5vw", bottom: "21vh" }, w: "120px", rot: 18 },
+    { file: "", pos: { left: "35vw",  top: "8px"     }, w: "270px", rot: -4 },
+    { file: "",      pos: { right: "29vw", top: "5vh"     }, w: "145px", rot: 0,  float: true },
+    { file: "",   pos: { left: "1.5vw", bottom: "21vh" }, w: "120px", rot: 18 },
     { file: "favicon.png",     pos: { right: "1.5vw", bottom: "4vh" }, w: "100px", rot: 8,  float: true,
       mobile: { pos: { right: "5vw", top: "36vh" }, w: "62px" } },
-    { file: "label.svg",      pos: { left: "39vw",  bottom: "2.5vh" }, w: "300px", rot: -3 }
+    { file: "",      pos: { left: "39vw",  bottom: "2.5vh" }, w: "300px", rot: -3 }
   ];
   /* ================================================================= */
 
