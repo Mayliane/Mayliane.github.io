@@ -436,6 +436,9 @@ const IMG_DIR = "";
 /* ---------------------------------------------------------------------
    PROJETS  (l'ordre ci-dessous = l'ordre dans le carrousel)
 
+   Un clic sur un projet ouvre sa page : projet/<slug>.html (ex. projet/air-up.html),
+   placée dans le dossier « projet » à côté de index.html.
+
    IMAGES : chaque projet a un champ  cover  qui indique son image de couverture.
    Numérotation de tes fichiers :
      01 carte d'infidélité · 02 mariage franco-japonais · 03 Grain Doré boulangerie · 04 Maison Lima
@@ -449,22 +452,11 @@ const IMG_DIR = "";
      desc    : courte description
      team    : équipe (laisse "" si aucune)
      cover   : image de couverture, ex. "04.jpg"
-     slug    : (optionnel) adresse du projet, ex. "air-up" -> tonsite.fr/#air-up
-               Sans slug, elle est créée à partir du titre.
-               Mets-en un si tu changes un titre et veux garder l'ancien lien.
+     slug    : (optionnel) nom de la page du projet, ex. "air-up" -> air-up.html
+               Sans slug, il est créé à partir du titre.
+               IMPORTANT : le nom du fichier .html doit correspondre au slug.
      details : (optionnel) lignes d'infos affichées dans la fenêtre, ex. { "Année":"2026", "Outils":"Canva" }
-     blocks  : (optionnel) contenu ajouté dans la fenêtre, sous l'image de couverture.
-
-   BLOCS DISPONIBLES (à mettre dans blocks:[ … ], dans l'ordre voulu) :
-     { heading: "Titre de section" }
-     { text: "Un paragraphe.\nUn 2e paragraphe (retour à la ligne = nouveau paragraphe)." }
-     { img: "ma-photo.jpg", caption: "Légende (optionnel)" }
-     { gallery: ["a.jpg", "b.jpg", "c.jpg", "d.jpg"] }            // grille de photos
-     { video: "ma-video.mp4" }                                      // vidéo envoyée avec le site
-     { youtube: "dQw4w9WgXcQ" }                                     // identifiant YouTube
-     { embed: "https://www.canva.com/design/xxx/view?embed" }       // Canva, Figma, Drive, PDF en ligne…
-     { link: "https://exemple.fr", label: "Voir le projet" }        // bouton lien
-   Les images (img et gallery) s'agrandissent au clic dans la fenêtre projet.
+     blocks  : (optionnel) contenu de l'ancienne fenêtre projet (plus utilisée : les pages .html la remplacent).
    --------------------------------------------------------------------- */
 const PROJECTS = [
   { title:"Maison Lima", type:"Création d’un produit", team:"", cover:"04.jpg",
@@ -553,6 +545,8 @@ const slugIndex = h => {
   try { s = decodeURIComponent(s); } catch (e) {}
   return SLUGS.indexOf(s.toLowerCase());
 };
+/* adresse de la page d'un projet : projet/<slug>.html */
+const pageOf = i => "projet/" + SLUGS[i] + ".html";
 
 /* ---------- thème clair / sombre ---------- */
 const themeBtn = $("themeBtn");
@@ -616,12 +610,12 @@ function nudge(v) {
 function goTo(i) { const r = Math.round(cur); target = r + wrap(i - r); kick(); }
 function kick() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } }
 
-/* clic : si le projet est au centre -> on l'ouvre, sinon on le ramène au centre */
+/* clic : si le projet est au centre -> on ouvre sa page, sinon on le ramène au centre */
 let dragged = false;
 function activate(i) {
   if (dragged || !ready) return;
   const r = Math.round(cur);
-  if (Math.abs(wrap(i - r)) < .01 && Math.abs(target - cur) < .05) openProject(i);
+  if (Math.abs(wrap(i - r)) < .01 && Math.abs(target - cur) < .05) location.href = pageOf(i);
   else goTo(i);
 }
 
@@ -748,7 +742,7 @@ addEventListener("keydown", e => {
 });
 addEventListener("resize", () => { render(); if (lbOpen()) { lbClamp(); lbApply(); } });
 
-/* ---------- fenêtre projet ---------- */
+/* ---------- fenêtre projet (ancienne version, conservée en secours) ---------- */
 let currentProject = 0, previousFocus = null, historyPushed = false;
 const modalLayout = $("modalLayout");
 
@@ -989,7 +983,7 @@ $("close").addEventListener("click", closePanel);
 
 /* ---------- intro : le personnage pousse le panneau, le nom apparaît, puis le panneau s'ouvre en deux ---------- */
 const initialIdx = slugIndex(location.hash);
-if (initialIdx >= 0) target = initialIdx;                // lien direct : le carrousel finira sur ce projet
+if (initialIdx >= 0) { location.replace(pageOf(initialIdx)); }   // ancien lien index.html#projet -> page du projet
 cur = target + SWEEP_FROM;                               // les cartes attendent en haut à droite, sous le panneau
 
 const loaderEl = $("loader"), ldPanels = $("ldPanels"), ldFig = $("ldFig"), ldNum = $("ldNum");
@@ -1054,10 +1048,15 @@ function frame(now) {
 function openCurtain() {
   ldFig.style.opacity = 0;
   loaderEl.classList.add(REDUCED ? "fade" : "open");       // la ligne du haut monte, celle du bas descend
-  if (initialIdx >= 0) openProject(initialIdx, { fromUrl: true });
   if (REDUCED) { cur = target; ready = true; uiOn = true; document.body.classList.add("ui"); render(); }
   else { sweeping = true; sweepT = 0; }                    // les cartes arrivent en diagonale
   kick();
+  /* retour depuis une page projet : index.html?p=about ou ?p=contact ouvre le panneau demandé */
+  const pp = new URLSearchParams(location.search).get("p");
+  if (pp === "about" || pp === "contact") {
+    document.querySelectorAll(".nav button").forEach(x => x.setAttribute("aria-current", x.dataset.go === pp));
+    openPanel(pp);
+  }
   setTimeout(() => loaderEl.classList.add("gone"), REDUCED ? 600 : 1300);
 }
 
