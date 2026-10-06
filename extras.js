@@ -50,6 +50,12 @@ html .c-stamp{width:84px;padding:6px;background:#fff;outline:2px dashed rgba(11,
 :root.uk .pins-rose{display:block}
 @media(max-width:860px){.pins-rose{left:150px;bottom:22px;width:56px}}
 
+/* UK70 : panneau en bas à droite (invisible dans les autres modes) */
+.panneau-uk{display:none;position:fixed;z-index:11;right:2.5vw;bottom:4vh;width:150px;height:auto;
+  pointer-events:none;user-select:none;-webkit-user-drag:none}
+:root.uk .panneau-uk{display:block}
+@media(max-width:860px){.panneau-uk{right:4vw;bottom:62px;width:60px}}
+
 /* May : stickers en bas à gauche, à côté du numéro (invisible dans les autres modes) */
 .stickers-may{display:none;position:fixed;z-index:11;left:4.5vw;bottom:9vh;width:130px;height:auto;
   transform:rotate(-6deg);pointer-events:none;user-select:none;-webkit-user-drag:none}
@@ -172,6 +178,16 @@ html.may-active .loader.has-pop .ld-bot{background-position:var(--pop-x) var(--p
   pins.src = encodeURI(DIR + "pins rose.svg");
   pins.onerror = () => { pins.style.display = "none"; };
   document.body.appendChild(pins);
+
+  /* ---------------------------------------------------------------
+     UK70 : panneau en bas à droite (affiché seulement en UK70, voir CSS)
+     --------------------------------------------------------------- */
+  const panneau = new Image();
+  panneau.className = "panneau-uk";
+  panneau.alt = ""; panneau.draggable = false;
+  panneau.src = encodeURI(DIR + "panneau.png");
+  panneau.onerror = () => { panneau.style.display = "none"; };
+  document.body.appendChild(panneau);
 
   /* ---------------------------------------------------------------
      MAY : stickers (affichés seulement en mode May, voir CSS)
