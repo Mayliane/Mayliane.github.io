@@ -53,7 +53,7 @@
      --------------------------------------------------------------- */
   const P  = "html:root.uk:not(.no-may)";                       // mode Londres actif
   // UK 70 est toujours en clair : le mode sombre n'est jamais utilisé ici.
-  const PD = 'html:root.uk[data-theme="dark"]:not(.no-may)';    // compatibilité (désactivée pendant UK)
+  const PD = 'html:root.uk[data-theme="white"]:not(.no-may)';    // compatibilité (désactivée pendant UK)
   const SPECK = "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='6' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  9 0 0 0 -5.6'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")";
   const TARTAN = "repeating-linear-gradient(90deg,rgba(0,0,0,.55) 0 9px,transparent 9px 26px,rgba(190,255,60,.5) 26px 28px,transparent 28px 40px)," +
                  "repeating-linear-gradient(0deg,rgba(0,0,0,.55) 0 9px,transparent 9px 26px,rgba(190,255,60,.5) 26px 28px,transparent 28px 40px),#b3121f";
