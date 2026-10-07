@@ -83,6 +83,16 @@
     return true;
   }
 
+  /* joue `fn` dès que le contexte audio tourne (arrivée sur une page : le navigateur peut tarder) */
+  function whenReady(fn) {
+    if (!enabled || !ensure()) return;
+    if (ctx.state === "running") { fn(); return; }
+    let done = false;
+    const go = () => { if (!done && enabled && ctx.state === "running") { done = true; fn(); } };
+    try { Promise.resolve(ctx.resume()).then(go); } catch (e) {}
+    setTimeout(() => { done = true; }, 1200);   // passé ce délai, le son n'aurait plus de sens
+  }
+
   function out(node, send, pan) {
     let n = node;
     if (pan && ctx.createStereoPanner) { const p = ctx.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, pan)); n.connect(p); n = p; }
@@ -160,20 +170,18 @@
   const SEMI = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33];   // pentatonique majeure
   const hz = (s, base) => (base || 220) * Math.pow(2, s / 12);            // départ : La3
   const mode = () => root.classList.contains("uk") ? "uk" : root.classList.contains("may-active") ? "may" : "base";
+  let lastIdx = -1;
   const vel = () => 0.85 + Math.random() * 0.3;                            // vélocité légèrement variable
 
   const S = {
-    /* changement de projet : une note par projet */
+    /* changement de projet : une page qui se tourne (le sens suit la direction du carrousel) */
     tick(i) {
-      const m = mode(), n = SEMI[i % SEMI.length], v = vel();
-      if (m === "uk") {
-        /* dactylo / photocopieuse : clic sec, sans note */
-        tick({ f: 2600, body: 180 + (i % 5) * 14, v: 0.09 * v });
-      } else if (m === "may") {
-        voice({ f: hz(n, 330) , parts: TINE, dur: 0.32, v: 0.11 * v, lp: 6500, rev: 0.28, pan: (i % 7 - 3) / 12 });
-      } else {
-        voice({ f: hz(n, 220) * 2, parts: MALLET, dur: 0.5, v: 0.12 * v, a: 0.004, lp: 5000, rev: 0.4, pan: (i % 7 - 3) / 14 });
-      }
+      const m = mode(), v = vel(), dir = (typeof i === "number" && lastIdx >= 0) ? (((i - lastIdx + 15) % 15) <= 7 ? 1 : -1) : 1;
+      lastIdx = typeof i === "number" ? i : lastIdx;
+      const bright = m === "may" ? 1.25 : m === "uk" ? 0.9 : 1, pan = dir * 0.12;
+      /* un seul froissé de papier, court et aérien : une page qu'on feuillette */
+      noise({ f0: (dir > 0 ? 2800 : 4600) * bright, f1: (dir > 0 ? 5200 : 2400) * bright, q: 0.6, dur: 0.11, a: 0.025, v: 0.04 * v, pan: pan });
+      noise({ f0: 7000, ft: "highpass", q: 0.4, dur: 0.07, a: 0.02, v: 0.009 * v, at: 0.015 });
     },
     /* survol d'une carte : presque imperceptible */
     hover() {
@@ -181,17 +189,20 @@
       if (m === "uk") noise({ f0: 5000, ft: "highpass", dur: 0.02, v: 0.025, a: 0.002 });
       else noise({ f0: 4200, q: 2.5, dur: 0.03, v: 0.022, a: 0.004, pan: (Math.random() - 0.5) * 0.4 });
     },
-    /* ouverture d'un projet : souffle qui monte puis s'éteint, calé sur la transition (~0,75 s) */
+    /* départ (ouverture d'un projet, sortie, projet suivant) : souffle d'air très doux qui gonfle puis s'éteint (~0,7 s) */
     whoosh() {
-      const m = mode();
-      if (m === "uk") {
-        noise({ f0: 600, f1: 2400, q: 1.1, dur: 0.72, a: 0.2, v: 0.12, peak: 0.55, rev: 0.1 });
-        thud({ f: 90, to: 55, v: 0.16, at: 0.02 });
-      } else {
-        noise({ f0: 220, f1: 3400, q: 0.6, dur: 0.74, a: 0.3, v: 0.16, peak: 0.55, rev: 0.3 });
-        noise({ f0: 2500, f1: 7000, ft: "highpass", q: 0.5, dur: 0.6, a: 0.3, v: 0.02, at: 0.05, rev: 0.2 });
-        voice({ f: 70, to: 110, parts: [[1, 1, 1]], dur: 0.7, a: 0.3, v: 0.1, lp: 300, rev: 0.05 });
-      }
+      const m = mode(), q = m === "uk" ? 1.1 : 0.45;
+      noise({ f0: 160, f1: 1700, q, dur: 0.72, a: 0.34, v: 0.075, peak: 0.5, rev: 0.4 });
+      noise({ f0: 900, f1: 2600, q: 0.5, dur: 0.6, a: 0.3, v: 0.03, at: 0.05, rev: 0.45, pan: 0.1 });
+      voice({ f: m === "uk" ? 110 : 196, to: m === "uk" ? 140 : 262, parts: [[1, 1, 1], [2, 0.2, 0.7]], dur: 0.7, a: 0.35, v: 0.032, lp: 700, rev: 0.45 });
+    },
+    /* arrivée : le souffle se pose, même douceur en sens inverse + petit appui feutré */
+    settle() {
+      const m = mode(), q = m === "uk" ? 1.1 : 0.45;
+      noise({ f0: 1900, f1: 170, q, dur: 0.8, a: 0.12, v: 0.07, rev: 0.45 });
+      noise({ f0: 2600, f1: 900, q: 0.5, dur: 0.6, a: 0.1, v: 0.025, rev: 0.45, pan: -0.1 });
+      voice({ f: 262, to: 196, parts: [[1, 1, 1], [2, 0.2, 0.7]], dur: 0.75, a: 0.12, v: 0.03, lp: 700, rev: 0.5 });
+      thud({ f: 95, to: 58, v: 0.08, dur: 0.3, at: 0.38, lp: 300, rev: 0.15 });
     },
     /* ouverture / fermeture À propos & Contact */
     open() {
@@ -258,16 +269,20 @@ body:not(.ui) .snd{opacity:0;pointer-events:none}
 @media(prefers-reduced-motion:reduce){.snd[aria-pressed="true"] .snd-bars i{animation:none;height:8px}}
 @media(max-width:860px){.snd{bottom:calc(12px + var(--sb,0px))}}
 `;
-  const st = document.createElement("style");
-  st.textContent = css;
-  document.head.appendChild(st);
-
-  const btn = document.createElement("button");
-  btn.className = "snd"; btn.type = "button"; btn.id = "soundBtn";
-  btn.innerHTML = '<span class="snd-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="snd-t"></span>';
-  document.body.appendChild(btn);
+  const isHome = !!$("stage");           // les pages projet n'ont pas de bouton : elles suivent le choix fait sur l'accueil
+  let btn = null;
+  if (isHome) {
+    const st = document.createElement("style");
+    st.textContent = css;
+    document.head.appendChild(st);
+    btn = document.createElement("button");
+    btn.className = "snd"; btn.type = "button"; btn.id = "soundBtn";
+    btn.innerHTML = '<span class="snd-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="snd-t"></span>';
+    document.body.appendChild(btn);
+  }
 
   function paint() {
+    if (!btn) return;
     btn.setAttribute("aria-pressed", enabled ? "true" : "false");
     btn.setAttribute("aria-label", enabled ? "Couper le son" : "Activer le son");
     btn.querySelector(".snd-t").textContent = enabled ? LABEL_ON : LABEL_OFF;
@@ -286,7 +301,7 @@ body:not(.ui) .snd{opacity:0;pointer-events:none}
       master.gain.setTargetAtTime(0, ctx.currentTime, 0.03);
     }
   }
-  btn.addEventListener("click", () => setEnabled(!enabled));
+  if (btn) btn.addEventListener("click", () => setEnabled(!enabled));
   paint();
 
   /* le navigateur exige un geste de l'utilisateur : on débloque au premier appui */
@@ -301,6 +316,23 @@ body:not(.ui) .snd{opacity:0;pointer-events:none}
   /* ---------------------------------------------------------------
      BRANCHEMENTS SUR LE SITE
      --------------------------------------------------------------- */
+
+  /* ----- PAGES PROJET : entrée et sortie ----- */
+  if (!isHome) {
+    /* arrivée (depuis l'accueil, un autre projet…) */
+    if (!matchMedia("(prefers-reduced-motion:reduce)").matches) whenReady(S.settle);
+    /* sortie : fermer, projet suivant/précédent */
+    if (typeof window.leave === "function") {
+      const baseLeave = window.leave;
+      window.leave = function () { S.whoosh(); return baseLeave.apply(this, arguments); };
+    }
+    return;
+  }
+
+  /* ----- ACCUEIL ----- */
+  /* retour depuis un projet : le souffle se pose sur le carrousel */
+  try { if (document.referrer.indexOf("/projet/") > -1 && !matchMedia("(prefers-reduced-motion:reduce)").matches) whenReady(S.settle); } catch (e) {}
+
   /* 1. changement de projet : on écoute le gros numéro (limité : pas de mitraillette en défilement rapide) */
   const num = $("num");
   let lastTick = 0;
