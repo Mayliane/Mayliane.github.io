@@ -4,13 +4,13 @@
    À mettre tout en bas de index.html ET des pages projet :
        <script src="sound.js"></script>
 
-   2 sons seulement, jamais superposés :
-   - clic  : un seul petit clic par élément cliqué (hauteur légèrement variable)
-   - papier: un bruit de papier au changement de projet
-             (défilement du carrousel, projet suivant / précédent)
-   Pas de survol, pas de swoosh.
+   3 sons, jamais superposés :
+   - clic   : un seul petit clic par élément cliqué (hauteur légèrement variable)
+   - swoosh : ouverture et sortie d'un projet (à la place du clic)
+   - papier : défilement du carrousel
+   Pas de survol.
 
-   Test console : __sfx.click(), __sfx.paper()
+   Test console : __sfx.click(), __sfx.whoosh(), __sfx.paper()
    ===================================================================== */
 (function () {
   "use strict";
@@ -70,12 +70,19 @@
   }
 
   /* ---------------- LES DEUX SONS ---------------- */
-  let lastPaper = 0;
+  let lastPaper = 0, lastWhoosh = 0;
   const S = {
     click() {
       if (!ready()) return;
       const hz = 1800 + Math.random() * 3200;          // plus ou moins aigu
       burst(hz, hz * 0.8, 3, 0.03, 0.001, 0.16);
+    },
+    whoosh() {
+      const now = performance.now();
+      if (now - lastWhoosh < 300) return;      // jamais deux fois d'affilée
+      lastWhoosh = now;
+      if (!ready()) return;
+      burst(500, 3000, 0.6, 0.5, 0.2, 0.14);
     },
     paper() {
       if (!ready()) return;
@@ -152,19 +159,32 @@ body:not(.ui) .snd{opacity:0;pointer-events:none}
     if (!t || !t.closest || t.closest("#soundBtn")) return;
     const el = t.closest(CLICKABLE);
     if (!el) return;
+    if (performance.now() - lastWhoosh < 400) return;
 
-    /* page projet : lien vers un autre projet = papier, tout le reste = clic */
-    const a = el.closest("a[href]");
-    if (!isHome && a && /\/projet\//.test(a.getAttribute("href") || "")) { S.paper(); return; }
+    /* page projet : fermer / autre projet = swoosh, le reste = clic */
+    if (!isHome) {
+      const a = el.closest("a[href]");
+      const href = a ? (a.getAttribute("href") || "") : "";
+      if (a && href && href.charAt(0) !== "#" && !/^(mailto|tel):/.test(href)) { S.whoosh(); return; }
+      S.click();
+      return;
+    }
 
-    /* accueil : un clic sur une carte peut faire défiler (papier) ou ouvrir (clic) -> on attend de voir */
-    if (isHome && el.classList.contains("card")) {
+    /* accueil : carte = défilement (papier) ou ouverture (swoosh) -> on attend de voir */
+    if (el.classList.contains("card")) {
       const t0 = performance.now();
-      setTimeout(() => { if (lastPaper < t0) S.click(); }, 90);
+      setTimeout(() => { if (lastPaper < t0) S.whoosh(); }, 90);
       return;
     }
     S.click();
   }, true);
+
+  /* si le site ouvre / ferme un projet par une fonction, on la double du swoosh */
+  ["go", "leave"].forEach(name => {
+    if (typeof window[name] !== "function") return;
+    const base = window[name];
+    window[name] = function () { S.whoosh(); return base.apply(this, arguments); };
+  });
 
   /* défilement du carrousel : on lit le gros numéro */
   if (isHome) {
