@@ -241,33 +241,51 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     back.addEventListener("touchmove", e => e.preventDefault(), { passive: false });
   }
 
-  /* ---- boutons de mode : on mesure leur centre réel et on les recentre sur l'écran ---- */
-  const ms = document.querySelector(".mode-switch");
-  if (ms) {
-    const landscape = () => matchMedia("(max-height:520px) and (orientation:landscape)").matches;
-    let raf = 0;
-    const centerModes = () => {
-      ms.style.translate = "";
-      if (innerWidth > 860 || landscape()) return;
-      let l = Infinity, r = -Infinity;
-      Array.prototype.forEach.call(ms.children, k => {
-        const b = k.getBoundingClientRect();
-        if (b.width > 0 && b.height > 0) { l = Math.min(l, b.left); r = Math.max(r, b.right); }
-      });
-      if (l === Infinity) return;
-      const dx = document.documentElement.clientWidth / 2 - (l + r) / 2;
-      if (Math.abs(dx) > 0.5) ms.style.translate = dx + "px 0";
-    };
-    const soon = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(centerModes); };
-    soon();
-    [300, 1000, 2500].forEach(t => setTimeout(soon, t));          // après l'intro et le chargement des polices
-    addEventListener("load", soon);
-    addEventListener("resize", soon);
-    addEventListener("orientationchange", () => setTimeout(soon, 250));
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(soon);
-    new MutationObserver(soon).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });  // changement de mode
-    if (window.ResizeObserver) new ResizeObserver(soon).observe(ms);
+  /* ---- logo + boutons de mode : on mesure leur centre réel et on les recentre sur l'écran ---- */
+  const brand = document.querySelector(".brand");
+  const modes = document.querySelector(".mode-switch");
+  const landscape = () => matchMedia("(max-height:520px) and (orientation:landscape)").matches;
+
+  /* bornes visibles : le texte pour le logo, les boutons pour les modes */
+  function bounds(el, isText) {
+    let l = Infinity, r = -Infinity;
+    const add = b => { if (b.width > 0 && b.height > 0) { l = Math.min(l, b.left); r = Math.max(r, b.right); } };
+    if (isText) {
+      const rg = document.createRange(); rg.selectNodeContents(el); add(rg.getBoundingClientRect());
+      if (l === Infinity) add(el.getBoundingClientRect());
+    } else {
+      Array.prototype.forEach.call(el.children, k => add(k.getBoundingClientRect()));
+      if (l === Infinity) add(el.getBoundingClientRect());
+    }
+    return l === Infinity ? null : [l, r];
   }
+
+  function centerOne(el, isText, skipLandscape) {
+    if (!el) return;
+    el.style.translate = "";
+    if (innerWidth > 860 || (skipLandscape && landscape())) return;
+    const bd = bounds(el, isText);
+    if (!bd) return;
+    const dx = document.documentElement.clientWidth / 2 - (bd[0] + bd[1]) / 2;
+    if (Math.abs(dx) > 0.5) el.style.translate = dx + "px 0";
+  }
+
+  let raf = 0;
+  const recenter = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => {
+    centerOne(brand, true, false);      // le logo reste centré aussi en paysage
+    centerOne(modes, false, true);      // les modes passent à droite en paysage
+  }); };
+
+  recenter();
+  [300, 1000, 2500].forEach(t => setTimeout(recenter, t));          // après l'intro et le chargement des polices
+  addEventListener("load", recenter);
+  addEventListener("resize", recenter);
+  addEventListener("orientationchange", () => setTimeout(recenter, 250));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(recenter);
+  const mo = new MutationObserver(recenter);
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });   // changement de mode / thème
+  mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });              // fin de l'intro
+  if (window.ResizeObserver) [brand, modes].forEach(el => { if (el) new ResizeObserver(recenter).observe(el); });
 
   /* ---- clavier mobile : le champ actif reste visible dans la page Contact ---- */
   document.addEventListener("focusin", e => {
