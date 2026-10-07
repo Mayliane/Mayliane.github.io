@@ -55,13 +55,17 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   html.menu-open .menu-btn i:nth-child(2){top:21.5px;transform:rotate(-45deg)}
   body:not(.ui) .menu-btn{opacity:0;pointer-events:none}
 
-  /* logo : centré, sur la même ligne que le menu et le bouton thème */
+  /* logo : horizontal (il était vertical), centré entre le bouton menu et le bouton thème */
   ${R} .brand{
-    position:fixed;top:calc(6px + var(--st,0px));left:0;right:0;bottom:auto;
-    margin:0 auto;width:max-content;max-width:calc(100% - 110px);
-    height:44px;display:flex;align-items:center;justify-content:center;
-    text-align:center;white-space:nowrap
+    position:fixed;top:calc(6px + var(--st,0px));bottom:auto;
+    left:calc(52px + var(--sl,0px));right:calc(52px + var(--sr,0px));
+    margin:0;width:auto;max-width:none;height:44px;
+    writing-mode:horizontal-tb;text-orientation:mixed;transform:none;rotate:none;translate:none;
+    display:block;line-height:44px;text-align:center;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    font-size:15px;letter-spacing:.08em
   }
+  ${R} .brand *{writing-mode:horizontal-tb;transform:none;rotate:none}
   ${R} .themebtn{width:44px;height:44px;right:calc(4px + var(--sr,0px));top:calc(6px + var(--st,0px))}
 
   /* boutons de mode : centrés sous le logo */
@@ -138,7 +142,7 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
 /* petits écrans (≤ 400 px) */
 @media(max-width:400px){
-  ${R} .brand{font-size:17px}
+  ${R} .brand{font-size:14px;letter-spacing:.06em}
   ${R} .nav button{font-size:23px}
   ${R} .counter b{font-size:72px}
   ${R} .item .ttl{font-size:23px}
@@ -235,6 +239,34 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     nav.addEventListener("touchend", () => { y0 = null; }, { passive: true });
     /* le fond ne fait pas défiler la page derrière */
     back.addEventListener("touchmove", e => e.preventDefault(), { passive: false });
+  }
+
+  /* ---- boutons de mode : on mesure leur centre réel et on les recentre sur l'écran ---- */
+  const ms = document.querySelector(".mode-switch");
+  if (ms) {
+    const landscape = () => matchMedia("(max-height:520px) and (orientation:landscape)").matches;
+    let raf = 0;
+    const centerModes = () => {
+      ms.style.translate = "";
+      if (innerWidth > 860 || landscape()) return;
+      let l = Infinity, r = -Infinity;
+      Array.prototype.forEach.call(ms.children, k => {
+        const b = k.getBoundingClientRect();
+        if (b.width > 0 && b.height > 0) { l = Math.min(l, b.left); r = Math.max(r, b.right); }
+      });
+      if (l === Infinity) return;
+      const dx = document.documentElement.clientWidth / 2 - (l + r) / 2;
+      if (Math.abs(dx) > 0.5) ms.style.translate = dx + "px 0";
+    };
+    const soon = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(centerModes); };
+    soon();
+    [300, 1000, 2500].forEach(t => setTimeout(soon, t));          // après l'intro et le chargement des polices
+    addEventListener("load", soon);
+    addEventListener("resize", soon);
+    addEventListener("orientationchange", () => setTimeout(soon, 250));
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(soon);
+    new MutationObserver(soon).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });  // changement de mode
+    if (window.ResizeObserver) new ResizeObserver(soon).observe(ms);
   }
 
   /* ---- clavier mobile : le champ actif reste visible dans la page Contact ---- */
