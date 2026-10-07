@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://mayliane.github.io//</loc>
-    <lastmod>2026-10-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
+    <loc>https://mayliane.github.io/</loc>
+    <lastmod>2026-10-07</lastmod>
+  </url>
+  <url><loc>https://mayliane.github.io/projet/maison-lima.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/cocon-deveil.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/air-up.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/le-grain-dore.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/muddy-bites.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/eclat.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/pastelie.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/cartier.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/horizon-com.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/horizon-com-ii.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/avenix.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/papeterie-neveu.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/la-carte-dinfidelite.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/mariage-franco-japonais.html</loc></url>
+  <url><loc>https://mayliane.github.io/projet/grain-dore.html</loc></url>
+  <url>
+    <loc>https://mayliane.github.io/mentions-legales.html</loc>
   </url>
   <url>
-    <loc>https://mayliane.github.io//mentions-legales.html</loc>
-    <lastmod>2026-10-03</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://mayliane.github.io//cgu.html</loc>
-    <lastmod>2026-10-03</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://mayliane.github.io/cgu.html</loc>
   </url>
 </urlset>
