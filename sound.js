@@ -189,64 +189,39 @@
       if (m === "uk") noise({ f0: 5000, ft: "highpass", dur: 0.02, v: 0.025, a: 0.002 });
       else noise({ f0: 4200, q: 2.5, dur: 0.03, v: 0.022, a: 0.004, pan: (Math.random() - 0.5) * 0.4 });
     },
-    /* départ (ouverture d'un projet, sortie, projet suivant) : souffle d'air très doux qui gonfle puis s'éteint (~0,7 s) */
+    /* départ (ouverture d'un projet, sortie) : petit souffle de papier, doux et rapide */
     whoosh() {
-      const m = mode(), q = m === "uk" ? 1.1 : 0.45;
-      noise({ f0: 160, f1: 1700, q, dur: 0.72, a: 0.34, v: 0.075, peak: 0.5, rev: 0.4 });
-      noise({ f0: 900, f1: 2600, q: 0.5, dur: 0.6, a: 0.3, v: 0.03, at: 0.05, rev: 0.45, pan: 0.1 });
-      voice({ f: m === "uk" ? 110 : 196, to: m === "uk" ? 140 : 262, parts: [[1, 1, 1], [2, 0.2, 0.7]], dur: 0.7, a: 0.35, v: 0.032, lp: 700, rev: 0.45 });
+      const q = mode() === "uk" ? 1.1 : 0.5;
+      noise({ f0: 500, f1: 2600, q, dur: 0.5, a: 0.22, v: 0.06, peak: 0.55, rev: 0.25 });
+      noise({ f0: 4000, ft: "highpass", q: 0.4, dur: 0.35, a: 0.2, v: 0.012, at: 0.05 });
     },
-    /* arrivée : le souffle se pose, même douceur en sens inverse + petit appui feutré */
+    /* arrivée : même souffle, en sens inverse */
     settle() {
-      const m = mode(), q = m === "uk" ? 1.1 : 0.45;
-      noise({ f0: 1900, f1: 170, q, dur: 0.8, a: 0.12, v: 0.07, rev: 0.45 });
-      noise({ f0: 2600, f1: 900, q: 0.5, dur: 0.6, a: 0.1, v: 0.025, rev: 0.45, pan: -0.1 });
-      voice({ f: 262, to: 196, parts: [[1, 1, 1], [2, 0.2, 0.7]], dur: 0.75, a: 0.12, v: 0.03, lp: 700, rev: 0.5 });
-      thud({ f: 95, to: 58, v: 0.08, dur: 0.3, at: 0.38, lp: 300, rev: 0.15 });
+      const q = mode() === "uk" ? 1.1 : 0.5;
+      noise({ f0: 2600, f1: 450, q, dur: 0.45, a: 0.06, v: 0.055, rev: 0.25 });
+      noise({ f0: 4000, ft: "highpass", q: 0.4, dur: 0.3, a: 0.05, v: 0.01, rev: 0.1 });
     },
-    /* ouverture / fermeture À propos & Contact */
+    /* ouverture / fermeture À propos & Contact : un petit froissé */
     open() {
-      const m = mode();
-      if (m === "uk") { tick({ f: 1800, body: 150, v: 0.12 }); thud({ f: 100, to: 60, v: 0.14, dur: 0.16 }); }
-      else if (m === "may") { voice({ f: 523, parts: TINE, dur: 0.4, v: 0.1, rev: 0.3 }); voice({ f: 784, parts: TINE, dur: 0.45, at: 0.07, v: 0.08, rev: 0.3 }); }
-      else {
-        noise({ f0: 500, f1: 2200, q: 0.8, dur: 0.28, a: 0.1, v: 0.05, rev: 0.25 });
-        voice({ f: 392, parts: GLASS, dur: 0.9, v: 0.07, rev: 0.5, pan: -0.1 });
-        voice({ f: 587, parts: GLASS, dur: 0.9, at: 0.07, v: 0.055, rev: 0.5, pan: 0.1 });
-      }
+      noise({ f0: 1200, f1: 4200, q: 0.7, dur: 0.16, a: 0.04, v: 0.05, rev: 0.15 });
+      tick({ f: 2800, body: 200, v: 0.04, at: 0.12 });
     },
     close() {
-      const m = mode();
-      if (m === "uk") { tick({ f: 1500, body: 130, v: 0.1 }); thud({ f: 85, to: 52, v: 0.12, dur: 0.14 }); }
-      else if (m === "may") { voice({ f: 784, parts: TINE, dur: 0.35, v: 0.09, rev: 0.25 }); voice({ f: 523, parts: TINE, dur: 0.4, at: 0.07, v: 0.08, rev: 0.25 }); }
-      else {
-        noise({ f0: 2200, f1: 450, q: 0.8, dur: 0.24, a: 0.06, v: 0.04, rev: 0.2 });
-        voice({ f: 587, parts: GLASS, dur: 0.7, v: 0.06, rev: 0.5, pan: 0.1 });
-        voice({ f: 392, parts: GLASS, dur: 0.8, at: 0.07, v: 0.06, rev: 0.5, pan: -0.1 });
-      }
+      noise({ f0: 4200, f1: 1200, q: 0.7, dur: 0.14, a: 0.03, v: 0.045, rev: 0.15 });
+      tick({ f: 2400, body: 180, v: 0.035, at: 0.1 });
     },
-    /* bouton thème clair / sombre : petit interrupteur + note */
-    theme() {
-      const dark = root.getAttribute("data-theme") === "dark";
-      tick({ f: 3000, body: 260, v: 0.07 });
-      voice({ f: dark ? 330 : 494, parts: SOFT, dur: 0.45, at: 0.03, v: 0.07, rev: 0.35 });
-    },
-    /* bascule d'univers (May / UK70 / normal) */
-    mode() {
-      const m = mode();
-      if (m === "may") [523, 659, 784, 1047].forEach((f, i) => voice({ f, parts: TINE, dur: 0.35, at: i * 0.055, v: 0.075, rev: 0.3, pan: (i - 1.5) / 6 }));
-      else if (m === "uk") { noise({ f0: 1400, f1: 500, q: 1, dur: 0.18, v: 0.12, a: 0.004 }); thud({ f: 95, to: 55, v: 0.18, dur: 0.18 }); tick({ f: 2200, body: 170, v: 0.08, at: 0.1 }); }
-      else { voice({ f: 523, parts: GLASS, dur: 0.8, v: 0.07, rev: 0.5 }); voice({ f: 392, parts: GLASS, dur: 0.9, at: 0.08, v: 0.07, rev: 0.5 }); }
-    },
-    /* « Poster la lettre » : tampon sur papier */
+    /* bouton thème : petit clic d'interrupteur */
+    theme() { tick({ f: 3200, body: 260, v: 0.07 }); tick({ f: 2400, body: 200, v: 0.04, at: 0.06 }); },
+    /* bascule d'univers : deux clics secs */
+    mode() { tick({ f: 3000, body: 230, v: 0.07 }); tick({ f: 2200, body: 170, v: 0.06, at: 0.08 }); },
+    /* « Poster la lettre » : tampon sur papier, sourd et bref */
     stamp() {
-      thud({ f: 130, to: 48, v: 0.3, dur: 0.24, lp: 360, rev: 0.05 });
-      noise({ f0: 1800, f1: 600, q: 0.9, dur: 0.07, v: 0.07, a: 0.002 });        // grain du papier
-      noise({ f0: 3500, ft: "highpass", dur: 0.03, v: 0.04, a: 0.001 });
+      noise({ f0: 380, ft: "lowpass", q: 0.7, dur: 0.14, a: 0.003, v: 0.2, rev: 0.05 });
+      noise({ f0: 1800, f1: 600, q: 0.9, dur: 0.07, a: 0.002, v: 0.06 });
     },
     click() { tick({ f: 3000, body: 250, v: 0.06 }); },
-    /* son activé : deux notes de verre, claires et courtes */
-    on() { voice({ f: 523, parts: GLASS, dur: 0.7, v: 0.07, rev: 0.5, pan: -0.1 }); voice({ f: 784, parts: GLASS, dur: 0.8, at: 0.09, v: 0.06, rev: 0.5, pan: 0.1 }); }
+    /* son activé : deux micro-clics */
+    on() { tick({ f: 3200, body: 260, v: 0.06 }); tick({ f: 3800, body: 300, v: 0.05, at: 0.07 }); }
   };
   window.__sfx = S;
 
