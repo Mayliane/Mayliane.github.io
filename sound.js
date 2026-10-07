@@ -176,12 +176,7 @@
   const S = {
     /* changement de projet : une page qui se tourne (le sens suit la direction du carrousel) */
     tick(i) {
-      const m = mode(), v = vel(), dir = (typeof i === "number" && lastIdx >= 0) ? (((i - lastIdx + 15) % 15) <= 7 ? 1 : -1) : 1;
-      lastIdx = typeof i === "number" ? i : lastIdx;
-      const bright = m === "may" ? 1.25 : m === "uk" ? 0.9 : 1, pan = dir * 0.12;
-      /* un seul froissé de papier, court et aérien : une page qu'on feuillette */
-      noise({ f0: (dir > 0 ? 2800 : 4600) * bright, f1: (dir > 0 ? 5200 : 2400) * bright, q: 0.6, dur: 0.11, a: 0.025, v: 0.04 * v, pan: pan });
-      noise({ f0: 7000, ft: "highpass", q: 0.4, dur: 0.07, a: 0.02, v: 0.009 * v, at: 0.015 });
+      S.click1(0.07);
     },
     /* survol d'une carte : presque imperceptible */
     hover() {
@@ -210,14 +205,21 @@
       noise({ f0: 4200, f1: 1200, q: 0.7, dur: 0.14, a: 0.03, v: 0.045, rev: 0.15 });
       tick({ f: 2400, body: 180, v: 0.035, at: 0.1 });
     },
-    /* bouton thème : petit clic d'interrupteur */
-    theme() { tick({ f: 3200, body: 260, v: 0.07 }); tick({ f: 2400, body: 200, v: 0.04, at: 0.06 }); },
+    /* bouton thème clair / sombre : un seul clic (pop / may) */
+    theme() { S.click1(0.09); },
     /* bascule d'univers : deux clics secs */
     mode() { tick({ f: 3000, body: 230, v: 0.07 }); tick({ f: 2200, body: 170, v: 0.06, at: 0.08 }); },
     /* « Poster la lettre » : tampon sur papier, sourd et bref */
     stamp() {
       noise({ f0: 380, ft: "lowpass", q: 0.7, dur: 0.14, a: 0.003, v: 0.2, rev: 0.05 });
       noise({ f0: 1800, f1: 600, q: 0.9, dur: 0.07, a: 0.002, v: 0.06 });
+    },
+    /* un seul clic, deux versions : pop (rond, bois doux) et may (plus clair, plus haut) ; uk = sec */
+    click1(v0) {
+      const m = mode(), v = (v0 || 0.07) * vel(), pan = (Math.random() - 0.5) * 0.2;
+      if (m === "may") tick({ f: 4200, body: 420, v: v * 0.95, pan });
+      else if (m === "uk") tick({ f: 2200, body: 160, v: v * 1.1, pan });
+      else tick({ f: 2800, body: 230, v, pan });
     },
     click() { tick({ f: 3000, body: 250, v: 0.06 }); },
     /* son activé : deux micro-clics */
