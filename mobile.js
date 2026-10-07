@@ -5,9 +5,11 @@
        <script src="mobile.js"></script>
 
    Sur téléphone (≤ 860 px) :
-   - barre du haut : bouton menu à gauche · logo centré · bouton thème à droite
+   - le logo et les boutons May / UK 70 sont déplacés dans une barre à eux,
+     centrée par flexbox (plus aucun calcul de position ni dépendance au CSS du site)
+   - bouton menu à gauche, bouton thème à droite
    - le menu devient un tiroir qui se déroule sous la barre
-   - les boutons de mode (May / UK 70) sont centrés sous le logo
+   Sur ordinateur, tout est remis exactement à sa place d'origine.
    ===================================================================== */
 (function () {
   "use strict";
@@ -26,8 +28,8 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .lightbox img{max-height:92dvh}
 .panel{height:100dvh}
 
-/* ---- bouton menu + fond du tiroir : cachés sur ordinateur ---- */
-.menu-btn,.menu-backdrop{display:none}
+/* ---- éléments ajoutés par mobile.js : cachés sur ordinateur ---- */
+.menu-btn,.menu-backdrop,#mTop{display:none}
 
 /* ---- survol collant : sur écran tactile, un appui ne doit pas laisser l'état « hover » ---- */
 @media(hover:none){
@@ -41,12 +43,14 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
 @media(max-width:860px){
 
-  /* ============ BARRE DU HAUT : menu · logo · thème ============ */
+  /* ============ BARRE DU HAUT ============ */
+
+  /* bouton menu à gauche */
   .menu-btn{
     display:block;position:fixed;z-index:60;
     left:calc(4px + var(--sl,0px));top:calc(6px + var(--st,0px));
     width:44px;height:44px;padding:0;color:var(--dw-fg,currentColor);
-    -webkit-tap-highlight-color:transparent;transition:opacity .8s ease
+    transition:opacity .8s ease
   }
   .menu-btn i{position:absolute;left:12px;right:12px;height:2px;background:currentColor;transition:transform .3s ease,top .3s ease}
   .menu-btn i:nth-child(1){top:18px}
@@ -55,25 +59,35 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   html.menu-open .menu-btn i:nth-child(2){top:21.5px;transform:rotate(-45deg)}
   body:not(.ui) .menu-btn{opacity:0;pointer-events:none}
 
-  /* logo : horizontal (il était vertical), centré entre le bouton menu et le bouton thème */
-  ${R} .brand{
-    position:fixed;top:calc(6px + var(--st,0px));bottom:auto;
-    left:calc(52px + var(--sl,0px));right:calc(52px + var(--sr,0px));
-    margin:0;width:auto;max-width:none;height:44px;
-    writing-mode:horizontal-tb;text-orientation:mixed;transform:none;rotate:none;translate:none;
-    display:block;line-height:44px;text-align:center;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-    font-size:15px;letter-spacing:.08em
-  }
-  ${R} .brand *{writing-mode:horizontal-tb;transform:none;rotate:none}
+  /* bouton thème à droite */
   ${R} .themebtn{width:44px;height:44px;right:calc(4px + var(--sr,0px));top:calc(6px + var(--st,0px))}
 
-  /* boutons de mode : centrés sous le logo */
-  ${R} .mode-switch{
-    top:calc(54px + var(--st,0px));left:0;right:0;bottom:auto;
-    margin-left:auto;margin-right:auto;width:max-content;max-width:calc(100% - 24px)
+  /* barre centrale : logo puis boutons de mode, centrés l'un sous l'autre */
+  #mTop{
+    display:flex;flex-direction:column;align-items:center;
+    position:fixed;z-index:45;left:0;right:0;top:calc(6px + var(--st,0px));
+    padding:0 56px;box-sizing:border-box;pointer-events:none;
+    transform:none;filter:none
   }
-  ${R} .mode-switch .may-btn,${R} .mode-switch .uk-btn{min-height:40px}
+  #mTop > *{pointer-events:auto}
+
+  #mTop .brand{
+    position:static !important;inset:auto !important;transform:none !important;rotate:none !important;translate:none !important;
+    writing-mode:horizontal-tb !important;text-orientation:mixed !important;
+    margin:0 !important;width:auto !important;max-width:100% !important;height:44px !important;
+    display:block !important;line-height:44px !important;text-align:center !important;
+    white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;
+    font-size:15px !important;letter-spacing:.08em !important
+  }
+  #mTop .brand *{writing-mode:horizontal-tb !important;transform:none !important;rotate:none !important}
+
+  #mTop .mode-switch{
+    position:static !important;inset:auto !important;translate:none !important;
+    margin:6px auto 0 !important;width:max-content !important;max-width:100% !important;
+    justify-content:center !important;align-items:center !important;text-align:center !important
+  }
+  #mTop .mode-switch > *{position:relative !important;inset:auto !important;margin-top:0 !important;margin-bottom:0 !important}
+  #mTop .mode-switch .may-btn,#mTop .mode-switch .uk-btn{min-height:40px}
 
   /* ============ MENU TIROIR ============ */
   .menu-backdrop{
@@ -142,7 +156,7 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
 /* petits écrans (≤ 400 px) */
 @media(max-width:400px){
-  ${R} .brand{font-size:14px;letter-spacing:.06em}
+  #mTop .brand{font-size:14px !important;letter-spacing:.06em !important}
   ${R} .nav button{font-size:23px}
   ${R} .counter b{font-size:72px}
   ${R} .item .ttl{font-size:23px}
@@ -151,13 +165,13 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .c-air{font-size:11px}
 }
 
-/* téléphone en paysage : une seule ligne en haut, les modes passent à droite du bouton thème */
+/* téléphone en paysage : le logo reste centré, les modes passent à droite du bouton thème */
 @media(max-height:520px) and (orientation:landscape){
   .panel{padding-top:calc(60px + var(--st,0px))}
   .panel h2{font-size:40px;margin-bottom:16px}
   .panel .in{padding-top:0}
   .about-stage,.about-stage.is-model{max-width:140px}
-  ${R} .mode-switch{top:calc(8px + var(--st,0px));left:auto;right:calc(54px + var(--sr,0px));margin:0}
+  #mTop .mode-switch{position:fixed !important;top:calc(8px + var(--st,0px)) !important;right:calc(54px + var(--sr,0px)) !important;left:auto !important;margin:0 !important}
   ${R} .nav{top:calc(54px + var(--st,0px))}
   ${R} .nav button{min-height:46px;font-size:21px}
   .modal-layout{display:grid;grid-template-columns:minmax(200px,.8fr) minmax(0,1.4fr);gap:4vw}
@@ -176,9 +190,43 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   document.head.appendChild(st);
 
   /* ---------------------------------------------------------------
-     MENU TIROIR (les boutons du menu restent ceux du site : leurs actions ne changent pas)
+     BARRE CENTRALE : le logo et les boutons de mode sont déplacés dans #mTop (mobile),
+     puis remis exactement à leur place d'origine sur grand écran.
+     Les boutons gardent leurs écouteurs : May / UK 70 fonctionnent comme avant.
      --------------------------------------------------------------- */
   const root = document.documentElement;
+  const brand = document.querySelector(".brand");
+  const modes = document.querySelector(".mode-switch");
+  const mTop = document.createElement("div");
+  mTop.id = "mTop";
+  const saved = [];
+
+  function toMobile() {
+    if (mTop.parentNode) return;
+    document.body.appendChild(mTop);
+    [brand, modes].forEach(el => {
+      if (!el) return;
+      saved.push({ el: el, parent: el.parentNode, next: el.nextSibling });
+      mTop.appendChild(el);
+    });
+  }
+  function toDesktop() {
+    if (!mTop.parentNode) return;
+    while (saved.length) {
+      const s = saved.pop();
+      if (s.next && s.next.parentNode === s.parent) s.parent.insertBefore(s.el, s.next);
+      else s.parent.appendChild(s.el);
+    }
+    mTop.remove();
+  }
+  const mq = matchMedia("(max-width:860px)");
+  const sync = () => (mq.matches ? toMobile() : toDesktop());
+  sync();
+  if (mq.addEventListener) mq.addEventListener("change", sync); else mq.addListener(sync);
+
+  /* ---------------------------------------------------------------
+     MENU TIROIR (les boutons du menu restent ceux du site : leurs actions ne changent pas)
+     --------------------------------------------------------------- */
   const nav = document.querySelector(".nav");
 
   if (nav) {
@@ -240,52 +288,6 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     /* le fond ne fait pas défiler la page derrière */
     back.addEventListener("touchmove", e => e.preventDefault(), { passive: false });
   }
-
-  /* ---- logo + boutons de mode : on mesure leur centre réel et on les recentre sur l'écran ---- */
-  const brand = document.querySelector(".brand");
-  const modes = document.querySelector(".mode-switch");
-  const landscape = () => matchMedia("(max-height:520px) and (orientation:landscape)").matches;
-
-  /* bornes visibles : le texte pour le logo, les boutons pour les modes */
-  function bounds(el, isText) {
-    let l = Infinity, r = -Infinity;
-    const add = b => { if (b.width > 0 && b.height > 0) { l = Math.min(l, b.left); r = Math.max(r, b.right); } };
-    if (isText) {
-      const rg = document.createRange(); rg.selectNodeContents(el); add(rg.getBoundingClientRect());
-      if (l === Infinity) add(el.getBoundingClientRect());
-    } else {
-      Array.prototype.forEach.call(el.children, k => add(k.getBoundingClientRect()));
-      if (l === Infinity) add(el.getBoundingClientRect());
-    }
-    return l === Infinity ? null : [l, r];
-  }
-
-  function centerOne(el, isText, skipLandscape) {
-    if (!el) return;
-    el.style.translate = "";
-    if (innerWidth > 860 || (skipLandscape && landscape())) return;
-    const bd = bounds(el, isText);
-    if (!bd) return;
-    const dx = document.documentElement.clientWidth / 2 - (bd[0] + bd[1]) / 2;
-    if (Math.abs(dx) > 0.5) el.style.translate = dx + "px 0";
-  }
-
-  let raf = 0;
-  const recenter = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => {
-    centerOne(brand, true, false);      // le logo reste centré aussi en paysage
-    centerOne(modes, false, true);      // les modes passent à droite en paysage
-  }); };
-
-  recenter();
-  [300, 1000, 2500].forEach(t => setTimeout(recenter, t));          // après l'intro et le chargement des polices
-  addEventListener("load", recenter);
-  addEventListener("resize", recenter);
-  addEventListener("orientationchange", () => setTimeout(recenter, 250));
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(recenter);
-  const mo = new MutationObserver(recenter);
-  mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });   // changement de mode / thème
-  mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });              // fin de l'intro
-  if (window.ResizeObserver) [brand, modes].forEach(el => { if (el) new ResizeObserver(recenter).observe(el); });
 
   /* ---- clavier mobile : le champ actif reste visible dans la page Contact ---- */
   document.addEventListener("focusin", e => {
