@@ -157,9 +157,18 @@ body:not(.ui) .snd{opacity:0;pointer-events:none}
   document.addEventListener("click", e => {
     const t = e.target;
     if (!t || !t.closest || t.closest("#soundBtn")) return;
+    if (performance.now() - lastWhoosh < 400) return;
+
+    /* accueil : tout ce qui est dans une carte (même un lien) -> jamais de clic.
+       défilement = papier, ouverture = swoosh, on attend de voir */
+    if (isHome && t.closest(".card")) {
+      const t0 = performance.now();
+      setTimeout(() => { if (lastPaper < t0) S.whoosh(); }, 90);
+      return;
+    }
+
     const el = t.closest(CLICKABLE);
     if (!el) return;
-    if (performance.now() - lastWhoosh < 400) return;
 
     /* page projet : fermer / autre projet = swoosh, le reste = clic */
     if (!isHome) {
@@ -170,12 +179,6 @@ body:not(.ui) .snd{opacity:0;pointer-events:none}
       return;
     }
 
-    /* accueil : carte = défilement (papier) ou ouverture (swoosh) -> on attend de voir */
-    if (el.classList.contains("card")) {
-      const t0 = performance.now();
-      setTimeout(() => { if (lastPaper < t0) S.whoosh(); }, 90);
-      return;
-    }
     S.click();
   }, true);
 
