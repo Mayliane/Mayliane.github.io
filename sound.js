@@ -4,18 +4,21 @@
    INSTALLATION : tout en bas de index.html, APRÈS transitions-index.js :
        <script src="sound.js"></script>
 
-   Principes :
+   Direction sonore : « objet de design » — matières douces (bois, verre, papier),
+   notes de mallet pentatoniques, souffles filtrés, grave arrondi. Aucun bip,
+   aucune onde carrée/dent de scie. Tout est court, bas en volume, passé dans
+   une réverbération sombre + un compresseur, pour un rendu propre et "premium".
+
    - Son désactivé par défaut, bouton « Son » visible, choix mémorisé
-   - Sons courts (< 0,7 s), volume bas, compresseur + petite réverbération
-   - Gamme pentatonique : chaque projet a sa note, les sons restent harmonieux
-   - 3 palettes qui suivent le mode actif : normal (doux), May (pop), UK70 (sec, photocopie)
+   - 3 palettes qui suivent le mode actif : normal (mallet/verre), May (kalimba brillante), UK70 (sec, mécanique, papier)
    - Se coupe quand l'onglet est caché
+   - Pour tester dans la console : __sfx.tick(3), __sfx.whoosh(), __sfx.open() …
    ===================================================================== */
 (function () {
   "use strict";
 
   /* ---------------- À MODIFIER ---------------- */
-  const VOL = 0.5;          // volume général (0 à 1)
+  const VOL = 0.55;         // volume général (0 à 1)
   const DEFAULT_ON = false; // true = actif d'office (le navigateur attend quand même un 1er clic)
   const LABEL_ON = "Son on", LABEL_OFF = "Son off";
   /* -------------------------------------------- */
@@ -32,12 +35,19 @@
      --------------------------------------------------------------- */
   let ctx = null, master = null, revIn = null, nb = null;
 
+  /* réverbération : bruit qui s'assombrit au fil de la queue, léger pré-délai */
   function impulse(sec, decay) {
-    const len = Math.floor(ctx.sampleRate * sec);
-    const buf = ctx.createBuffer(2, len, ctx.sampleRate);
+    const sr = ctx.sampleRate, len = Math.floor(sr * sec), pre = Math.floor(sr * 0.016);
+    const buf = ctx.createBuffer(2, len, sr);
     for (let c = 0; c < 2; c++) {
       const d = buf.getChannelData(c);
-      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+      let lp = 0;
+      for (let i = pre; i < len; i++) {
+        const t = (i - pre) / (len - pre);
+        const k = 0.62 - 0.52 * t;                       // filtre passe-bas qui se ferme
+        lp += ((Math.random() * 2 - 1) - lp) * k;
+        d[i] = lp * Math.pow(1 - t, decay) * Math.min(1, (i - pre) / (sr * 0.012));
+      }
     }
     return buf;
   }
@@ -49,15 +59,21 @@
     ctx = new AC();
     master = ctx.createGain();
     master.gain.value = enabled ? VOL : 0;
+    /* chaîne de sortie : adoucit les aigus, compresse doucement, limite */
+    const tone = ctx.createBiquadFilter(); tone.type = "lowpass"; tone.frequency.value = 11000; tone.Q.value = 0.5;
+    const warm = ctx.createBiquadFilter(); warm.type = "lowshelf"; warm.frequency.value = 180; warm.gain.value = 1.5;
     const comp = ctx.createDynamicsCompressor();
-    comp.threshold.value = -18; comp.knee.value = 24; comp.ratio.value = 3;
-    comp.attack.value = 0.003; comp.release.value = 0.2;
-    master.connect(comp); comp.connect(ctx.destination);
-    const rv = ctx.createConvolver();
-    rv.buffer = impulse(1.4, 2.6);
-    const wet = ctx.createGain(); wet.gain.value = 0.22;
-    rv.connect(wet); wet.connect(master);
-    revIn = rv;
+    comp.threshold.value = -20; comp.knee.value = 18; comp.ratio.value = 2.5;
+    comp.attack.value = 0.006; comp.release.value = 0.25;
+    const lim = ctx.createDynamicsCompressor();
+    lim.threshold.value = -4; lim.knee.value = 0; lim.ratio.value = 20; lim.attack.value = 0.001; lim.release.value = 0.08;
+    master.connect(tone); tone.connect(warm); warm.connect(comp); comp.connect(lim); lim.connect(ctx.destination);
+    /* réverbération (envoi filtré : pas de grave boueux) */
+    const hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 220;
+    const rv = ctx.createConvolver(); rv.buffer = impulse(1.9, 2.4);
+    const wet = ctx.createGain(); wet.gain.value = 0.2;
+    hp.connect(rv); rv.connect(wet); wet.connect(master);
+    revIn = hp;
     return ctx;
   }
 
@@ -67,120 +83,161 @@
     return true;
   }
 
-  function out(node, send) {
-    node.connect(master);
-    if (send > 0) { const g = ctx.createGain(); g.gain.value = send; node.connect(g); g.connect(revIn); }
+  function out(node, send, pan) {
+    let n = node;
+    if (pan && ctx.createStereoPanner) { const p = ctx.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, pan)); n.connect(p); n = p; }
+    n.connect(master);
+    if (send > 0) { const g = ctx.createGain(); g.gain.value = send; n.connect(g); g.connect(revIn); }
   }
 
-  /* note : o = { f, to, type, dur, v, a, at, lp, rev } */
-  function tone(o) {
+  /* partiels (ratio, amplitude, durée relative) — la matière du son */
+  const MALLET = [[1, 1, 1], [4, 0.22, 0.28], [9.6, 0.05, 0.1]];                 // marimba / bois doux
+  const GLASS  = [[1, 1, 1], [2.76, 0.3, 0.6], [5.4, 0.12, 0.35], [8.93, 0.05, 0.2]]; // verre / carillon
+  const SOFT   = [[1, 1, 1], [2, 0.14, 0.55]];                                    // piano électrique très doux
+  const TINE   = [[1, 1, 1], [5.4, 0.16, 0.18]];                                 // kalimba
+
+  /* voix : o = { f, to, parts, dur, v, a, at, lp, rev, pan } */
+  function voice(o) {
     if (!ready()) return;
-    const t = ctx.currentTime + (o.at || 0), dur = o.dur || 0.2, v = o.v || 0.15, a = o.a || 0.004;
-    const osc = ctx.createOscillator(), g = ctx.createGain(), f = ctx.createBiquadFilter();
-    osc.type = o.type || "sine";
-    osc.frequency.setValueAtTime(o.f, t);
-    if (o.to) osc.frequency.exponentialRampToValueAtTime(o.to, t + dur);
-    f.type = "lowpass"; f.frequency.value = o.lp || 6000;
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(v, t + a);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    osc.connect(f); f.connect(g); out(g, o.rev || 0);
-    osc.start(t); osc.stop(t + dur + 0.05);
+    const t = ctx.currentTime + (o.at || 0), dur = o.dur || 0.3, v = o.v || 0.12, a = o.a || 0.006;
+    const parts = o.parts || SOFT;
+    const sum = ctx.createGain(), lp = ctx.createBiquadFilter();
+    lp.type = "lowpass"; lp.frequency.setValueAtTime(o.lp || 5200, t); lp.frequency.exponentialRampToValueAtTime(Math.max(600, (o.lp || 5200) * 0.35), t + dur);
+    sum.gain.value = 1; sum.connect(lp);
+    const detune = (Math.random() - 0.5) * 6;                 // ± 3 cents : vivant, pas "machine"
+    parts.forEach(p => {
+      const f = o.f * p[0]; if (f > 9000) return;
+      const osc = ctx.createOscillator(), g = ctx.createGain(), d = Math.max(0.05, dur * p[2]);
+      osc.type = "sine"; osc.detune.value = detune;
+      osc.frequency.setValueAtTime(f, t);
+      if (o.to) osc.frequency.exponentialRampToValueAtTime(o.to * p[0], t + dur);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(v * p[1], t + a);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + a + d);
+      osc.connect(g); g.connect(sum);
+      osc.start(t); osc.stop(t + a + d + 0.05);
+    });
+    out(lp, o.rev || 0, o.pan);
   }
 
-  /* bruit filtré : o = { f0, f1, q, ft, dur, v, a, at, rev } */
+  /* bruit filtré : o = { f0, f1, q, ft, dur, v, a, at, rev, pan, peak } */
   function noise(o) {
     if (!ready()) return;
     if (!nb) {
-      nb = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+      nb = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
       const d = nb.getChannelData(0);
       for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     }
-    const t = ctx.currentTime + (o.at || 0), dur = o.dur || 0.2, v = o.v || 0.1, a = o.a || 0.01;
+    const t = ctx.currentTime + (o.at || 0), dur = o.dur || 0.2, v = o.v || 0.1, a = Math.min(o.a || 0.005, dur * 0.6);
     const s = ctx.createBufferSource(); s.buffer = nb; s.loop = true;
-    const f = ctx.createBiquadFilter(); f.type = o.ft || "bandpass"; f.Q.value = o.q || 1;
+    const f = ctx.createBiquadFilter(); f.type = o.ft || "bandpass"; f.Q.value = o.q || 0.7;
     f.frequency.setValueAtTime(o.f0, t);
     if (o.f1) f.frequency.exponentialRampToValueAtTime(o.f1, t + dur);
     const g = ctx.createGain();
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(v, t + a);
+    if (o.peak) { g.gain.setValueAtTime(v, t + dur * o.peak); }  // enveloppe en cloche : monte jusqu'à `peak`, retombe ensuite
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    s.connect(f); f.connect(g); out(g, o.rev || 0);
-    s.start(t); s.stop(t + dur + 0.05);
+    s.connect(f); f.connect(g); out(g, o.rev || 0, o.pan);
+    s.start(t, Math.random()); s.stop(t + dur + 0.05);
+  }
+
+  /* grave arrondi (impact doux, jamais un "boom") */
+  function thud(o) {
+    voice({ f: o.f || 110, to: o.to || 52, parts: [[1, 1, 1], [2, 0.08, 0.4]], dur: o.dur || 0.22, v: o.v || 0.25, a: 0.004, lp: o.lp || 420, at: o.at, rev: o.rev || 0.08 });
+  }
+
+  /* petit clic tactile (bruit très bref + corps de bois) */
+  function tick(o) {
+    o = o || {};
+    noise({ f0: o.f || 3200, q: 1.4, dur: 0.018, v: o.v || 0.07, a: 0.001, at: o.at, pan: o.pan });
+    voice({ f: o.body || 240, to: (o.body || 240) * 0.7, parts: [[1, 1, 1]], dur: 0.05, v: (o.v || 0.07) * 0.9, a: 0.002, lp: 900, at: o.at, pan: o.pan });
   }
 
   /* ---------------------------------------------------------------
      PALETTES
      --------------------------------------------------------------- */
-  const SEMI = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33];
-  const hz = (s, base) => (base || 261.63) * Math.pow(2, s / 12);
+  const SEMI = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33];   // pentatonique majeure
+  const hz = (s, base) => (base || 220) * Math.pow(2, s / 12);            // départ : La3
   const mode = () => root.classList.contains("uk") ? "uk" : root.classList.contains("may-active") ? "may" : "base";
-  const jitter = () => 1 + (Math.random() - 0.5) * 0.012;   // micro-variation : évite l'effet « machine »
+  const vel = () => 0.85 + Math.random() * 0.3;                            // vélocité légèrement variable
 
   const S = {
     /* changement de projet : une note par projet */
     tick(i) {
-      const m = mode(), n = SEMI[i % SEMI.length];
+      const m = mode(), n = SEMI[i % SEMI.length], v = vel();
       if (m === "uk") {
-        noise({ f0: 1800, f1: 900, q: 2, dur: 0.05, v: 0.18 });
-        tone({ f: hz(n, 130) * jitter(), type: "sawtooth", dur: 0.09, v: 0.07, lp: 900 });
+        /* dactylo / photocopieuse : clic sec, sans note */
+        tick({ f: 2600, body: 180 + (i % 5) * 14, v: 0.09 * v });
       } else if (m === "may") {
-        const f = hz(n) * 2 * jitter();
-        tone({ f, to: f * 1.2, type: "triangle", dur: 0.14, v: 0.13, lp: 4000, rev: 0.15 });
-        noise({ f0: 3000, ft: "highpass", dur: 0.02, v: 0.04 });
+        voice({ f: hz(n, 330) , parts: TINE, dur: 0.32, v: 0.11 * v, lp: 6500, rev: 0.28, pan: (i % 7 - 3) / 12 });
       } else {
-        const f = hz(n) * 2 * jitter();
-        tone({ f, dur: 0.24, v: 0.11, rev: 0.4 });
-        tone({ f: f * 2, dur: 0.1, v: 0.025, rev: 0.4 });
+        voice({ f: hz(n, 220) * 2, parts: MALLET, dur: 0.5, v: 0.12 * v, a: 0.004, lp: 5000, rev: 0.4, pan: (i % 7 - 3) / 14 });
       }
     },
-    /* survol d'une carte (très discret) */
+    /* survol d'une carte : presque imperceptible */
     hover() {
       const m = mode();
-      if (m === "uk") noise({ f0: 4500, ft: "highpass", dur: 0.03, v: 0.04 });
-      else if (m === "may") tone({ f: 1400, to: 1900, type: "triangle", dur: 0.06, v: 0.03 });
-      else tone({ f: 1800, dur: 0.05, v: 0.022 });
+      if (m === "uk") noise({ f0: 5000, ft: "highpass", dur: 0.02, v: 0.025, a: 0.002 });
+      else noise({ f0: 4200, q: 2.5, dur: 0.03, v: 0.022, a: 0.004, pan: (Math.random() - 0.5) * 0.4 });
     },
-    /* ouverture d'un projet : balayage + souffle grave */
+    /* ouverture d'un projet : souffle qui monte puis s'éteint, calé sur la transition (~0,75 s) */
     whoosh() {
       const m = mode();
-      noise({ f0: 300, f1: 4500, q: m === "uk" ? 2 : 0.8, dur: 0.7, a: 0.25, v: 0.2, rev: 0.3 });
-      tone({ f: 80, to: 170, dur: 0.7, a: 0.3, v: 0.14 });
+      if (m === "uk") {
+        noise({ f0: 600, f1: 2400, q: 1.1, dur: 0.72, a: 0.2, v: 0.12, peak: 0.55, rev: 0.1 });
+        thud({ f: 90, to: 55, v: 0.16, at: 0.02 });
+      } else {
+        noise({ f0: 220, f1: 3400, q: 0.6, dur: 0.74, a: 0.3, v: 0.16, peak: 0.55, rev: 0.3 });
+        noise({ f0: 2500, f1: 7000, ft: "highpass", q: 0.5, dur: 0.6, a: 0.3, v: 0.02, at: 0.05, rev: 0.2 });
+        voice({ f: 70, to: 110, parts: [[1, 1, 1]], dur: 0.7, a: 0.3, v: 0.1, lp: 300, rev: 0.05 });
+      }
     },
     /* ouverture / fermeture À propos & Contact */
     open() {
       const m = mode();
-      if (m === "uk") { noise({ f0: 900, f1: 300, q: 2, dur: 0.12, v: 0.2 }); tone({ f: 110, to: 60, dur: 0.18, v: 0.22 }); }
-      else if (m === "may") { tone({ f: 392, to: 784, type: "triangle", dur: 0.2, v: 0.13, rev: 0.25 }); tone({ f: 988, dur: 0.14, at: 0.1, type: "triangle", v: 0.08, rev: 0.25 }); }
-      else { tone({ f: 392, dur: 0.5, v: 0.09, rev: 0.5 }); tone({ f: 587, dur: 0.5, at: 0.06, v: 0.07, rev: 0.5 }); }
+      if (m === "uk") { tick({ f: 1800, body: 150, v: 0.12 }); thud({ f: 100, to: 60, v: 0.14, dur: 0.16 }); }
+      else if (m === "may") { voice({ f: 523, parts: TINE, dur: 0.4, v: 0.1, rev: 0.3 }); voice({ f: 784, parts: TINE, dur: 0.45, at: 0.07, v: 0.08, rev: 0.3 }); }
+      else {
+        noise({ f0: 500, f1: 2200, q: 0.8, dur: 0.28, a: 0.1, v: 0.05, rev: 0.25 });
+        voice({ f: 392, parts: GLASS, dur: 0.9, v: 0.07, rev: 0.5, pan: -0.1 });
+        voice({ f: 587, parts: GLASS, dur: 0.9, at: 0.07, v: 0.055, rev: 0.5, pan: 0.1 });
+      }
     },
     close() {
       const m = mode();
-      if (m === "uk") { noise({ f0: 700, f1: 250, q: 2, dur: 0.1, v: 0.16 }); tone({ f: 90, to: 50, dur: 0.14, v: 0.18 }); }
-      else if (m === "may") tone({ f: 784, to: 392, type: "triangle", dur: 0.18, v: 0.12, rev: 0.2 });
-      else { tone({ f: 587, dur: 0.35, v: 0.07, rev: 0.5 }); tone({ f: 392, dur: 0.4, at: 0.05, v: 0.07, rev: 0.5 }); }
+      if (m === "uk") { tick({ f: 1500, body: 130, v: 0.1 }); thud({ f: 85, to: 52, v: 0.12, dur: 0.14 }); }
+      else if (m === "may") { voice({ f: 784, parts: TINE, dur: 0.35, v: 0.09, rev: 0.25 }); voice({ f: 523, parts: TINE, dur: 0.4, at: 0.07, v: 0.08, rev: 0.25 }); }
+      else {
+        noise({ f0: 2200, f1: 450, q: 0.8, dur: 0.24, a: 0.06, v: 0.04, rev: 0.2 });
+        voice({ f: 587, parts: GLASS, dur: 0.7, v: 0.06, rev: 0.5, pan: 0.1 });
+        voice({ f: 392, parts: GLASS, dur: 0.8, at: 0.07, v: 0.06, rev: 0.5, pan: -0.1 });
+      }
     },
-    /* bouton thème clair / sombre */
+    /* bouton thème clair / sombre : petit interrupteur + note */
     theme() {
       const dark = root.getAttribute("data-theme") === "dark";
-      tone({ f: dark ? 330 : 494, to: dark ? 247 : 659, dur: 0.18, v: 0.1, rev: 0.3 });
+      tick({ f: 3000, body: 260, v: 0.07 });
+      voice({ f: dark ? 330 : 494, parts: SOFT, dur: 0.45, at: 0.03, v: 0.07, rev: 0.35 });
     },
     /* bascule d'univers (May / UK70 / normal) */
     mode() {
       const m = mode();
-      if (m === "may") [523, 659, 784].forEach((f, i) => tone({ f, type: "square", dur: 0.1, at: i * 0.06, v: 0.05, lp: 3000, rev: 0.2 }));
-      else if (m === "uk") { noise({ f0: 2500, f1: 500, q: 1.5, dur: 0.25, v: 0.25 }); tone({ f: 100, to: 55, type: "sawtooth", dur: 0.25, v: 0.12, lp: 700 }); }
-      else { tone({ f: 523, dur: 0.3, v: 0.08, rev: 0.4 }); tone({ f: 392, dur: 0.4, at: 0.08, v: 0.08, rev: 0.4 }); }
+      if (m === "may") [523, 659, 784, 1047].forEach((f, i) => voice({ f, parts: TINE, dur: 0.35, at: i * 0.055, v: 0.075, rev: 0.3, pan: (i - 1.5) / 6 }));
+      else if (m === "uk") { noise({ f0: 1400, f1: 500, q: 1, dur: 0.18, v: 0.12, a: 0.004 }); thud({ f: 95, to: 55, v: 0.18, dur: 0.18 }); tick({ f: 2200, body: 170, v: 0.08, at: 0.1 }); }
+      else { voice({ f: 523, parts: GLASS, dur: 0.8, v: 0.07, rev: 0.5 }); voice({ f: 392, parts: GLASS, dur: 0.9, at: 0.08, v: 0.07, rev: 0.5 }); }
     },
-    /* « Poster la lettre » : tampon */
+    /* « Poster la lettre » : tampon sur papier */
     stamp() {
-      tone({ f: 150, to: 45, dur: 0.28, v: 0.38 });
-      noise({ f0: 3500, ft: "highpass", dur: 0.06, v: 0.1 });
+      thud({ f: 130, to: 48, v: 0.3, dur: 0.24, lp: 360, rev: 0.05 });
+      noise({ f0: 1800, f1: 600, q: 0.9, dur: 0.07, v: 0.07, a: 0.002 });        // grain du papier
+      noise({ f0: 3500, ft: "highpass", dur: 0.03, v: 0.04, a: 0.001 });
     },
-    click() { tone({ f: 900, to: 600, type: "triangle", dur: 0.06, v: 0.06 }); },
-    /* son activé : petit carillon */
-    on() { [523, 659, 784].forEach((f, i) => tone({ f, dur: 0.35, at: i * 0.08, v: 0.08, rev: 0.5 })); }
+    click() { tick({ f: 3000, body: 250, v: 0.06 }); },
+    /* son activé : deux notes de verre, claires et courtes */
+    on() { voice({ f: 523, parts: GLASS, dur: 0.7, v: 0.07, rev: 0.5, pan: -0.1 }); voice({ f: 784, parts: GLASS, dur: 0.8, at: 0.09, v: 0.06, rev: 0.5, pan: 0.1 }); }
   };
+  window.__sfx = S;
 
   /* ---------------------------------------------------------------
      BOUTON « SON »
@@ -244,11 +301,15 @@ body:not(.ui) .snd{opacity:0;pointer-events:none}
   /* ---------------------------------------------------------------
      BRANCHEMENTS SUR LE SITE
      --------------------------------------------------------------- */
-  /* 1. changement de projet : on écoute le gros numéro */
+  /* 1. changement de projet : on écoute le gros numéro (limité : pas de mitraillette en défilement rapide) */
   const num = $("num");
+  let lastTick = 0;
   if (num && window.MutationObserver) {
     new MutationObserver(() => {
       if (!document.body.classList.contains("ui")) return;
+      const now = performance.now();
+      if (now - lastTick < 70) return;
+      lastTick = now;
       const i = parseInt(num.textContent, 10) - 1;
       if (i >= 0) S.tick(i);
     }).observe(num, { childList: true, characterData: true, subtree: true });
@@ -261,7 +322,7 @@ body:not(.ui) .snd{opacity:0;pointer-events:none}
     if (e.pointerType !== "mouse") return;
     const c = e.target.closest && e.target.closest(".card");
     const now = performance.now();
-    if (c && c !== lastCard && now - lastT > 140) { lastCard = c; lastT = now; S.hover(); }
+    if (c && c !== lastCard && now - lastT > 160) { lastCard = c; lastT = now; S.hover(); }
     else if (!c) lastCard = null;
   });
 
