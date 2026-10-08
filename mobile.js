@@ -348,6 +348,39 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   new MutationObserver(repaint).observe(root, { attributes: true, attributeFilter: ["class", "data-theme"] });
   new MutationObserver(repaint).observe(document.body, { attributes: true, attributeFilter: ["class"] });
 
+
+  /* ---------------------------------------------------------------
+     BOUTONS DE MODE : on s'assure que May et UK70 sont bien DANS la barre,
+     même si le script d'un thème les a déplacés ou repositionnés (position fixe, top/left…).
+     --------------------------------------------------------------- */
+  const POS = ["position", "top", "left", "right", "bottom", "inset", "margin", "translate"];
+  let modesRaf = 0;
+  function fixModes() {
+    modesRaf = 0;
+    if (!modes || !mq.matches) return;
+    const list = [
+      document.getElementById("mayModeBtn") || modes.querySelector(".may-btn") || document.querySelector(".may-btn"),
+      document.getElementById("ukModeBtn")  || modes.querySelector(".uk-btn")  || document.querySelector(".uk-btn")
+    ];
+    list.forEach(b => {
+      if (!b) return;
+      if (b.parentNode !== modes) modes.appendChild(b);
+      POS.forEach(p => { if (b.style.getPropertyValue(p)) b.style.removeProperty(p); });
+    });
+  }
+  const fixModesSoon = () => { if (!modesRaf) modesRaf = requestAnimationFrame(fixModes); };
+  fixModes();
+  if (mq.addEventListener) mq.addEventListener("change", fixModesSoon); else mq.addListener(fixModesSoon);
+  /* un thème qui re-déplace un bouton plus tard : on le remet en place */
+  /* on ne surveille que le <body> (ajouts directs) et les deux boutons : rien sur les cartes, donc aucun coût pendant l'animation */
+  const modesObs = new MutationObserver(fixModesSoon);
+  modesObs.observe(document.body, { childList: true });
+  ["mayModeBtn", "ukModeBtn"].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) modesObs.observe(b, { attributes: true, attributeFilter: ["style", "class"] });
+  });
+  addEventListener("load", () => { fixModesSoon(); setTimeout(fixModes, 600); setTimeout(fixModes, 1800); });
+
   /* un glissement qui démarre sur la barre du haut ne fait pas défiler le carrousel */
   ["touchstart", "touchmove", "touchend"].forEach(t =>
     mTop.addEventListener(t, e => e.stopPropagation(), { passive: true }));
