@@ -102,7 +102,7 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     margin:0 0 0 auto !important;width:max-content !important;max-width:100% !important;
     gap:9px !important;justify-content:flex-end !important;align-items:center !important
   }
-  #mTop .mode-switch > *{position:relative !important;inset:auto !important;margin-top:0 !important;margin-bottom:0 !important}
+  #mTop .mode-switch > button{position:relative !important;inset:auto !important;margin-top:0 !important;margin-bottom:0 !important}
   #mTop .mode-switch .may-btn,#mTop .mode-switch .uk-btn{
     min-height:38px !important;font-size:14px !important;padding:7px 10px 4px !important;
     border-width:2.5px !important;box-shadow:3px 3px 0 #0b0b0b
@@ -252,7 +252,7 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     display:flex !important;flex-wrap:nowrap !important;gap:6px !important;
     width:max-content !important;max-width:none !important
   }
-  html:root:root:root:root #mTop .mode-switch > *{
+  html:root:root:root:root #mTop .mode-switch > button{
     flex:0 0 auto !important;white-space:nowrap !important;
     font-size:clamp(11px,3.3vw,14px) !important;min-height:38px !important
   }
@@ -273,6 +273,21 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   }
   html:root:root:root:root #mTop .brand{width:auto !important;padding:0 !important}
   html:root:root:root:root #mTop .mode-switch{justify-self:start !important}
+}
+
+
+/* ============ BOUTONS DE MODE : seuls les <button> sont mis en ligne ============
+   Les décors des thèmes (autocollants, lèvres…) placés dans le même bloc gardent
+   leur positionnement d'origine et ne prennent plus de place dans la ligne. */
+@media(max-width:860px){
+  html:root:root:root:root #mTop .mode-switch{position:relative !important;flex-direction:row !important;align-items:center !important}
+  html:root:root:root:root #mTop .mode-switch > :not(button){position:absolute !important;pointer-events:none !important;margin:0 !important}
+  html:root:root:root:root #mTop .mode-switch .may-btn{order:1 !important}
+  html:root:root:root:root #mTop .mode-switch .uk-btn{order:2 !important}
+  html:root:root:root:root #mTop .mode-switch > button{
+    overflow:visible !important;line-height:1.1 !important;z-index:2 !important;
+    display:inline-flex !important;align-items:center !important;justify-content:center !important
+  }
 }
 
 @media(prefers-reduced-motion:reduce){
