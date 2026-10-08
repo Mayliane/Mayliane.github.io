@@ -218,6 +218,63 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .modal-nav-end{display:none}
 }
 
+
+/* ============ VERROU DE MISE EN PAGE (barre du haut) ============
+   Grille stable : les thèmes May / UK 70 ou une police plus large ne peuvent plus
+   faire passer « À PROPOS » sur 2 lignes ni faire chevaucher menu et boutons de mode. */
+@media(max-width:860px){
+  html:root:root:root:root #mTop{
+    display:grid !important;grid-template-columns:minmax(0,1fr) auto !important;
+    grid-template-areas:"brand brand" "nav modes" !important;
+    align-items:center !important;column-gap:6px !important;row-gap:0 !important;
+    padding-left:calc(10px + var(--sl,0px)) !important;padding-right:calc(10px + var(--sr,0px)) !important
+  }
+  html:root:root:root:root #mTop .brand{grid-area:brand !important;width:100% !important}
+  html:root:root:root:root #mTop .nav{
+    grid-area:nav !important;min-width:0 !important;margin:0 !important;
+    display:flex !important;flex-direction:row !important;flex-wrap:nowrap !important;
+    justify-content:flex-start !important;align-items:center !important;gap:0 !important;
+    position:static !important;width:auto !important;overflow:visible !important
+  }
+  html:root:root:root:root #mTop .nav button{
+    flex:0 0 auto !important;width:auto !important;margin:0 !important;
+    display:inline-flex !important;align-items:center !important;justify-content:center !important;
+    min-height:44px !important;padding:0 clamp(3px,1.5vw,8px) !important;
+    font-size:clamp(10.5px,3vw,13px) !important;line-height:1 !important;
+    letter-spacing:0 !important;white-space:nowrap !important;text-align:center !important;
+    font-stretch:100% !important
+  }
+  html:root:root:root:root #mTop .nav button:first-child{padding-left:2px !important}
+  html:root:root:root:root #mTop .nav button::before,
+  html:root:root:root:root #mTop .nav button::after{content:none !important;display:none !important}
+  html:root:root:root:root #mTop .mode-switch{
+    grid-area:modes !important;justify-self:end !important;margin:0 !important;
+    display:flex !important;flex-wrap:nowrap !important;gap:6px !important;
+    width:max-content !important;max-width:none !important
+  }
+  html:root:root:root:root #mTop .mode-switch > *{
+    flex:0 0 auto !important;white-space:nowrap !important;
+    font-size:clamp(11px,3.3vw,14px) !important;min-height:38px !important
+  }
+  /* indication du bas : plus petite, ne touche plus le compteur ni « SON » */
+  html:root:root:root:root .hint{font-size:12px !important;max-width:30vw !important;line-height:1.25 !important}
+}
+/* écrans très étroits (≤ 340 px) : les modes passent sur leur propre ligne, bien alignés */
+@media(max-width:340px){
+  html:root:root:root:root #mTop{grid-template-columns:minmax(0,1fr) !important;grid-template-areas:"brand" "nav" "modes" !important}
+  html:root:root:root:root #mTop .mode-switch{justify-self:center !important;margin-top:2px !important}
+  .panel{padding-top:calc(138px + var(--st,0px)) !important}
+}
+/* paysage : logo · menu · modes sur une ligne */
+@media(max-height:520px) and (orientation:landscape){
+  html:root:root:root:root #mTop{
+    grid-template-columns:auto auto auto !important;grid-template-areas:"brand nav modes" !important;
+    justify-content:center !important;column-gap:16px !important
+  }
+  html:root:root:root:root #mTop .brand{width:auto !important;padding:0 !important}
+  html:root:root:root:root #mTop .mode-switch{justify-self:start !important}
+}
+
 @media(prefers-reduced-motion:reduce){
   .hint{transition:none !important}
 }
