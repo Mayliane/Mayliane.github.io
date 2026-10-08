@@ -6,16 +6,16 @@
 
    Sur téléphone (≤ 860 px) :
    - le logo et les boutons May / UK 70 sont dans une barre à eux (flexbox)
-   - bouton menu à gauche, bouton thème à droite, menu en tiroir
+   - barre toujours visible : logo, puis Travaux / À propos / Contact, puis May / UK70
+   - bouton thème à droite (plus de menu hamburger : tout est accessible d'un seul toucher)
 
    NOUVEAU dans cette version :
    1. Les petits écrans (iPhone SE, Android compacts) ne se chevauchent plus :
       compteur, titre et description s'adaptent à la hauteur disponible.
    2. Le carrousel a une vraie inertie : un coup de doigt rapide fait défiler
       plusieurs projets, puis ça se cale sur le plus proche.
-   3. Le tiroir ne fait plus défiler le carrousel qui est derrière lui.
-   4. Le bouton « retour » d'Android (ou le geste retour d'iOS) ferme le tiroir
-      au lieu de quitter le site.
+   3. La barre du haut reste visible même quand À propos / Contact est ouvert.
+   4. Un glissement qui démarre sur la barre ne fait pas défiler le carrousel.
    5. Retour tactile : un appui sur une carte, un titre ou un lien du menu réagit
       visuellement, et une micro-vibration (Android) marque chaque changement de projet.
    6. L'indication « Glisser · toucher pour ouvrir » disparaît dès le premier geste.
@@ -39,7 +39,7 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .panel{height:100dvh}
 
 /* ---- éléments ajoutés par mobile.js : cachés sur ordinateur ---- */
-.menu-btn,.menu-backdrop,#mTop{display:none}
+#mTop{display:none}
 
 /* ---- survol collant : sur écran tactile, un appui ne doit pas laisser l'état « hover » ---- */
 @media(hover:none){
@@ -53,33 +53,17 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
 @media(max-width:860px){
 
-  /* ============ BARRE DU HAUT ============ */
-
-  /* bouton menu à gauche */
-  .menu-btn{
-    display:block;position:fixed;z-index:60;
-    left:calc(4px + var(--sl,0px));top:calc(6px + var(--st,0px));
-    width:44px;height:44px;padding:0;color:var(--dw-fg,currentColor);
-    transition:opacity .8s ease
-  }
-  .menu-btn i{position:absolute;left:12px;right:12px;height:2px;background:currentColor;transition:transform .3s ease,top .3s ease}
-  .menu-btn i:nth-child(1){top:18px}
-  .menu-btn i:nth-child(2){top:25px}
-  html.menu-open .menu-btn i:nth-child(1){top:21.5px;transform:rotate(45deg)}
-  html.menu-open .menu-btn i:nth-child(2){top:21.5px;transform:rotate(-45deg)}
-  body:not(.ui) .menu-btn{opacity:0;pointer-events:none}
-
-  /* bouton thème à droite */
-  ${R} .themebtn{width:44px;height:44px;right:calc(4px + var(--sr,0px));top:calc(6px + var(--st,0px))}
-
-  /* barre centrale : logo puis boutons de mode, plus compacte qu'avant */
+  /* ============ BARRE DU HAUT : toujours visible ============
+     ligne 1 : logo · ligne 2 : Travaux / À propos / Contact · ligne 3 : May / UK70 */
   #mTop{
     display:flex;flex-direction:column;align-items:center;
-    position:fixed;z-index:45;left:0;right:0;top:calc(4px + var(--st,0px));
-    padding:0 56px;box-sizing:border-box;pointer-events:none;
-    transform:none;filter:none
+    position:fixed;z-index:95;left:0;right:0;top:0;
+    padding:calc(4px + var(--st,0px)) calc(56px + var(--sr,0px)) 6px calc(56px + var(--sl,0px));
+    box-sizing:border-box;pointer-events:none;transform:none;filter:none
   }
   #mTop > *{pointer-events:auto}
+  /* quand À propos / Contact est ouvert, la barre reste au-dessus et le texte glisse dessous */
+  html:has(.panel.open) #mTop{background:linear-gradient(var(--bg,#fff) 80%,var(--bg0,transparent))}
 
   #mTop .brand{
     position:static !important;inset:auto !important;transform:none !important;rotate:none !important;translate:none !important;
@@ -87,17 +71,36 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     margin:0 !important;width:auto !important;max-width:100% !important;height:40px !important;
     display:block !important;line-height:40px !important;text-align:center !important;
     white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;
-    font-size:15px !important;letter-spacing:.08em !important
+    font-size:15px !important;letter-spacing:.08em !important;order:1
   }
   #mTop .brand *{writing-mode:horizontal-tb !important;transform:none !important;rotate:none !important}
 
+  /* menu : trois boutons côte à côte, toujours visibles */
+  ${R} #mTop .nav{
+    position:static;inset:auto;order:2;
+    display:flex;flex-direction:row;justify-content:center;align-items:center;gap:2px;
+    width:auto;height:auto;max-height:none;margin:0;padding:0;overflow:visible;
+    background:none;border:0;clip-path:none;visibility:visible;transform:none
+  }
+  ${R} #mTop .nav button{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:auto;min-height:40px;margin:0;padding:0 12px;
+    font-size:15px;font-weight:700;line-height:1;letter-spacing:.01em;
+    text-align:center;box-shadow:none;transform:none
+  }
+  ${R} #mTop .nav button:active{opacity:.55}
+
+  /* boutons de mode */
   #mTop .mode-switch{
-    position:static !important;inset:auto !important;translate:none !important;
+    position:static !important;inset:auto !important;translate:none !important;order:3;
     margin:2px auto 0 !important;width:max-content !important;max-width:100% !important;
     justify-content:center !important;align-items:center !important;text-align:center !important
   }
   #mTop .mode-switch > *{position:relative !important;inset:auto !important;margin-top:0 !important;margin-bottom:0 !important}
   #mTop .mode-switch .may-btn,#mTop .mode-switch .uk-btn{min-height:40px}
+
+  /* bouton thème à droite, au niveau du logo, toujours au-dessus */
+  ${R} .themebtn{width:44px;height:44px;right:calc(4px + var(--sr,0px));top:calc(2px + var(--st,0px));z-index:96}
 
   /* ============ ACCUEIL : carrousel ============ */
 
@@ -113,46 +116,6 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .hint{transition:opacity .6s ease}
   .hint.hint-off{opacity:0}
 
-  /* ============ MENU TIROIR ============ */
-  .menu-backdrop{
-    display:block;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.32);
-    opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s linear .3s;
-    touch-action:none
-  }
-  html.menu-open .menu-backdrop{opacity:1;visibility:visible;transition:opacity .3s ease}
-
-  ${R} .nav{
-    position:fixed;z-index:55;
-    top:calc(54px + var(--st,0px));left:calc(10px + var(--sl,0px));right:calc(10px + var(--sr,0px));bottom:auto;
-    width:auto;height:auto;margin:0;padding:0;
-    display:flex;flex-direction:column;align-items:stretch;gap:0;
-    background:var(--dw-bg,#fff);color:var(--dw-fg,#0b0b0b);
-    border:1px solid var(--dw-fg,#0b0b0b);
-    max-height:calc(100dvh - 64px - var(--st,0px) - var(--sb,0px));overflow-y:auto;overscroll-behavior:contain;
-    counter-reset:nv;
-    clip-path:inset(0 0 100% 0);visibility:hidden;
-    transition:clip-path .32s cubic-bezier(.2,.8,.2,1),visibility 0s linear .32s
-  }
-  html.menu-open,html.menu-open body{overflow:hidden}
-  ${R}.menu-open .nav{clip-path:inset(0 0 0 0);visibility:visible;transition:clip-path .32s cubic-bezier(.2,.8,.2,1)}
-
-  ${R} .nav button{
-    display:flex;align-items:center;justify-content:flex-start;
-    width:100%;min-height:60px;margin:0;padding:0 18px;text-align:left;
-    font-size:26px;line-height:1.1;color:var(--dw-fg,#0b0b0b);
-    counter-increment:nv;
-    box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--dw-fg,#0b0b0b) 18%,transparent);
-    transform:translateY(-8px);transition:transform .38s cubic-bezier(.2,.8,.2,1),background-color .12s
-  }
-  ${R}.menu-open .nav button{transform:none}
-  ${R}.menu-open .nav button:nth-child(2){transition-delay:.05s}
-  ${R}.menu-open .nav button:nth-child(3){transition-delay:.1s}
-  ${R}.menu-open .nav button:nth-child(4){transition-delay:.15s}
-  ${R} .nav button:active{background-color:color-mix(in srgb,var(--dw-fg,#0b0b0b) 10%,transparent);transition-delay:0s}
-  ${R} .nav button:last-child{box-shadow:none}
-  ${R} .nav button::before{content:counter(nv,decimal-leading-zero);font-size:12px;letter-spacing:.12em;opacity:.45;min-width:34px}
-  ${R} .nav button::after{content:"→";font-size:18px;opacity:.45;margin-left:auto}
-
   /* ============ le reste de la page ============ */
   .modal-close,.panel .close,.lb-close{min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center}
   .modal-nav button{min-height:44px}
@@ -161,9 +124,9 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   textarea.c-in{min-height:130px}
 
   /* pages À propos / Contact : on laisse la place à la barre + aux boutons de mode */
-  .panel{padding-top:calc(98px + var(--st,0px))}
+  .panel{padding-top:calc(142px + var(--st,0px))}
   .panel .in{padding-top:8px}
-  .panel .close{top:calc(54px + var(--st,0px));right:calc(10px + var(--sr,0px))}
+  .panel .close{display:none}   /* le bouton « Travaux » de la barre ferme le panneau */
   .panel h2{overflow-wrap:anywhere}
 
   /* contact : l'enveloppe ne déborde plus */
@@ -183,8 +146,7 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 /* petits écrans en largeur (≤ 400 px) */
 @media(max-width:400px){
   #mTop .brand{font-size:14px !important;letter-spacing:.06em !important}
-  ${R} .nav button{font-size:23px}
-  ${R} .counter b{font-size:72px}
+    ${R} .counter b{font-size:72px}
   ${R} .item .ttl{font-size:23px}
   .c-pm{width:96px;right:54px}
   .c-stamp{width:60px}
@@ -202,6 +164,10 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   ${R} .item .bar{margin-top:10px;margin-bottom:10px}
   ${R} .item .dsc{font-size:13px;-webkit-line-clamp:2;line-clamp:2}
   ${R} .hint{display:none}
+  #mTop .brand{height:34px !important;line-height:34px !important}
+  ${R} #mTop .nav button{min-height:36px}
+  #mTop .mode-switch .may-btn,#mTop .mode-switch .uk-btn{min-height:34px}
+  .panel{padding-top:calc(124px + var(--st,0px))}
 }
 /* très petits écrans (≤ 600 px de haut) : on retire la description, le titre suffit */
 @media(max-width:860px) and (max-height:600px){
@@ -209,15 +175,17 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   ${R} .item{top:78%}
 }
 
-/* téléphone en paysage : le logo reste centré, les modes passent à droite du bouton thème */
+/* téléphone en paysage : logo, menu et modes sur une seule ligne */
 @media(max-height:520px) and (orientation:landscape){
-  .panel{padding-top:calc(60px + var(--st,0px))}
+  #mTop{flex-direction:row;flex-wrap:wrap;justify-content:center;align-items:center;column-gap:14px;padding-bottom:0}
+  #mTop .brand{height:36px !important;line-height:36px !important;font-size:13px !important}
+  ${R} #mTop .nav button{min-height:36px;font-size:14px;padding:0 8px}
+  #mTop .mode-switch{margin:0 !important}
+  #mTop .mode-switch .may-btn,#mTop .mode-switch .uk-btn{min-height:34px}
+  .panel{padding-top:calc(56px + var(--st,0px))}
   .panel h2{font-size:40px;margin-bottom:16px}
   .panel .in{padding-top:0}
   .about-stage,.about-stage.is-model{max-width:140px}
-  #mTop .mode-switch{position:fixed !important;top:calc(8px + var(--st,0px)) !important;right:calc(54px + var(--sr,0px)) !important;left:auto !important;margin:0 !important}
-  ${R} .nav{top:calc(54px + var(--st,0px))}
-  ${R} .nav button{min-height:46px;font-size:21px}
   .modal-layout{display:grid;grid-template-columns:minmax(200px,.8fr) minmax(0,1.4fr);gap:4vw}
   .modal-info{position:sticky;top:70px}
   .modal-info .modal-nav{display:flex}
@@ -225,7 +193,7 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 }
 
 @media(prefers-reduced-motion:reduce){
-  .nav,.menu-backdrop,.menu-btn i,.hint{transition:none !important}
+  .hint{transition:none !important}
 }
 `;
   const st = document.createElement("style");
@@ -241,6 +209,7 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   const root = document.documentElement;
   const brand = document.querySelector(".brand");
   const modes = document.querySelector(".mode-switch");
+  const nav = document.querySelector(".nav");
   const mTop = document.createElement("div");
   mTop.id = "mTop";
   const saved = [];
@@ -248,7 +217,7 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   function toMobile() {
     if (mTop.parentNode) return;
     document.body.appendChild(mTop);
-    [brand, modes].forEach(el => {
+    [brand, nav, modes].forEach(el => {
       if (!el) return;
       saved.push({ el: el, parent: el.parentNode, next: el.nextSibling });
       mTop.appendChild(el);
@@ -268,86 +237,9 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   sync();
   if (mq.addEventListener) mq.addEventListener("change", sync); else mq.addListener(sync);
 
-  /* ---------------------------------------------------------------
-     MENU TIROIR (les boutons du menu restent ceux du site : leurs actions ne changent pas)
-     --------------------------------------------------------------- */
-  const nav = document.querySelector(".nav");
-
-  if (nav) {
-    if (!nav.id) nav.id = "mainNav";
-
-    const btn = document.createElement("button");
-    btn.type = "button"; btn.className = "menu-btn"; btn.id = "menuBtn";
-    btn.setAttribute("aria-label", "Menu");
-    btn.setAttribute("aria-controls", nav.id);
-    btn.setAttribute("aria-expanded", "false");
-    btn.innerHTML = "<i></i><i></i>";
-    document.body.appendChild(btn);
-
-    const back = document.createElement("div");
-    back.className = "menu-backdrop";
-    document.body.appendChild(back);
-
-    /* le tiroir reprend les couleurs réelles du site (clair / sombre / May / UK 70) */
-    function paintColors() {
-      const cs = getComputedStyle(document.body);
-      let bg = cs.backgroundColor;
-      if (!bg || bg === "transparent" || /rgba\(.*,\s*0\)$/.test(bg)) bg = getComputedStyle(root).backgroundColor;
-      if (!bg || bg === "transparent" || /rgba\(.*,\s*0\)$/.test(bg)) bg = "#fff";
-      root.style.setProperty("--dw-bg", bg);
-      root.style.setProperty("--dw-fg", cs.color || "#0b0b0b");
-    }
-
-    /* historique : le bouton « retour » du téléphone ferme le tiroir au lieu de quitter le site */
-    let menuPushed = false;
-
-    function setOpen(on) {
-      if (on === root.classList.contains("menu-open")) return;
-      if (on) {
-        paintColors();
-        try { history.pushState({ menu: true }, "", location.href); menuPushed = true; } catch (e) { menuPushed = false; }
-      } else if (menuPushed) {
-        menuPushed = false;
-        try { history.back(); } catch (e) {}
-      }
-      root.classList.toggle("menu-open", on);
-      btn.setAttribute("aria-expanded", on ? "true" : "false");
-      btn.setAttribute("aria-label", on ? "Fermer le menu" : "Menu");
-      try { if (navigator.vibrate) navigator.vibrate(6); } catch (e) {}     /* Android : micro-vibration */
-      if (on) {
-        setTimeout(() => { const b = nav.querySelector("button"); if (b) try { b.focus({ preventScroll: true }); } catch (e) {} }, 60);
-      } else if (nav.contains(document.activeElement)) {
-        try { btn.focus({ preventScroll: true }); } catch (e) {}
-      }
-    }
-    const close = () => setOpen(false);
-
-    addEventListener("popstate", () => {
-      if (root.classList.contains("menu-open")) { menuPushed = false; setOpen(false); }
-    });
-
-    btn.addEventListener("click", e => { e.stopPropagation(); setOpen(!root.classList.contains("menu-open")); });
-    back.addEventListener("click", close);
-    nav.addEventListener("click", e => { if (e.target.closest("button,a")) close(); });   /* après l'action du site */
-    document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
-    document.addEventListener("click", e => {
-      if (e.target.closest && e.target.closest(".mode-switch,.themebtn")) close();
-    });
-    addEventListener("resize", () => { if (innerWidth > 860) close(); });
-
-    /* le tiroir et son fond ne font JAMAIS défiler le carrousel qui est derrière :
-       on arrête les événements tactiles avant qu'ils n'atteignent la page */
-    let y0 = null;
-    nav.addEventListener("touchstart", e => { e.stopPropagation(); y0 = e.touches[0].clientY; }, { passive: true });
-    nav.addEventListener("touchmove", e => {
-      e.stopPropagation();
-      if (y0 !== null && y0 - e.touches[0].clientY > 40) { y0 = null; close(); }   /* glisser vers le haut = fermer */
-    }, { passive: true });
-    nav.addEventListener("touchend", e => { e.stopPropagation(); y0 = null; }, { passive: true });
-    back.addEventListener("touchstart", e => e.stopPropagation(), { passive: true });
-    back.addEventListener("touchmove", e => { e.preventDefault(); e.stopPropagation(); }, { passive: false });
-    back.addEventListener("touchend", e => e.stopPropagation(), { passive: true });
-  }
+  /* un glissement qui démarre sur la barre du haut ne fait pas défiler le carrousel */
+  ["touchstart", "touchmove", "touchend"].forEach(t =>
+    mTop.addEventListener(t, e => e.stopPropagation(), { passive: true }));
 
   /* ---------------------------------------------------------------
      ACCUEIL : inertie du carrousel, indication, vibration
@@ -359,7 +251,7 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   const canFlick = () => {
     try {
       return innerWidth <= 860 && typeof nudge === "function" && ready === true &&
-        !(typeof overlayOpen === "function" && overlayOpen()) && !root.classList.contains("menu-open");
+        !(typeof overlayOpen === "function" && overlayOpen());
     } catch (e) { return false; }
   };
 
