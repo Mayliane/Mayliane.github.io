@@ -53,54 +53,65 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
 @media(max-width:860px){
 
-  /* ============ BARRE DU HAUT : toujours visible ============
-     ligne 1 : logo · ligne 2 : Travaux / À propos / Contact · ligne 3 : May / UK70 */
+  /* ============ BARRE DU HAUT : toujours visible, sur 2 lignes ============
+     ligne 1 : logo (centré)
+     ligne 2 : Travaux / À propos / Contact à gauche · May / UK70 à droite
+     (si l'écran est vraiment très étroit, May / UK70 passent sur une 3e ligne, à droite) */
   #mTop{
-    display:flex;flex-direction:column;align-items:center;
+    display:flex;flex-direction:row;flex-wrap:wrap;justify-content:space-between;align-items:center;
+    column-gap:8px;row-gap:0;
     position:fixed;z-index:95;left:0;right:0;top:0;
-    padding:calc(4px + var(--st,0px)) calc(56px + var(--sr,0px)) 6px calc(56px + var(--sl,0px));
-    box-sizing:border-box;pointer-events:none;transform:none;filter:none
+    padding:calc(4px + var(--st,0px)) calc(10px + var(--sr,0px)) 8px calc(10px + var(--sl,0px));
+    box-sizing:border-box;pointer-events:none;transform:none;filter:none;
+    /* voile de la couleur du fond : les cartes qui montent passent derrière sans gêner la lecture */
+    background:linear-gradient(var(--dw-bg,transparent) 72%,transparent)
   }
   #mTop > *{pointer-events:auto}
-  /* quand À propos / Contact est ouvert, la barre reste au-dessus et le texte glisse dessous */
-  html:has(.panel.open) #mTop{background:linear-gradient(var(--bg,#fff) 80%,var(--bg0,transparent))}
 
+  /* ligne 1 : logo centré, avec de la marge pour ne pas passer sous le bouton thème */
   #mTop .brand{
     position:static !important;inset:auto !important;transform:none !important;rotate:none !important;translate:none !important;
     writing-mode:horizontal-tb !important;text-orientation:mixed !important;
-    margin:0 !important;width:auto !important;max-width:100% !important;height:40px !important;
-    display:block !important;line-height:40px !important;text-align:center !important;
+    flex:0 0 100% !important;width:100% !important;max-width:100% !important;box-sizing:border-box !important;
+    margin:0 !important;padding:0 44px !important;height:38px !important;
+    display:block !important;line-height:38px !important;text-align:center !important;
     white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;
     font-size:15px !important;letter-spacing:.08em !important;order:1
   }
   #mTop .brand *{writing-mode:horizontal-tb !important;transform:none !important;rotate:none !important}
 
-  /* menu : trois boutons côte à côte, toujours visibles */
+  /* ligne 2, à gauche : le menu */
   ${R} #mTop .nav{
-    position:static;inset:auto;order:2;
-    display:flex;flex-direction:row;justify-content:center;align-items:center;gap:2px;
+    position:static;inset:auto;order:2;flex:0 1 auto;
+    display:flex;flex-direction:row;justify-content:flex-start;align-items:center;gap:0;
     width:auto;height:auto;max-height:none;margin:0;padding:0;overflow:visible;
     background:none;border:0;clip-path:none;visibility:visible;transform:none
   }
   ${R} #mTop .nav button{
     display:inline-flex;align-items:center;justify-content:center;
-    width:auto;min-height:40px;margin:0;padding:0 12px;
-    font-size:15px;font-weight:700;line-height:1;letter-spacing:.01em;
-    text-align:center;box-shadow:none;transform:none
+    width:auto;min-height:44px;margin:0;padding:0 9px;
+    font-size:13px;font-weight:700;line-height:1;letter-spacing:.02em;
+    text-align:center;box-shadow:none;transform:none;white-space:nowrap
   }
+  ${R} #mTop .nav button:first-of-type{padding-left:2px}
   ${R} #mTop .nav button:active{opacity:.55}
 
-  /* boutons de mode */
+  /* ligne 2, à droite : boutons de mode (autocollants plus petits pour tenir à côté du menu) */
   #mTop .mode-switch{
     position:static !important;inset:auto !important;translate:none !important;order:3;
-    margin:2px auto 0 !important;width:max-content !important;max-width:100% !important;
-    justify-content:center !important;align-items:center !important;text-align:center !important
+    margin:0 0 0 auto !important;width:max-content !important;max-width:100% !important;
+    gap:9px !important;justify-content:flex-end !important;align-items:center !important
   }
   #mTop .mode-switch > *{position:relative !important;inset:auto !important;margin-top:0 !important;margin-bottom:0 !important}
-  #mTop .mode-switch .may-btn,#mTop .mode-switch .uk-btn{min-height:40px}
+  #mTop .mode-switch .may-btn,#mTop .mode-switch .uk-btn{
+    min-height:38px !important;font-size:14px !important;padding:7px 10px 4px !important;
+    border-width:2.5px !important;box-shadow:3px 3px 0 #0b0b0b
+  }
+  #mTop .mode-switch .uk-btn{box-shadow:3px 3px 0 #ff2d8a}
+  #mTop .mode-switch .uk-btn[aria-pressed="true"]{box-shadow:3px 3px 0 #0b0b0b}
 
-  /* bouton thème à droite, au niveau du logo, toujours au-dessus */
-  ${R} .themebtn{width:44px;height:44px;right:calc(4px + var(--sr,0px));top:calc(2px + var(--st,0px));z-index:96}
+  /* bouton thème : à droite, à la hauteur du logo, toujours au-dessus */
+  ${R} .themebtn{width:44px;height:44px;right:calc(4px + var(--sr,0px));top:calc(1px + var(--st,0px));z-index:96}
 
   /* ============ ACCUEIL : carrousel ============ */
 
@@ -124,7 +135,7 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   textarea.c-in{min-height:130px}
 
   /* pages À propos / Contact : on laisse la place à la barre + aux boutons de mode */
-  .panel{padding-top:calc(142px + var(--st,0px))}
+  .panel{padding-top:calc(112px + var(--st,0px))}
   .panel .in{padding-top:8px}
   .panel .close{display:none}   /* le bouton « Travaux » de la barre ferme le panneau */
   .panel h2{overflow-wrap:anywhere}
@@ -146,11 +157,24 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 /* petits écrans en largeur (≤ 400 px) */
 @media(max-width:400px){
   #mTop .brand{font-size:14px !important;letter-spacing:.06em !important}
-    ${R} .counter b{font-size:72px}
+  ${R} .counter b{font-size:72px}
   ${R} .item .ttl{font-size:23px}
   .c-pm{width:96px;right:54px}
   .c-stamp{width:60px}
   .c-air{font-size:11px}
+}
+
+/* écrans étroits (≤ 380 px : iPhone SE/mini, petits Android) : menu + modes restent sur UNE seule ligne */
+@media(max-width:380px){
+  #mTop{column-gap:4px;padding-left:calc(8px + var(--sl,0px));padding-right:calc(8px + var(--sr,0px))}
+  ${R} #mTop .nav button{font-size:12px;padding:0 6px;letter-spacing:.01em}
+  ${R} #mTop .nav button:first-of-type{padding-left:0}
+  #mTop .mode-switch{gap:6px !important}
+  #mTop .mode-switch .may-btn,#mTop .mode-switch .uk-btn{font-size:13px !important;padding:6px 8px 3px !important}
+}
+@media(max-width:340px){
+  ${R} #mTop .nav button{font-size:11px;padding:0 4px}
+  #mTop .mode-switch .may-btn,#mTop .mode-switch .uk-btn{font-size:12px !important;padding:5px 7px 3px !important}
 }
 
 /* petits écrans en HAUTEUR (iPhone SE, mini, Android compacts) :
@@ -164,10 +188,10 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   ${R} .item .bar{margin-top:10px;margin-bottom:10px}
   ${R} .item .dsc{font-size:13px;-webkit-line-clamp:2;line-clamp:2}
   ${R} .hint{display:none}
-  #mTop .brand{height:34px !important;line-height:34px !important}
-  ${R} #mTop .nav button{min-height:36px}
-  #mTop .mode-switch .may-btn,#mTop .mode-switch .uk-btn{min-height:34px}
-  .panel{padding-top:calc(124px + var(--st,0px))}
+  #mTop .brand{height:32px !important;line-height:32px !important}
+  ${R} #mTop .nav button{min-height:40px}
+  #mTop .mode-switch .may-btn,#mTop .mode-switch .uk-btn{min-height:34px !important}
+  .panel{padding-top:calc(98px + var(--st,0px))}
 }
 /* très petits écrans (≤ 600 px de haut) : on retire la description, le titre suffit */
 @media(max-width:860px) and (max-height:600px){
@@ -177,11 +201,13 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
 /* téléphone en paysage : logo, menu et modes sur une seule ligne */
 @media(max-height:520px) and (orientation:landscape){
-  #mTop{flex-direction:row;flex-wrap:wrap;justify-content:center;align-items:center;column-gap:14px;padding-bottom:0}
-  #mTop .brand{height:36px !important;line-height:36px !important;font-size:13px !important}
-  ${R} #mTop .nav button{min-height:36px;font-size:14px;padding:0 8px}
+  /* la carte se règle sur la HAUTEUR de l'écran : elle ne recouvre plus le titre du projet */
+  .card{width:min(40vw,calc(56vh * 16 / 9))}
+  #mTop{justify-content:center;column-gap:16px;padding-bottom:2px}
+  #mTop .brand{flex:0 0 auto !important;width:auto !important;padding:0 !important;height:40px !important;line-height:40px !important;font-size:13px !important}
+  ${R} #mTop .nav button{min-height:40px;font-size:13px;padding:0 8px}
   #mTop .mode-switch{margin:0 !important}
-  #mTop .mode-switch .may-btn,#mTop .mode-switch .uk-btn{min-height:34px}
+  #mTop .mode-switch .may-btn,#mTop .mode-switch .uk-btn{min-height:34px !important}
   .panel{padding-top:calc(56px + var(--st,0px))}
   .panel h2{font-size:40px;margin-bottom:16px}
   .panel .in{padding-top:0}
@@ -236,6 +262,19 @@ button,.c-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   const sync = () => (mq.matches ? toMobile() : toDesktop());
   sync();
   if (mq.addEventListener) mq.addEventListener("change", sync); else mq.addListener(sync);
+
+  /* voile de la barre : on lit la vraie couleur du fond et on la met à jour quand le thème change */
+  function paintBar() {
+    const ok = c => c && c !== "transparent" && !/rgba\(.*,\s*0\)$/.test(c);
+    let bg = getComputedStyle(document.body).backgroundColor;
+    if (!ok(bg)) bg = getComputedStyle(root).backgroundColor;
+    root.style.setProperty("--dw-bg", ok(bg) ? bg : "transparent");
+  }
+  paintBar();
+  addEventListener("load", () => { paintBar(); setTimeout(paintBar, 500); });
+  const repaint = () => { paintBar(); setTimeout(paintBar, 450); };   /* 2e passage : après les transitions de couleur */
+  new MutationObserver(repaint).observe(root, { attributes: true, attributeFilter: ["class", "data-theme"] });
+  new MutationObserver(repaint).observe(document.body, { attributes: true, attributeFilter: ["class"] });
 
   /* un glissement qui démarre sur la barre du haut ne fait pas défiler le carrousel */
   ["touchstart", "touchmove", "touchend"].forEach(t =>
