@@ -19,6 +19,8 @@ try{if(sessionStorage.getItem("flyIn")==="1"){sessionStorage.removeItem("flyIn")
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<!-- l'image de couverture est chargée en priorité -->
+<link rel="preload" as="image" href="../10.jpg" fetchpriority="high">
 <style>
 /* mêmes variables, polices et comportements que la page d'accueil */
 :root{
@@ -67,6 +69,7 @@ a{color:inherit}
 /* images + petites notes sur les côtés */
 .modal-blocks{display:flex;flex-direction:column;gap:18px;min-width:0}
 .b-img{margin:0}
+/* height:auto + attributs width/height => le navigateur réserve la place (pas de saut de mise en page) */
 .b-img img{display:block;width:100%;height:auto;background:var(--line);cursor:zoom-in}
 .row{display:grid;gap:22px;align-items:start;margin-top:30px}
 .row.r{grid-template-columns:minmax(0,1fr) 170px}
@@ -76,7 +79,10 @@ a{color:inherit}
 .note h3{font-size:14px;font-weight:700;margin-bottom:8px}
 .note h3::before{content:"—";margin-right:8px;font-weight:400}
 .note p{color:var(--mute);font-size:13px;line-height:1.5}
-.ph{display:grid;place-items:center;aspect-ratio:16/9;border:1px dashed var(--mute);color:var(--mute);text-align:center;padding:20px;font-size:13px;background:var(--bg)}
+.ph{display:grid;place-items:center;aspect-ratio:16/10;border:1px dashed var(--mute);color:var(--mute);text-align:center;padding:20px;font-size:13px;background:var(--bg)}
+
+/* les blocs hors écran ne sont pas rendus tant qu'on n'en approche pas */
+.modal-blocks>section,.modal-blocks>.b-img+.b-img{content-visibility:auto;contain-intrinsic-size:auto 700px}
 
 /* zoom plein écran */
 .lightbox{position:fixed;inset:0;z-index:150;background:var(--bg);display:none;align-items:center;justify-content:center;overflow:hidden;touch-action:none;cursor:zoom-in;user-select:none;-webkit-user-select:none}
@@ -165,23 +171,40 @@ html.hold .modal-info,html.hold .modal-blocks>section{opacity:0;filter:blur(12px
     </aside>
 
     <div class="modal-blocks">
-      <figure class="b-img"><img src="../10.jpg" alt="Pastelie"></figure>
+      <!-- couverture : chargée tout de suite, en priorité (pas de lazy) -->
+      <figure class="b-img"><img src="../10.jpg" alt="Pastelie" width="1600" height="1000" fetchpriority="high" decoding="async"></figure>
+
+      <!-- 1 à 4 : avec notes -->
       <section class="row r">
-        <figure class="b-img"><img src="pastelie-1.jpg" alt="Pastelie – Le lieu" loading="lazy" decoding="async" onerror="miss(this)"></figure>
+        <figure class="b-img"><img src="pastelie-1.jpg" alt="Pastelie – Le lieu" width="1600" height="1000" loading="lazy" decoding="async"></figure>
         <aside class="note"><h3>Le lieu</h3><p>Un café où l’on peint de la céramique.</p></aside>
       </section>
       <section class="row l">
-        <figure class="b-img"><img src="pastelie-2.jpg" alt="Pastelie – Les formes" loading="lazy" decoding="async" onerror="miss(this)"></figure>
+        <figure class="b-img"><img src="pastelie-2.jpg" alt="Pastelie – Les formes" width="1600" height="1000" loading="lazy" decoding="async"></figure>
         <aside class="note"><h3>Les formes</h3><p>Courbes douces et motifs.</p></aside>
       </section>
       <section class="row r">
-        <figure class="b-img"><img src="pastelie-3.jpg" alt="Pastelie – Les couleurs" loading="lazy" decoding="async" onerror="miss(this)"></figure>
+        <figure class="b-img"><img src="pastelie-3.jpg" alt="Pastelie – Les couleurs" width="1600" height="1000" loading="lazy" decoding="async"></figure>
         <aside class="note"><h3>Les couleurs</h3><p>Palette pastel.</p></aside>
       </section>
       <section class="row l">
-        <figure class="b-img"><img src="pastelie-4.jpg" alt="Pastelie – Les supports" loading="lazy" decoding="async" onerror="miss(this)"></figure>
+        <figure class="b-img"><img src="pastelie-4.jpg" alt="Pastelie – Les supports" width="1600" height="1000" loading="lazy" decoding="async"></figure>
         <aside class="note"><h3>Les supports</h3><p>Menu, tasses, communication.</p></aside>
       </section>
+
+      <!-- 5 à 16 : images seules -->
+      <figure class="b-img"><img src="pastelie-5.jpg" alt="Pastelie – image 5" width="1600" height="1000" loading="lazy" decoding="async"></figure>
+      <figure class="b-img"><img src="pastelie-6.jpg" alt="Pastelie – image 6" width="1600" height="1000" loading="lazy" decoding="async"></figure>
+      <figure class="b-img"><img src="pastelie-7.jpg" alt="Pastelie – image 7" width="1600" height="1000" loading="lazy" decoding="async"></figure>
+      <figure class="b-img"><img src="pastelie-8.jpg" alt="Pastelie – image 8" width="1600" height="1000" loading="lazy" decoding="async"></figure>
+      <figure class="b-img"><img src="pastelie-9.jpg" alt="Pastelie – image 9" width="1600" height="1000" loading="lazy" decoding="async"></figure>
+      <figure class="b-img"><img src="pastelie-10.jpg" alt="Pastelie – image 10" width="1600" height="1000" loading="lazy" decoding="async"></figure>
+      <figure class="b-img"><img src="pastelie-11.jpg" alt="Pastelie – image 11" width="1600" height="1000" loading="lazy" decoding="async"></figure>
+      <figure class="b-img"><img src="pastelie-12.jpg" alt="Pastelie – image 12" width="1600" height="1000" loading="lazy" decoding="async"></figure>
+      <figure class="b-img"><img src="pastelie-13.jpg" alt="Pastelie – image 13" width="1600" height="1000" loading="lazy" decoding="async"></figure>
+      <figure class="b-img"><img src="pastelie-14.jpg" alt="Pastelie – image 14" width="1600" height="1000" loading="lazy" decoding="async"></figure>
+      <figure class="b-img"><img src="pastelie-15.jpg" alt="Pastelie – image 15" width="1600" height="1000" loading="lazy" decoding="async"></figure>
+      <figure class="b-img"><img src="pastelie-16.jpg" alt="Pastelie – image 16" width="1600" height="1000" loading="lazy" decoding="async"></figure>
     </div>
   </div>
   <div class="modal-nav modal-nav-end"><a href="eclat.html">← précédent</a><a href="cartier.html">suivant →</a></div>
@@ -194,11 +217,14 @@ html.hold .modal-info,html.hold .modal-blocks>section{opacity:0;filter:blur(12px
 </div>
 
 <script>
-function miss(img){
+/* image manquante -> placeholder (écouteur unique, l'événement error ne remonte pas : on utilise la capture) */
+document.addEventListener("error",function(e){
+  var img=e.target;
+  if(!img||img.tagName!=="IMG"||!img.closest(".modal-blocks")||img.getAttribute("fetchpriority")==="high")return;
   var d=document.createElement("div");d.className="ph";
   d.textContent="Ajoute ici l’image « "+img.getAttribute("src")+" »";
   img.replaceWith(d);
-}
+},true);
 var $=function(id){return document.getElementById(id)};
 $("themeBtn").addEventListener("click",function(){
   if(document.documentElement.classList.contains("uk"))return;
