@@ -180,7 +180,7 @@ html.may-active .loader.has-pop .ld-bot{background-position:var(--pop-x) var(--p
   const pins = new Image();
   pins.className = "pins-rose";
   pins.alt = ""; pins.draggable = false;
-  pins.src = encodeURI(DIR + "pins rose.svg");
+  pins.dataset.src = encodeURI(DIR + "pins rose.svg");
   pins.onerror = () => { pins.style.display = "none"; };
   document.body.appendChild(pins);
 
@@ -190,7 +190,7 @@ html.may-active .loader.has-pop .ld-bot{background-position:var(--pop-x) var(--p
   const panneau = new Image();
   panneau.className = "panneau-uk";
   panneau.alt = ""; panneau.draggable = false;
-  panneau.src = encodeURI(DIR + "panneau.png");
+  panneau.dataset.src = encodeURI(DIR + "panneau.webp");
   panneau.onerror = () => { panneau.style.display = "none"; };
   document.body.appendChild(panneau);
 
@@ -200,9 +200,18 @@ html.may-active .loader.has-pop .ld-bot{background-position:var(--pop-x) var(--p
   const stickers = new Image();
   stickers.className = "stickers-may";
   stickers.alt = ""; stickers.draggable = false;
-  stickers.src = encodeURI(DIR + "stickers.svg");
+  stickers.dataset.src = encodeURI(DIR + "stickers.svg");
   stickers.onerror = () => { stickers.style.display = "none"; };
   document.body.appendChild(stickers);
+
+  /* ces 3 images ne se chargent que si leur mode est actif (~3,7 Mo économisés sur la page d'accueil) */
+  const docEl = document.documentElement;
+  const lazySync = () => {
+    if (docEl.classList.contains("uk")) [pins, panneau].forEach(im => { if (!im.getAttribute("src")) im.src = im.dataset.src; });
+    if (docEl.classList.contains("may-active")) { if (!stickers.getAttribute("src")) stickers.src = stickers.dataset.src; }
+  };
+  lazySync();
+  new MutationObserver(lazySync).observe(docEl, { attributes: true, attributeFilter: ["class"] });
 
   /* ---------------------------------------------------------------
      MAY : intro avec « Transition pop.svg » (fichier à côté de index.html)

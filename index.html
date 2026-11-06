@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr" data-theme="dark">
 <head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="dark light">
 <link rel="preload" as="image" href="Transition%20pop.svg">
 <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -8,7 +10,6 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <meta name="apple-mobile-web-app-title" content="MyWebSite" />
 <link rel="manifest" href="/site.webmanifest" />
-<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#121212">
 <title>Mayliane Lefebvre – Portfolio</title>
@@ -31,8 +32,6 @@
 <meta name="description" content="Portfolio de Mayliane Lefebvre : identités visuelles, stratégies publicitaires, personas, événementiel et supports de marque.">
 <meta name="author" content="Mayliane Lefebvre">
 <link rel="canonical" href="https://mayliane.github.io/">
-<link rel="manifest" href="site.webmanifest">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
 <!-- Google Search Console : remplace par le code donné lors de la validation par balise HTML -->
 <meta name="google-site-verification" content="j6ChLdMG_mtgxUeU3OvdPStkxxDg6ht0hpKQeA6yXFs" />
 <meta property="og:type" content="website">
@@ -41,18 +40,18 @@
 <meta property="og:title" content="Mayliane Lefebvre – Portfolio">
 <meta property="og:description" content="Identités visuelles, stratégies publicitaires, personas et événementiel.">
 <!-- IMPORTANT : mets l'adresse complète de l'image, ex. https://tonsite.fr/04.jpg (04.jpg = Maison Lima) -->
-<meta property="og:image" content="favicon.png">
+<meta property="og:image" content="https://mayliane.github.io/04.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Mayliane Lefebvre – Portfolio">
 <meta name="twitter:description" content="Identités visuelles, stratégies publicitaires, personas et événementiel.">
-<meta name="twitter:image" content="favicon.png">
+<meta name="twitter:image" content="https://mayliane.github.io/04.jpg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Gloock&family=Permanent+Marker&family=Special+Elite&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#ebebea;--bg0:rgba(235,235,234,0);--ink:#141414;--mute:#8d8d8b;--line:#cfcfcd;
+  --bg:#ebebea;--bg0:rgba(235,235,234,0);--ink:#141414;--mute:#666664;--line:#cfcfcd;
   --sh1:rgba(0,0,0,.15);--sh2:rgba(0,0,0,.08);
   --font:"Archivo","Helvetica Neue",Arial,sans-serif;
   --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
@@ -140,8 +139,8 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
 .stage{position:fixed;inset:0;perspective:1500px;perspective-origin:50% 50%;overflow:hidden;pointer-events:none}
 .card{position:absolute;left:50%;top:50%;width:min(30vw,500px);aspect-ratio:16/9;overflow:hidden;background:var(--line);border-radius:2px;
   box-shadow:0 28px 70px var(--sh1),0 2px 8px var(--sh2);transform-style:preserve-3d;will-change:transform,opacity;pointer-events:auto;cursor:pointer}
-.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.8,.2,1);-webkit-user-drag:none}
-.card:hover img{transform:scale(1.04)}
+.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s cubic-bezier(.23,1,.32,1);-webkit-user-drag:none}
+@media(hover:hover) and (pointer:fine){.card:hover img{transform:scale(1.04)}}
 .card::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.1),transparent 38%,rgba(0,0,0,.08));pointer-events:none}
 
 /* ---------- numéro + indices ---------- */
@@ -157,60 +156,9 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
 .item button{width:100%;max-width:340px;text-align:center;padding:0 12px;pointer-events:auto;transform:translateY(-50%)}
 .item .cat{display:block;color:var(--mute);margin-bottom:10px}
 .item .ttl{display:block;font-weight:600;font-size:clamp(22px,2.3vw,36px);text-transform:uppercase;line-height:1.05}
-.item .bar{display:block;width:18px;height:1px;background:currentColor;margin:16px auto}
-.item .dsc{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;line-clamp:5;overflow:hidden;max-width:34ch;margin:auto}
-
-/* ---------- fenêtre projet ---------- */
-.project-modal{position:fixed;inset:0;z-index:100;background:var(--bg);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .4s ease,visibility .4s}
-.project-modal.open{opacity:1;visibility:visible;pointer-events:auto}
-.modal-scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;
-  transform:translateY(28px);transition:transform .55s cubic-bezier(.2,.8,.2,1)}
-.project-modal.open .modal-scroll{transform:none}
-.modal-bar{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;
-  padding:calc(20px + var(--st)) calc(28px + var(--sr)) 18px calc(28px + var(--sl));
-  background:linear-gradient(var(--bg) 62%,var(--bg0))}
-.modal-number{color:var(--mute);font-size:13px}
-.modal-close{text-transform:uppercase;font-weight:600;padding:8px 0 8px 14px}
-.modal-layout{display:grid;grid-template-columns:minmax(280px,.75fr) minmax(0,1.65fr);gap:6vw;padding:2vh calc(5vw + var(--sr)) 8vh calc(5vw + var(--sl));max-width:1600px;margin:0 auto}
-.modal-layout.in-r{animation:inR .45s cubic-bezier(.2,.8,.2,1)}
-.modal-layout.in-l{animation:inL .45s cubic-bezier(.2,.8,.2,1)}
-@keyframes inR{from{opacity:0;transform:translateX(44px)}to{opacity:1;transform:none}}
-@keyframes inL{from{opacity:0;transform:translateX(-44px)}to{opacity:1;transform:none}}
-.modal-info{position:sticky;top:96px;align-self:start}
-.modal-type{color:var(--mute);margin-bottom:12px}
-.modal-title{font-size:clamp(28px,3.1vw,60px);line-height:1.04;text-transform:uppercase;letter-spacing:-.035em;margin-bottom:26px;overflow-wrap:break-word;text-wrap:balance}
-.modal-desc{font-size:17px;line-height:1.45;max-width:35ch;margin-bottom:26px}
-.modal-details{display:grid;grid-template-columns:5.5em 1fr;gap:10px 14px;line-height:1.35;margin-bottom:28px}
-.modal-details dt{color:var(--mute)}
-.modal-details dd{font-weight:600}
-.modal-nav{display:flex;gap:22px}
-.modal-nav button{color:var(--mute);padding:6px 0}
-.modal-nav button:hover{color:var(--ink)}
-.modal-nav-end{display:none}
-
-/* blocs de contenu */
-.modal-blocks{display:flex;flex-direction:column;gap:18px;min-width:0}
-.b-img{margin:0}
-.b-img img{display:block;width:100%;height:auto;background:var(--line);cursor:zoom-in}
-.b-img figcaption{color:var(--mute);margin-top:8px;font-size:13px}
-.b-heading{font-size:clamp(22px,2.4vw,32px);font-weight:700;text-transform:uppercase;letter-spacing:-.02em;line-height:1;margin-top:14px}
-.b-text{font-size:17px;line-height:1.55;max-width:60ch}
-.b-text p+p{margin-top:12px}
-.b-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.b-gallery img{display:block;width:100%;height:100%;object-fit:cover;aspect-ratio:4/3;background:var(--line);cursor:zoom-in}
-.b-video,.b-embed{width:100%;aspect-ratio:16/9;background:#000;border:0;display:block}
-.b-link{align-self:flex-start;display:inline-block;border:1px solid var(--ink);padding:12px 20px;text-transform:uppercase;font-weight:600;text-decoration:none;transition:background .25s,color .25s}
-.b-link:hover{background:var(--ink);color:var(--bg)}
-
-/* ---------- zoom plein écran ---------- */
-.lightbox{position:fixed;inset:0;z-index:150;background:var(--bg);display:none;align-items:center;justify-content:center;overflow:hidden;touch-action:none;cursor:zoom-in;user-select:none;-webkit-user-select:none}
-.lightbox.open{display:flex}
-.lightbox.zoomed{cursor:grab}
-.lightbox.drag{cursor:grabbing}
-.lightbox img{display:block;max-width:96vw;max-height:92vh;transform-origin:50% 50%;transition:transform .35s cubic-bezier(.2,.8,.2,1);will-change:transform;-webkit-user-drag:none;pointer-events:auto}
-.lightbox.drag img{transition:none}
-.lb-close{position:absolute;z-index:2;top:calc(20px + var(--st));right:calc(24px + var(--sr));text-transform:uppercase;font-weight:600;padding:8px;cursor:pointer}
-.lb-hint{position:absolute;left:0;right:0;bottom:calc(16px + var(--sb));text-align:center;color:var(--mute);pointer-events:none;font-size:13px}
+.item button{position:relative}
+.item .bar{position:absolute;left:50%;top:calc(100% + 16px);display:block;width:18px;height:1px;margin-left:-9px;background:currentColor}
+.item .dsc{position:absolute;left:0;right:0;top:calc(100% + 33px);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;line-clamp:5;overflow:hidden;width:max-content;max-width:34ch;margin:0 auto}
 
 /* ---------- à propos / contact ---------- */
 .panel{position:fixed;inset:0;z-index:90;background:var(--bg);display:none;padding:calc(26px + var(--st)) calc(22px + var(--sr)) calc(26px + var(--sb)) calc(22px + var(--sl));overflow:auto;touch-action:pan-y}
@@ -245,18 +193,6 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
   .hint{left:auto;right:calc(18px + var(--sr));bottom:calc(20px + var(--sb));text-align:right;max-width:34vw}
   .hint .d{display:none}.hint .m{display:inline}
 
-  .modal-bar{padding:calc(14px + var(--st)) calc(18px + var(--sr)) 14px calc(18px + var(--sl))}
-  .modal-layout{display:block;padding:4px calc(18px + var(--sr)) 0 calc(18px + var(--sl))}
-  .modal-info{position:static;margin-bottom:26px}
-  .modal-info .modal-nav{display:none}
-  .modal-title{font-size:clamp(30px,10.2vw,52px);margin-bottom:18px}
-  .modal-desc{font-size:16px;margin-bottom:20px}
-  .modal-details{margin-bottom:0}
-  .modal-blocks{gap:14px}
-  .b-text{font-size:16px}
-  .b-gallery{gap:8px}
-  .modal-nav-end{display:flex;justify-content:space-between;padding:30px calc(18px + var(--sr)) calc(40px + var(--sb)) calc(18px + var(--sl))}
-  .modal-nav button{padding:12px 0}
   .panel .in{margin-left:0;padding-top:50px}
   .panel h2{font-size:clamp(44px,15vw,80px);margin-bottom:28px}
   .panel p{font-size:17px}
@@ -272,9 +208,6 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
   .item .dsc,.item .bar{display:none}
 }
 @media(hover:none){.card:hover img{transform:none}}
-@media(prefers-reduced-motion:reduce){
-  .modal-layout.in-r,.modal-layout.in-l{animation:none}
-}
 
 
 /* ---------- base sobre + verrouillage du thème dans UK 70 ---------- */
@@ -288,8 +221,6 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
   .themebtn svg{width:20px;height:20px}
   .card{box-shadow:0 18px 45px var(--sh1),0 2px 7px var(--sh2)}
   .item button{padding-left:18px;padding-right:18px}
-  .b-gallery{grid-template-columns:1fr}
-  .modal-title{overflow-wrap:anywhere}
 }
 /* Accès aux modes */
 .mode-switch{position:fixed;top:calc(14px + var(--st));right:calc(64px + var(--sr));z-index:30;display:flex;align-items:center;gap:12px}
@@ -301,6 +232,20 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
 @media(max-width:860px){.mode-switch{top:calc(50px + var(--st));right:calc(8px + var(--sr));gap:7px}.mode-switch .may-btn,.mode-switch .uk-btn{font-size:15px;padding:6px 10px 3px}}
 /* ---------- transition entre l'accueil et les pages projet ---------- */
 .wipe{position:fixed;inset:0;z-index:300;background:var(--bg);transform:translateY(100%);pointer-events:none}
+/* ---------- ajouts : mobile natif + accessibilité ---------- */
+button,a,[role="button"]{touch-action:manipulation}
+.card img{-webkit-touch-callout:none}
+.card:active,.item button:active,.nav button:active,.themebtn:active,.modal-close:active{transform:scale(.97);transition:transform .12s cubic-bezier(.23,1,.32,1)}
+.item button:active{transform:translateY(-50%) scale(.97)}
+/* zone de toucher de 44px minimum sans changer l'apparence */
+.themebtn::after{content:"";position:absolute;inset:-6px}
+.nav button{position:relative}
+.nav button::after{content:"";position:absolute;inset:-6px -4px}
+/* mouvement réduit : on garde les fondus, on retire les déplacements */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .card:hover img,.card:active{transform:none!important}
+}
 </style>
 
 </head>
@@ -387,34 +332,6 @@ body.ui :is(.meta,.counter,.list){opacity:1;filter:none}
 <div class="hint"><span class="d">Défiler</span><span class="m">Glisser · toucher pour ouvrir</span></div>
 
 <div class="list" id="list" role="list" aria-label="Projets"></div>
-
-<!-- fenêtre projet -->
-<section class="project-modal" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-  <div class="modal-scroll" id="modalScroll">
-    <div class="modal-bar">
-      <span class="modal-number" id="modalNumber"></span>
-      <button class="modal-close" id="modalClose">Fermer ×</button>
-    </div>
-    <div class="modal-layout" id="modalLayout">
-      <aside class="modal-info">
-        <div class="modal-type" id="modalType"></div>
-        <h2 class="modal-title" id="modalTitle"></h2>
-        <p class="modal-desc" id="modalDesc"></p>
-        <dl class="modal-details" id="modalDetails"></dl>
-        <div class="modal-nav"><button class="js-prev">← précédent</button><button class="js-next">suivant →</button></div>
-      </aside>
-      <div class="modal-blocks" id="modalBlocks"></div>
-    </div>
-    <div class="modal-nav modal-nav-end"><button class="js-prev">← précédent</button><button class="js-next">suivant →</button></div>
-  </div>
-</section>
-
-<!-- zoom plein écran -->
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image agrandie">
-  <button class="lb-close" id="lbClose">Fermer ×</button>
-  <img id="lbImg" alt="" draggable="false">
-  <div class="lb-hint">Appuyer pour zoomer · glisser pour déplacer</div>
-</div>
 
 <section class="panel" id="panel"><button class="close" id="close">Fermer</button><div class="in" id="panel-in"></div></section>
 
@@ -594,7 +511,7 @@ for (let i = 0; i < N; i++) {
 
   const c = document.createElement("button");
   c.className = "card";
-  c.setAttribute("aria-label", p.title);
+  c.setAttribute("aria-label", p.title); c.tabIndex = -1;
   const im = document.createElement("img");
   im.src = coverOf(i); im.alt = p.title; im.draggable = false; im.decoding = "async";
   c.appendChild(im);
@@ -657,20 +574,20 @@ function render() {
 
     c.style.opacity = Math.max(0, 1 - a * .17);
     c.style.zIndex = 100 - Math.round(a * 10);
-    c.style.filter = (!mobile && a > .25) ? "blur(" + (Math.min(a, 1.5) * 1.1).toFixed(2) + "px)" : "none";
+    const bl = (!mobile && a > .25) ? Math.round(Math.min(a, 1.5) * 1.1 * 2) / 2 : 0;
+    if (c._bl !== bl) { c._bl = bl; c.style.filter = bl ? "blur(" + bl + "px)" : "none"; }
     c.style.transform =
       `translate3d(calc(-50% + ${x}px),calc(-50% + ${y}px),${z}px) rotateZ(${rot}deg) rotateX(${-pty * k}deg) rotateY(${ptx * k}deg) scale(${scale})`;
 
     it.style.opacity = (mobile ? Math.max(0, 1 - a * 2.4) : Math.max(.02, 1 - a * .55));
     const base = mobile ? 90 : Math.max(innerHeight * .15, 125);
     const ext  = mobile ? 0 : 62;                         // écarte les voisins pour laisser la place à la description du projet actif
-    const iy = d * base + Math.sign(d) * Math.min(a, 1) * ext;
-    it.style.transform = `translate3d(0,${iy}px,0)`;
     const so = Math.max(0, 1 - a * 2.6);
-    const dsc = it.querySelector(".dsc"), bar = it.querySelector(".bar");
+    const dsc = it._d || (it._d = it.querySelector(".dsc")), bar = it._b || (it._b = it.querySelector(".bar"));
     dsc.style.opacity = so; bar.style.opacity = so;
-    dsc.style.maxHeight = (so * 140).toFixed(1) + "px";                 // la description des projets voisins ne prend plus de place
-    bar.style.marginTop = bar.style.marginBottom = (so * 16).toFixed(1) + "px";
+    if (it._h == null) it._h = dsc.offsetHeight ? dsc.offsetHeight + 33 : 0;        // hauteur de « barre + description », mesurée une fois
+    const iy = d * base + Math.sign(d) * Math.min(a, 1) * ext - so * it._h / 2;       // recentre le projet actif comme avant
+    it.style.transform = `translate3d(0,${iy}px,0)`;
     it.firstChild.tabIndex = (mobile && a > .5) ? -1 : 0;
     it.firstChild.style.pointerEvents = (mobile && a > .5) ? "none" : "";   // sur mobile, seuls le titre actif est cliquable
   }
@@ -710,9 +627,8 @@ function tick(now) {
 }
 
 /* ---------- entrées ---------- */
-const modal = $("projectModal"), panel = $("panel"), modalScroll = $("modalScroll"), lb = $("lightbox"), lbImg = $("lbImg");
-const lbOpen = () => lb.classList.contains("open");
-const overlayOpen = () => modal.classList.contains("open") || panel.classList.contains("open") || lbOpen();
+const panel = $("panel");
+const overlayOpen = () => panel.classList.contains("open");   /* utilisé aussi par mobile.js */
 
 addEventListener("pointermove", e => {
   if (innerWidth <= 860 || e.pointerType === "touch") return;
@@ -746,214 +662,14 @@ addEventListener("touchend", () => { ty = null; setTimeout(() => { dragged = fal
 addEventListener("touchcancel", () => { ty = null; dragged = false; });
 
 addEventListener("keydown", e => {
-  if (lbOpen()) { if (e.key === "Escape") closeLightbox(); return; }
-  if (modal.classList.contains("open")) {
-    if (e.key === "Escape") closeProject();
-    if (e.key === "ArrowRight") openProject((currentProject + 1) % N, { dir: 1 });
-    if (e.key === "ArrowLeft") openProject((currentProject - 1 + N) % N, { dir: -1 });
-    return;
-  }
   if (panel.classList.contains("open")) { if (e.key === "Escape") closePanel(); return; }
   if (!ready) return;
+  if (e.key === " " && e.target.closest && e.target.closest("button,a")) return;   // l'espace active le bouton focalisé
   if (["ArrowDown", "ArrowRight", "PageDown", " "].includes(e.key)) { e.preventDefault(); nudge(1); }
   if (["ArrowUp", "ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); nudge(-1); }
 });
-addEventListener("resize", () => { render(); if (lbOpen()) { lbClamp(); lbApply(); } });
-
-/* ---------- fenêtre projet (ancienne version, conservée en secours) ---------- */
-let currentProject = 0, previousFocus = null, historyPushed = false;
-const modalLayout = $("modalLayout");
-
-function makeFigure(src, alt, caption) {
-  const f = document.createElement("figure"); f.className = "b-img";
-  const im = document.createElement("img");
-  im.src = src; im.alt = alt || ""; im.loading = "lazy"; im.decoding = "async";
-  f.appendChild(im);
-  if (caption) { const fc = document.createElement("figcaption"); fc.textContent = caption; f.appendChild(fc); }
-  return f;
-}
-function makeBlock(b) {
-  if (b.heading) { const h = document.createElement("h3"); h.className = "b-heading"; h.textContent = b.heading; return h; }
-  if (b.text) {
-    const d = document.createElement("div"); d.className = "b-text";
-    String(b.text).split("\n").filter(Boolean).forEach(line => { const p = document.createElement("p"); p.textContent = line; d.appendChild(p); });
-    return d;
-  }
-  if (b.img) return makeFigure(asset(b.img), b.alt || b.caption, b.caption);
-  if (b.gallery) {
-    const g = document.createElement("div"); g.className = "b-gallery";
-    b.gallery.forEach(s => { const im = document.createElement("img"); im.src = asset(s); im.alt = ""; im.loading = "lazy"; im.decoding = "async"; g.appendChild(im); });
-    return g;
-  }
-  if (b.video) {
-    const v = document.createElement("video"); v.className = "b-video"; v.src = asset(b.video);
-    v.controls = true; v.playsInline = true; v.preload = "metadata"; return v;
-  }
-  if (b.youtube || b.embed) {
-    const f = document.createElement("iframe"); f.className = "b-embed"; f.loading = "lazy"; f.allowFullscreen = true;
-    f.src = b.youtube ? "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(b.youtube) : safeUrl(b.embed);
-    f.title = b.title || "Contenu intégré";
-    f.setAttribute("allow", "fullscreen; picture-in-picture; encrypted-media");
-    return f;
-  }
-  if (b.link) {
-    const a = document.createElement("a"); a.className = "b-link"; a.href = safeUrl(b.link);
-    a.textContent = b.label || "Voir le projet";
-    if (isRemote(b.link)) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
-    return a;
-  }
-  return null;
-}
-function fillModal(i) {
-  const p = PROJECTS[i];
-  $("modalNumber").textContent = String(i + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
-  $("modalType").textContent = p.type;
-  $("modalTitle").textContent = p.title;
-  $("modalDesc").textContent = p.desc;
-
-  const dl = $("modalDetails"); dl.innerHTML = "";
-  const rows = Object.assign({}, p.team ? { "Équipe": p.team } : {}, p.details || {});
-  Object.keys(rows).forEach(k => {
-    const dt = document.createElement("dt"), dd = document.createElement("dd");
-    dt.textContent = k; dd.textContent = rows[k]; dl.append(dt, dd);
-  });
-  dl.style.display = Object.keys(rows).length ? "" : "none";
-
-  const box = $("modalBlocks"); box.innerHTML = "";
-  box.appendChild(makeFigure(coverOf(i), p.title));
-  (p.blocks || []).forEach(b => { const el = makeBlock(b); if (el) box.appendChild(el); });
-  modalScroll.scrollTop = 0;
-}
-/* o.fromUrl : ouverture déclenchée par l'adresse (rien à ajouter à l'historique) ; o.dir : sens de l'animation */
-function openProject(i, o) {
-  o = o || {};
-  const wasOpen = modal.classList.contains("open");
-  if (!wasOpen) {
-    previousFocus = document.activeElement;
-    if (o.fromUrl) historyPushed = false;
-    else { try { history.pushState({ project: true }, "", "#" + SLUGS[i]); historyPushed = true; } catch (e) { historyPushed = false; } }
-  } else if (!o.fromUrl) {
-    try { history.replaceState(history.state, "", "#" + SLUGS[i]); } catch (e) {}
-  }
-  currentProject = i;
-  fillModal(i);
-  modalLayout.classList.remove("in-l", "in-r");
-  if (o.dir && !REDUCED) { void modalLayout.offsetWidth; modalLayout.classList.add(o.dir > 0 ? "in-r" : "in-l"); }
-  modal.classList.add("open");
-  $("modalClose").focus({ preventScroll: true });
-}
-function closeProject(fromPop) {
-  if (!modal.classList.contains("open")) return;
-  modal.classList.remove("open");
-  modal.querySelectorAll("video").forEach(v => v.pause());
-  modal.querySelectorAll("iframe").forEach(f => { f.src = "about:blank"; });   // coupe le son des vidéos intégrées
-  goTo(currentProject);
-  if (fromPop !== true) {
-    if (historyPushed) { historyPushed = false; try { history.back(); } catch (e) {} }
-    else { try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
-  }
-  historyPushed = false;
-  if (previousFocus && previousFocus.focus) previousFocus.focus({ preventScroll: true });
-}
-/* bouton retour / avant du navigateur ou du téléphone, ou adresse modifiée à la main */
-addEventListener("popstate", () => {
-  if (lbOpen()) { closeLightbox(true); return; }
-  const i = slugIndex(location.hash);
-  if (i >= 0) { if (ready && (!modal.classList.contains("open") || i !== currentProject)) openProject(i, { fromUrl: true }); }
-  else if (modal.classList.contains("open")) closeProject(true);
-});
-$("modalClose").addEventListener("click", () => closeProject());
-document.querySelectorAll(".js-prev").forEach(b => b.addEventListener("click", () => openProject((currentProject - 1 + N) % N, { dir: -1 })));
-document.querySelectorAll(".js-next").forEach(b => b.addEventListener("click", () => openProject((currentProject + 1) % N, { dir: 1 })));
-
-/* glisser gauche / droite = projet suivant / précédent */
-let sx = 0, sy = 0, st = 0, sOk = false;
-modalScroll.addEventListener("touchstart", e => {
-  if (e.touches.length !== 1) { sOk = false; return; }
-  sOk = !e.target.closest("video,iframe");
-  sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
-}, { passive: true });
-modalScroll.addEventListener("touchend", e => {
-  if (!sOk) return; sOk = false;
-  const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
-  if (Date.now() - st < 700 && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.6) {
-    const dir = dx < 0 ? 1 : -1;
-    openProject((currentProject + dir + N) % N, { dir });
-  }
-}, { passive: true });
-
-/* ---------- zoom plein écran ---------- */
-const LB_LEVELS = [1, 2.5, 5];
-let lbS = 1, lbX = 0, lbY = 0, lbLevel = 0, lbPushed = false, lbPrevFocus = null, lbDrag = null;
-
-function lbClamp() {
-  const w = lbImg.offsetWidth * lbS, h = lbImg.offsetHeight * lbS;
-  const mx = Math.max(0, (w - innerWidth) / 2), my = Math.max(0, (h - innerHeight) / 2);
-  lbX = Math.max(-mx, Math.min(mx, lbX));
-  lbY = Math.max(-my, Math.min(my, lbY));
-}
-function lbApply() {
-  lbImg.style.transform = `translate3d(${lbX}px,${lbY}px,0) scale(${lbS})`;
-  lb.classList.toggle("zoomed", lbS > 1);
-}
-function lbZoomTo(level, cx, cy) {
-  const s0 = lbS, s1 = LB_LEVELS[level];
-  const px = cx - innerWidth / 2, py = cy - innerHeight / 2;
-  lbX = px - (px - lbX) * (s1 / s0);
-  lbY = py - (py - lbY) * (s1 / s0);
-  lbS = s1; lbLevel = level;
-  if (s1 === 1) { lbX = 0; lbY = 0; }
-  lbClamp(); lbApply();
-}
-function openLightbox(src, alt) {
-  lbPrevFocus = document.activeElement;
-  lbImg.src = src; lbImg.alt = alt || "";
-  lbS = 1; lbX = 0; lbY = 0; lbLevel = 0; lbApply();
-  lb.classList.remove("drag");
-  lb.classList.add("open");
-  try { history.pushState({ zoom: true }, "", location.href); lbPushed = true; } catch (e) { lbPushed = false; }
-  $("lbClose").focus({ preventScroll: true });
-}
-function closeLightbox(fromPop) {
-  if (!lbOpen()) return;
-  lb.classList.remove("open", "zoomed", "drag");
-  lbDrag = null;
-  if (fromPop !== true && lbPushed) { lbPushed = false; try { history.back(); } catch (e) {} }
-  lbPushed = false;
-  if (lbPrevFocus && lbPrevFocus.focus) lbPrevFocus.focus({ preventScroll: true });
-}
-$("modalBlocks").addEventListener("click", e => {
-  const im = e.target.closest("img");
-  if (im) openLightbox(im.currentSrc || im.src, im.alt);
-});
-$("lbClose").addEventListener("click", () => closeLightbox());
-lb.addEventListener("pointerdown", e => {
-  if (e.target.closest(".lb-close")) return;
-  lbDrag = { x: e.clientX, y: e.clientY, ox: lbX, oy: lbY, moved: false };
-});
-lb.addEventListener("pointermove", e => {
-  if (!lbDrag) return;
-  const dx = e.clientX - lbDrag.x, dy = e.clientY - lbDrag.y;
-  if (Math.abs(dx) + Math.abs(dy) > 6) lbDrag.moved = true;
-  if (lbDrag.moved && lbS > 1) {
-    lb.classList.add("drag");
-    lbX = lbDrag.ox + dx; lbY = lbDrag.oy + dy;
-    lbClamp(); lbApply();
-  }
-});
-lb.addEventListener("pointerup", e => {
-  if (!lbDrag) return;
-  const d = lbDrag; lbDrag = null;
-  lb.classList.remove("drag");
-  if (d.moved) return;
-  if (e.target !== lbImg) { closeLightbox(); return; }           // clic à côté de l'image : on ferme
-  lbZoomTo((lbLevel + 1) % LB_LEVELS.length, e.clientX, e.clientY); // clic sur l'image : 1× -> 2,5× -> 5× -> 1×
-});
-lb.addEventListener("pointercancel", () => { lbDrag = null; lb.classList.remove("drag"); });
-lb.addEventListener("wheel", e => {
-  e.preventDefault();
-  if (lbS > 1) { lbX -= e.deltaX; lbY -= e.deltaY; lbClamp(); lbApply(); }
-}, { passive: false });
+addEventListener("resize", () => { items.forEach(it => { it._h = null; }); render(); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { items.forEach(it => { it._h = null; }); render(); });
 
 /* ---------- à propos / contact ---------- */
 const pin = $("panel-in");
@@ -1036,7 +752,8 @@ setTimeout(() => { loadedCount = N; }, 12000);            // sécurité : on n'a
 
 const PUSH_MS = REDUCED ? 0 : 2000;     // durée de la poussée : le panneau cède de plus en plus vite
 const WALK_MS = 700;                    // le personnage s'en va vers la droite
-const OPEN_AT = REDUCED ? 0 : 3000;     // le panneau ne s'ouvre jamais avant (même si tout est déjà chargé)
+let SEEN = false; try { SEEN = localStorage.getItem("introSeen") === "1"; localStorage.setItem("introSeen", "1"); } catch (e) {}
+const OPEN_AT = REDUCED ? 0 : (SEEN ? 2000 : 3000);   // 2e visite : intro plus courte     // le panneau ne s'ouvre jamais avant (même si tout est déjà chargé)
 const easeIn = t => Math.pow(t, 2.3);
 let tStart = null, shownPct = 0;
 
