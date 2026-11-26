@@ -20,12 +20,12 @@
        1) Rien                      -> une carte « ta photo ici » qui tourne en 3D (pour tester)
        2) photo: "mayliane.png"     -> TA PHOTO DÉTOURÉE (fond transparent, PNG) qui tourne en 3D
                                        comme un sticker épais, avec un contour blanc
-       3) model: "mayliane (1).glb"     -> un VRAI modèle 3D (scan / avatar exporté en .glb)
+       3) model: "MaylianE-v3.glb"     -> un VRAI modèle 3D (scan / avatar exporté en .glb)
                                        qui tourne et que l'on peut faire pivoter avec le doigt / la souris
        Si model est rempli, il passe avant photo. Si le .glb ne se charge pas, la photo prend le relais. */
     photo: "",          // ex. "mayliane.png"  (PNG sans fond, plutôt en pied ou en buste, format portrait)
     photoBack: "",      // optionnel : photo du dos ou d'une autre pose ; vide = la même photo des deux côtés
-    model: "mayliane (1).glb",   // ton modèle 3D (laisse "" pour revenir à la photo / à la carte de démonstration)
+    model: "MaylianE-v3.glb",   // ton modèle 3D (laisse "" pour revenir à la photo / à la carte de démonstration)
     poster: "",         // optionnel (avec model) : image affichée pendant le chargement du modèle
     hint: "Glisse pour la faire tourner",
 
