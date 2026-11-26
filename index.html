@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="color-scheme" content="dark light">
 <link rel="preload" as="image" href="Transition%20pop.svg">
+<link rel="preload" as="image" href="intro-caddie.webp" type="image/webp">
 <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="shortcut icon" href="/favicon.ico" />
@@ -346,8 +347,10 @@ const CONFIG = {
   host: "Github",             // contact : hébergeur affiché dans la ligne de mentions légales
   introLines: ["Mayliane", "Lefebvre"],   // intro : les 2 lignes du nom (vide = le nom est coupé automatiquement)
   introColor: "#d9474f",                  // intro : couleur du nom
-  introFigure: "",                        // intro : "" = petit personnage intégré ; ou ton dessin : "mon-perso.svg" / ".png" (tourné vers la droite, mains au bord droit)
-  introCounter: true                      // intro : petit compteur % en bas à gauche (false = caché)
+  introFigure: "intro-caddie.webp",       // intro : "" = petit personnage intégré ; ou ton dessin : "mon-perso.svg" / ".png" / ".webp" (tourné vers la droite, fond transparent)
+  introFigureHand: .99,
+  introFigureSize: 2.7,                   // intro : hauteur de l'image = taille du nom × cette valeur (personnage intégré : 1.6)                  // intro : position du doigt / de l'avant sur la largeur de l'image (0 à 1) -> ce point touche le bord du panneau
+  introCounter: true                     // intro : petit compteur % en bas à gauche (false = caché)
 };
 
 /* Dossier des fichiers (images, vidéos). "" = même dossier que index.html. Exemple : "images/" */
@@ -735,9 +738,19 @@ $("ldL1").textContent = introLines[0] || "";
 $("ldL2").textContent = introLines[1] || "";
 if (CONFIG.introColor) loaderEl.style.setProperty("--ld-red", CONFIG.introColor);
 if (CONFIG.introCounter === false) $("ldCount").classList.add("off");
+let FIG_HAND = .96;                                        // personnage intégré : mains à 96 % de la largeur
+let figReady = Promise.resolve();
 if (CONFIG.introFigure) {
   ldFig.innerHTML = "";
-  const fi = document.createElement("img"); fi.src = asset(CONFIG.introFigure); fi.alt = ""; fi.draggable = false;
+  FIG_HAND = +CONFIG.introFigureHand || .99;
+  const figSize = +CONFIG.introFigureSize || 1.6;          // plafonné à 85 % de la hauteur d'écran
+  loaderEl.style.setProperty("--ld-fig", "min(calc(var(--ld-fs) * " + figSize + "), 85vh)");
+  const fi = document.createElement("img"); fi.alt = ""; fi.draggable = false; fi.decoding = "async";
+  /* la largeur suit les proportions réelles de l'image (la hauteur reste celle du personnage) */
+  const fitFig = () => { if (fi.naturalWidth && fi.naturalHeight)
+    ldFig.style.width = "calc(var(--ld-fig) * " + (fi.naturalWidth / fi.naturalHeight).toFixed(4) + ")"; };
+  figReady = new Promise(r => { fi.onload = () => { fitFig(); r(); }; fi.onerror = r; });
+  fi.src = asset(CONFIG.introFigure);
   ldFig.appendChild(fi);
 }
 
@@ -769,7 +782,7 @@ function frame(now) {
 
   /* le personnage : mains au bord du panneau, puis il sort à droite */
   if (!REDUCED) {
-    const W = innerWidth, hand = ldFig.offsetWidth * .96;
+    const W = innerWidth, hand = ldFig.offsetWidth * FIG_HAND;
     let x, bob;
     if (el <= PUSH_MS) { x = edge * W - hand; bob = Math.sin(el / 95) * 2.5 * (1 - edge * .6); }
     else { const q = Math.min(1, (el - PUSH_MS) / WALK_MS); x = W - hand + q * q * (hand + 40); bob = Math.sin(el / 80) * 2; }
@@ -818,9 +831,12 @@ function openCurtain() {
   setTimeout(() => loaderEl.classList.add("gone"), REDUCED ? 600 : 1300);
 }
 
-/* on attend que la police du nom soit prête (1,5 s maximum) avant de lancer la poussée */
+/* on attend que la police du nom et l'image du personnage soient prêtes (1,5 s maximum) avant de lancer la poussée */
 if (skipIntro) startReturn(); else Promise.race([
-  (document.fonts && document.fonts.load) ? document.fonts.load('1em "Gloock"') : Promise.resolve(),
+  Promise.all([
+    (document.fonts && document.fonts.load) ? document.fonts.load('1em "Gloock"') : Promise.resolve(),
+    figReady
+  ]),
   new Promise(r => setTimeout(r, 1500))
 ]).catch(() => {}).then(() => {
   loaderEl.classList.add("fontok");
